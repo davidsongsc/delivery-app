@@ -3,7 +3,7 @@
 import { ConfigProvider, App as AntdApp, Layout } from "antd";
 import AppHeader from "@/components/header/internal";
 import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "../../../../tailwind.config.ts";
+import tailwindConfig from "../../../../tailwind.config";
 
 const fullConfig = resolveConfig(tailwindConfig);
 const theme = {

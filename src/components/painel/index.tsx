@@ -81,7 +81,7 @@ const PainelPedido: React.FC = () => {
 
             <Layout className='d-layout'>
                 <Header style={headerStyle}>Header</Header>
-                <Cardapio produtos={listaProdutos} onAdicionar={() => { }} />
+                <Cardapio produtos={listaProdutos} />
                 <Footer style={footerStyle}>Footer</Footer>
             </Layout>
         </>

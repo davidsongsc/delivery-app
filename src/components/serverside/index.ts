@@ -1,4 +1,5 @@
 import { ICupom } from "@/interfaces/ICupom";
+import { IProduto } from "@/interfaces/IProduto";
 
 export const cliente =
 {
@@ -120,7 +121,7 @@ export const adicionaisPorCategoria: Record<string, ({ item: string, valor: numb
 };
 
 
-export const listaProdutos = [
+export const listaProdutos: IProduto[] = [
     {
         id: '1',
         nome: 'X-Burguer',
@@ -180,12 +181,16 @@ export const listaProdutos = [
     }
 ].map(produto => ({
     ...produto,
-    adicionar: adicionaisPorCategoria[produto.categoria] || [],
-    remover: [], // Você pode ajustar isso conforme necessidade
+    adicionar: (adicionaisPorCategoria[produto.categoria] || []).map(item =>
+        typeof item === 'string'
+            ? { item, valor: 0 }
+            : item
+    ),
+
+    remover: [],
     desconto: 0,
     quantidade: 1,
 }));
-
 export const listaCupons: ICupom[] = [
     { codigo: 'desconto10', tipo: 'valor', valor: 10, usosRestantes: 5 },
     { codigo: 'desconto20', tipo: 'valor', valor: 20, usosRestantes: 3 },

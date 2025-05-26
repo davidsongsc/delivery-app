@@ -37,7 +37,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
         );
 
         const item: IItem = {
-            id: produtoSelecionado.id,
+            id: produtoSelecionado.id as number,
             nome: produtoSelecionado.nome,
             valor: produtoSelecionado.valor,
             desconto: produtoSelecionado.desconto || 0,

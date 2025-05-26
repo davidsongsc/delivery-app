@@ -5,12 +5,12 @@ export interface IItem {
     valor: number;
     desconto: number;
     remover: string[];
-    adicionar: string[] | { item: string, valor: number }[];
+    adicionar: { item: string; valor: number }[]; 
     quantidade: number;
     categoria: string;
     descricao: string;
-    
 }
+
 export interface IPedido {
     id: number;
     hora: string;
