@@ -4,6 +4,7 @@ import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useDeliveryStore } from '@/store/deliveryStore';
 import { IItem } from '@/interfaces/IPedido';
 import { IProduto } from '@/interfaces/IProduto';
+import Image from 'next/image';
 
 interface CardapioProps {
     produtos: IProduto[];
@@ -101,8 +102,9 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                     bordered={false}
                                     cover={
                                         <div className="overflow-hidden rounded-t-md">
-                                            <img
+                                            <Image
                                                 alt={produto.nome}
+                                                width={80} height={80}
                                                 src={`${process.env.NEXT_PUBLIC_FILES}/imagens/cardapio/${produto.id}.png`}
                                                 className="h-60 object-cover transition-transform duration-300 ease-in-out hover:scale-125 w-full"
                                             />
