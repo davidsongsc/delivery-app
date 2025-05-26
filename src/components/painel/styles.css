@@ -1,0 +1,35 @@
+.d-layout {
+    height: 100vh;
+    overflow: 'hidden';
+    background-color: theme('colors.d_am_fundo_c');
+}
+
+.d-layout-slider {
+    text-align: center;
+    margin-top: 10px;
+    color: theme('colors.d_tx_secondary');
+    background-color: theme('colors.d_am_fundo_c');
+}
+
+.scroll-bar::-webkit-scrollbar {
+  width: 8px;              /* largura da scrollbar vertical */
+}
+
+.scroll-bar::-webkit-scrollbar-track {
+  background: theme('colors.d_am_fundo_e');     /* cor do fundo */
+}
+
+.scroll-bar::-webkit-scrollbar-thumb {
+  background: #888;        /* cor do "botão" da barra */
+  border-radius: 4px;
+}
+
+.scroll-bar::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.d_primary');        /* cor ao passar o mouse */
+}
+
+/* Firefox */
+.scroll-bar {
+  scrollbar-width: thin;          /* largura fina */
+  scrollbar-color: theme('colors.d_am_fundo_c') theme('colors.d_am_acento');  /* thumb cor, track cor */
+}

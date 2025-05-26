@@ -1,0 +1,79 @@
+{
+  "name": "sistema-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install",
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start -p 4700",
+    "lint": "next lint",
+    "check-types": "tsc --noEmit --pretty",
+    "format": "prettier --check --ignore-path .gitignore .",
+    "format:fix": "prettier --write --ignore-path  .gitignore .",
+    "format:write": "prettier --write --ignore-path .gitignore .",
+    "lint:fix": "eslint --fix --quiet --config .eslintrc.json --cache --cache-location .eslintcache/ --cache-strategy content --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.8",
+    "@mui/material": "^6.4.8",
+    "antd": "^5.24.7",
+    "axios": "^1.7.9",
+    "cep-promise": "^4.4.1",
+    "dayjs": "^1.11.13",
+    "framer-motion": "^12.5.0",
+    "grapesjs": "^0.22.5",
+    "grapesjs-blocks-basic": "^1.0.2",
+    "grapesjs-blocks-flexbox": "^1.0.1",
+    "grapesjs-preset-webpage": "^1.0.3",
+    "grapesjs-rulers": "^1.0.8",
+    "js-cookie": "^3.0.5",
+    "next": "14.2.18",
+    "next-pwa": "^5.6.0",
+    "papaparse": "^5.5.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5.5.0",
+    "react-quill": "^2.0.0",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^22.14.1",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.7",
+    "eslint-plugin-prettier": "^5.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "postcss": "^8",
+    "prettier": "^3.5.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "yarn lint:fix ",
+      "yarn format:write"
+    ],
+    "!node_modules/**/*": []
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged",
+      "pre-push": "yarn lint:fix",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}

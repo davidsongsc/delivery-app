@@ -1,0 +1,36 @@
+.assinatura {
+    transform: translateY(-45px);
+    padding: 5px 10px 11px 10px;
+    color: white;
+    background-color: rgba(0, 0, 0, .615);
+    font-size: 16px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.assinatura span:first-child {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.assinatura span:last-child {
+    font-style: italic;
+    text-transform: capitalize;
+}
+
+.cortes {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 500px;
+    overflow-x: auto;
+    padding: 0 10px;
+    margin: 0 auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}

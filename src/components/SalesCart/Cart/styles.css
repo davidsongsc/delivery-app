@@ -1,0 +1,12 @@
+.d-layout-slider {
+    text-align: center;
+    margin-top: 10px;
+    color: theme('colors.d_tx_secondary');
+    background-color: theme('colors.d_am_fundo_c');
+}
+
+.slider-fixed {
+    position: fixed;
+    right: 0;
+    
+}

@@ -1,0 +1,142 @@
+[
+    {
+        "barbeiro": "joaobarber",
+        "nome": "João Barber",
+        "profileImage": "/cortes/juca-barbeiro.webp",
+        "whatsapp": "21983108439",
+        "atendimento": [
+            {
+                "dia": "segunda",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "terca",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "quarta",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "quinta",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "sexta",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "sabado",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            }
+        ],
+        "clientes": [
+            {
+                "cliente": "@lucas.rj",
+                "nome": "Lucas RJ",
+                "cortes": [
+                    {
+                        "nomeCorte": "Corte do Jaca",
+                        "imagem": "/cortes/lucasrj-corte-jaca.jpg"
+                    }
+                ]
+            },
+            {
+                "cliente": "@pilotoCS",
+                "nome": "pilotoCS",
+                "cortes": [
+                    {
+                        "nomeCorte": "Disfarçado",
+                        "imagem": "/cortes/pilotocs-moicano-disfarcado.jpg"
+                    }
+                ]
+            },
+            {
+                "cliente": "@caioprato",
+                "nome": "Caio Prato",
+                "cortes": [
+                    {
+                        "nomeCorte": "Corte Militar",
+                        "imagem": "/cortes/caio-corte-militar.webp"
+                    }
+                ]
+            },
+            {
+                "cliente": "@pereirabruno",
+                "nome": "Bruno Pereira",
+                "cortes": [
+                    {
+                        "nomeCorte": "Corte do Jaca",
+                        "imagem": "/cortes/caio-corte-jaca.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "barbeiro": "BrenoBarbeiro",
+        "nome": "Breno Lucas",
+        "profileImage": "/cortes/breno-barbeiro.jpg",
+        "whatsapp": "(21) 99999-9999",
+        "atendimento": [
+            {
+                "dia": "segunda",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "terca",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "quarta",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "quinta",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "sexta",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            },
+            {
+                "dia": "sabado",
+                "abertura": "08:00",
+                "fechamento": "22:00"
+            }
+        ],
+        "clientes": [
+            {
+                "cliente": "@bruletta",
+                "nome": "bruletta",
+                "cortes": [
+                    {
+                        "nomeCorte": "Corte Blindado",
+                        "imagem": "/cortes/bruletta-blindado.jpg"
+                    }
+                ]
+            },
+            {
+                "cliente": "@neguinrj",
+                "nome": "Neguin RJ",
+                "cortes": [
+                    {
+                        "nomeCorte": "Fade com Risco",
+                        "imagem": "/cortes/neguin-fade-risco.jpg"
+                    }
+                ]
+            }
+        ]
+    }
+]

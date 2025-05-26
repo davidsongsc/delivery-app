@@ -1,0 +1,4 @@
+.prettierrc
+.prettierignore
+tsconfig.json
+package.json

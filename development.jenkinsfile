@@ -1,0 +1,88 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+
+    environment {
+        dockerImage = ''
+    }
+
+    stages {
+        stage('Cloning our Git') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Constrói a imagem Docker
+                    docker.build("${DOCKERHUB_REPO}:latest", "--build-arg NEXT_PUBLIC_API=${NEXT_PUBLIC_API} --network=host .")
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    sh "docker tag ${DOCKERHUB_REPO}:latest ${DOCKERHUB_REPO}:1.0.${env.BUILD_NUMBER}"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
+                        docker.image("${DOCKERHUB_REPO}:1.0.${env.BUILD_NUMBER}").push()
+                    }
+                }
+            }
+        }
+
+        stage('Apply Image to Deployment') {
+            steps {
+                script {
+                    withEnv(["KUBECONFIG=${KUBECONFIG}"]) {
+                        def imageTag = "${env.DOCKERHUB_REPO}:1.0.${env.BUILD_NUMBER}"
+                        def kubectlCommand = "kubectl set image deployment/${env.APP} " +
+                                        "${env.APP}=${imageTag} " +
+                                        "--namespace=gestedu"
+                        sh kubectlCommand
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            sh "docker rmi ${DOCKERHUB_REPO}:latest || true"
+        }
+        failure {
+            script {
+                updateGitlabCommitStatus name: 'build', state: 'failed'
+                discordSend footer: 'infra.creativecode.dev.br', link: env.BUILD_URL, result: currentBuild.currentResult, title: "🔴 $JOB_NAME - Falha", webhookURL: DISCORD_URL
+            }
+        }
+        success {
+            script {
+                updateGitlabCommitStatus name: 'build', state: 'success'
+                discordSend footer: 'infra.creativecode.dev.br', link: env.BUILD_URL, result: currentBuild.currentResult, title: "✅ $JOB_NAME - Sucesso", webhookURL: DISCORD_URL
+            }
+        }
+        aborted {
+            script {
+                updateGitlabCommitStatus name: 'build', state: 'canceled'
+            }
+        }
+    }
+
+    options {
+        gitLabConnection('DEFAULT')
+    }
+    triggers {
+        gitlab(triggerOnPush: true, triggerOnMergeRequest: true, branchFilterType: 'All')
+    }
+}
