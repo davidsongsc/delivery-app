@@ -11,7 +11,6 @@ const CarrinhoItens: React.FC = () => {
             <div className='grid grid-cols-12 py-1 text-sm font-bold'>
                 <span className='col-span'>Item</span>
             </div>
-
             {itensPedido.map((item, index) => (
                 <div key={index} className='flex items-center justify-between border-t border-gray-500'>
                     <div className='grid grid-cols-12 py-1 text-sm '>

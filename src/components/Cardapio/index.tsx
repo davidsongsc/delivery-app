@@ -109,7 +109,6 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                                 className="h-60 object-cover transition-transform duration-300 ease-in-out hover:scale-125 w-full"
                                             />
                                         </div>
-
                                     }
                                     className="shadow rounded-md bg-d_secondary"
                                     actions={[
