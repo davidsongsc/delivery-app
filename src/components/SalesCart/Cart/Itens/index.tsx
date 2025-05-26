@@ -16,7 +16,7 @@ const CarrinhoItens: React.FC = () => {
                 <div key={index} className='flex items-center justify-between border-t border-gray-500'>
                     <div className='grid grid-cols-12 py-1 text-sm '>
                         <div className='col-span-2 flex items-center justify-center p-2'>
-                            <Image src={`${process.env.NEXT_PUBLIC_FILES}/imagens/cardapio/${item.id}.png`} width={80} height={80} alt={item.nome} />
+                            <Image src={`/files/imagens/cardapio/${item.id}.png`} width={80} height={80} alt={item.nome} />
                         </div>
 
                         <div className='col-span-8 grid grid-cols-12'>

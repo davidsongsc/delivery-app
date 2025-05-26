@@ -105,7 +105,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                             <Image
                                                 alt={produto.nome}
                                                 width={80} height={80}
-                                                src={`${process.env.NEXT_PUBLIC_FILES}/imagens/cardapio/${produto.id}.png`}
+                                                src={`/files/imagens/cardapio/${produto.id}.png`}
                                                 className="h-60 object-cover transition-transform duration-300 ease-in-out hover:scale-125 w-full"
                                             />
                                         </div>
