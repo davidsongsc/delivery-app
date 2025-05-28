@@ -124,7 +124,7 @@ export const adicionaisPorCategoria: Record<string, ({ item: string, valor: numb
 export const listaProdutos: IProduto[] = [
     {
         id: '1',
-        nome: 'X-Burguer',
+        nome: 'Hamburguer',
         descricao: 'Hambúrguer simples com queijo, picles, cebola e adicionais personalizáveis. Hambúrguer simples com queijo, picles, cebola e adicionais personalizáveis. Hambúrguer simples com queijo, picles, cebola e adicionais personalizáveis.',
         valor: 10.99,
         imagem: '/imgs/xburguer.jpg',
@@ -134,9 +134,9 @@ export const listaProdutos: IProduto[] = [
     },
     {
         id: '2',
-        nome: 'X-Tudo',
+        nome: 'Cheeseburguer',
         descricao: 'Hambúrguer completo com tudo: ovo, alface, tomate e mais.',
-        valor: 14.99,
+        valor: 11.99,
         imagem: '/imgs/xtudo.jpg',
         categoria: 'Lanches',
         composicao: ['pão', 'hambúrguer', 'queijo', 'picles', 'cebola'],
@@ -178,6 +178,25 @@ export const listaProdutos: IProduto[] = [
         imagem: '/imgs/costela.jpg',
         categoria: 'Carnes',
         composicao: ['molho'],
+    }, {
+        id: '7',
+        nome: 'Hamburguer Duplo',
+        descricao: 'Hambúrguer simples com queijo, picles, cebola e adicionais personalizáveis. Hambúrguer simples com queijo, picles, cebola e adicionais personalizáveis. Hambúrguer simples com queijo, picles, cebola e adicionais personalizáveis.',
+        valor: 13.99,
+        imagem: '/imgs/xburguer.jpg',
+        categoria: 'Lanches',
+        composicao: ['pão', 'hambúrguer', 'queijo', 'picles', 'cebola'],
+
+    },
+    {
+        id: '8',
+        nome: 'Cheeseburguer Duplo',
+        descricao: 'Hambúrguer completo com tudo: ovo, alface, tomate e mais.',
+        valor: 15.99,
+        imagem: '/imgs/xtudo.jpg',
+        categoria: 'Lanches',
+        composicao: ['pão', 'hambúrguer', 'queijo', 'picles', 'cebola'],
+
     }
 ].map(produto => ({
     ...produto,

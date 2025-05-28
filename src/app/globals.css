@@ -32,14 +32,27 @@ body {
 
 .ocultar-scroll {
   overflow-x: hidden;
-  
+
 }
 
 .custom-bg {
-  background: linear-gradient(
-    to right,
-    var(--primary) 20%, /* Cor primária até 20% */
-    var(--secondary) 50%, /* Cor secundária até 50% */
-    transparent 80% /* Transparente após 80% */
-  );
+  background: linear-gradient(to right,
+      var(--primary) 20%,
+      /* Cor primária até 20% */
+      var(--secondary) 50%,
+      /* Cor secundária até 50% */
+      transparent 80%
+      /* Transparente após 80% */
+    );
+}
+
+.ant-modal-content {
+  background-color: theme('colors.d_am_fundo_c') !important;
+  color: theme('colors.d_tx_primary') !important;
+  label {
+    color: theme('colors.d_tx_primary') !important;
+  }
+  .ant-modal-header{
+    padding: 5px;
+  }
 }

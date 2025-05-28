@@ -18,9 +18,8 @@ const theme = {
         Layout: {
             colorBgContainer: fullConfig.theme?.colors?.grafite || "#1C1C1E",
         },
-        Input:{
+        Input: {
             colorBgContainer: fullConfig.theme?.colors?.aço || "#1C1C1E",
-            
         }
     },
 };

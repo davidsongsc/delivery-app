@@ -71,29 +71,33 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
     const categoriasFiltradas = [...new Set(produtosFiltrados.map(p => p.categoria || 'Outros'))];
 
     return (
-        <div className="p-4 sm:px-80 space-y-6">
-            {/* Filtros */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <Select
-                    value={filtroCategoria}
-                    onChange={setFiltroCategoria}
-                    options={categorias.map(c => ({ label: c, value: c }))}
-                    className="w-full md:w-1/3"
-                    placeholder="Filtrar por categoria"
-                />
+        <div className="p-4 sm:px-40 space-y-6">
+            <div className="flex flex-col gap-4">
+                <div className="flex overflow-x-auto gap-2 pb-2">
+                    {categorias.map((categoria) => (
+                        <button
+                            key={categoria}
+                            onClick={() => setFiltroCategoria(categoria)}
+                            className={`flex-shrink-0 px-4 py-2 rounded-full border whitespace-nowrap transition 
+          ${filtroCategoria === categoria ? 'bg-d_primary text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+                        >
+                            {categoria}
+                        </button>
+                    ))}
+                </div>
+
                 <Input.Search
                     placeholder="Buscar por nome ou descrição"
                     allowClear
                     onChange={(e) => setBusca(e.target.value)}
-                    className="w-full md:w-2/3"
+                    className="w-full"
                 />
             </div>
-
-            {/* Listagem por categoria */}
+            
             {categoriasFiltradas.map(categoria => (
                 <div key={categoria}>
                     <h2 className="text-2xl font-bold text-d_primary mb-4">{categoria}</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                         {produtosFiltrados
                             .filter(p => (p.categoria || 'Outros') === categoria)
                             .map(produto => (
@@ -104,19 +108,19 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                         <div className="overflow-hidden rounded-t-md">
                                             <Image
                                                 alt={produto.nome}
-                                                width={80} height={80}
+                                                width={800} height={600}
                                                 src={`/files/imagens/cardapio/${produto.id}.png`}
                                                 className="h-60 object-cover transition-transform duration-300 ease-in-out hover:scale-125 w-full"
                                             />
                                         </div>
                                     }
-                                    className="shadow rounded-md bg-d_secondary"
+                                    className="shadow rounded-xl bg-d_am_fundo_c border border-d_am_fundo_e"
                                     actions={[
                                         <Button
                                             type="primary"
                                             icon={<ShoppingCartOutlined />}
                                             onClick={() => abrirModal(produto)}
-                                            className="bg-d_secondary text-d_tx_primary"
+                                            className="bg-d_am_fundo_c text-d_tx_primary"
                                         >
                                             Adicionar
                                         </Button>
