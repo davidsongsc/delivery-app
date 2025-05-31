@@ -13,11 +13,6 @@ export default async function CategoriaPage({ params }: Props) {
     );
 
     return (
-        <div className="p-4 sm:px-40">
-            <h1 className="text-2xl font-bold mb-4 capitalize text-d_primary">
-                Categoria: {params.id}
-            </h1>
-            <Cardapio produtos={produtosFiltrados} />
-        </div>
+        <Cardapio produtos={produtosFiltrados} />
     );
 }
