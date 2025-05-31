@@ -5,7 +5,6 @@ import { useAuthStore } from '@/store/authStore';
 import Cardapio from '../Cardapio';
 import { useDeliveryStore } from '@/store/deliveryStore';
 
-import { listaProdutos } from '@/components/serverside';
 const { Header, Footer, Content } = Layout;
 
 const headerStyle: React.CSSProperties = {
@@ -45,7 +44,7 @@ const PainelPedido: React.FC = () => {
 
             <Layout className='d-layout'>
                 
-                <Cardapio produtos={listaProdutos} />
+             
                 
             </Layout>
         </>

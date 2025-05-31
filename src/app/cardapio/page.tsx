@@ -1,5 +1,10 @@
+'use client';
+
+import React from 'react';
 import Delivery from "@/templates/delivery/delivery";
 
-export default function DeliveryPage() {
+const DeliveryPage: React.FC = () => {
     return <Delivery />;
-}
+};
+
+export default DeliveryPage;

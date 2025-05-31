@@ -80,10 +80,10 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
 
     const categoriasFiltradas = [...new Set(produtosFiltrados.map(p => p.categoria || 'Outros'))];
     useEffect(() => {
-        setProdutos(produtos); // Atualiza a store ao montar
+        setProdutos(produtos);
     }, [produtos, setProdutos]);
     return (
-        <div className="p-4 sm:px-40 space-y-6">
+        <div className="p-4 mx-auto sm:px-40 space-y-6">
             <div className="flex flex-col gap-4">
                 <div className="flex overflow-x-auto gap-2 pb-2">
                     {categorias.map((categoria) => (
@@ -93,7 +93,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                 if (categoria === 'Todos') {
                                     setFiltroCategoria('Todos');
                                     setBusca('');
-                                    router.push('/cardapio'); 
+                                    router.push('/cardapio');
 
                                 } else {
                                     setFiltroCategoria(categoria);
@@ -177,9 +177,19 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                 okText="Adicionar ao Pedido"
                 cancelText="Cancelar"
             >
+                <Image
+                    alt={produtoSelecionado?.nome!}
+                    width={800} height={600}
+                    src={`/files/imagens/cardapio/${produtoSelecionado?.id}.png`}
+                    className="h-60 object-cover transition-transform duration-300 ease-in-out  w-full"
+                />
+                <p className="text-white bg-black p-2 h-[80px] overflow-hidden text-ellipsis line-clamp-3 mb-4">
+                    {produtoSelecionado?.descricao}
+                </p>
                 {/* Adicionais */}
                 {Array.isArray(produtoSelecionado?.adicionar) && produtoSelecionado.adicionar.length > 0 && (
                     <>
+
                         <h3 className="text-lg font-semibold mb-2">Adicionais</h3>
                         <Checkbox.Group
                             className="grid grid-cols-1 gap-2 mb-4"
@@ -194,6 +204,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                 return <Checkbox key={i} value={value}>{label}</Checkbox>;
                             })}
                         </Checkbox.Group>
+
                     </>
                 )}
 

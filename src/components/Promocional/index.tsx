@@ -18,7 +18,23 @@ interface PromocionalSliderProps {
   Promocionals: Promocional[];
 }
 
-const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ Promocionals }) => {
+const PromocionalSlider: React.FC = () => {
+  const Promocionals = [
+    {
+      id: '1',
+      imageUrl: '/files/imagens/cardapio/3.png',
+      title: 'Super Combo Gourmet',
+      description: 'Hambúrguer + Batata + Açaí por R$39,90',
+      corsys: 'd_am_acento',
+    },
+    {
+      id: '4',
+      imageUrl: '/files/imagens/cardapio/7.png',
+      title: 'Novidade!',
+      description: 'Esfirra de Frango com Cream Cheasse.',
+      corsys: '',
+    },
+  ];
   const settings = {
     dots: true,
     infinite: true,
@@ -51,8 +67,7 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ Promocionals }) =
 
 
   return (
-    <div className="w-full 
-     mx-auto mt-4 px-2 overflow-hidden">
+    <div className=" mt-4 mx-auto px-2 overflow-hidden w-[90%]">
 
       <Slider {...settings}>
         {Promocionals.map((Promocional) => (
