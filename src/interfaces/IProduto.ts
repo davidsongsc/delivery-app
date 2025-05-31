@@ -4,9 +4,11 @@ export interface IProduto {
   valor: number;
   desconto: number;
   remover: string[];
-  adicionar: { item: string, valor: number }[]; 
+  adicionar: { item: string, valor: number }[];
   quantidade: number;
   categoria: string;
   descricao: string;
+  imagem?: string;
+  promocional?: boolean;
   composicao?: string[];
 }

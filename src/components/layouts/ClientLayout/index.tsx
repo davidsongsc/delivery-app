@@ -5,6 +5,7 @@ import AppHeader from "@/components/header/internal";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../../tailwind.config";
 
+
 const fullConfig = resolveConfig(tailwindConfig);
 const theme = {
     token: {
@@ -25,6 +26,8 @@ const theme = {
 };
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+    
+
     return (
         <ConfigProvider theme={theme}>
             <AntdApp>

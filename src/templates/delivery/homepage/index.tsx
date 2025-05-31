@@ -2,47 +2,47 @@
 
 import React from 'react';
 import BannerSlider from '@/components/Banner';
-import PromocionalSlider from '@/components/Promocional';
+import { listaProdutos } from '@/components/serverside';
+import Delivery from '../delivery';
 
 const HomePageDelivery: React.FC = () => {
     const banners = [
         {
             id: '1',
-            imageUrl: '/files/banners/banner1.jpg',
-            title: 'Super Combo Gourmet',
-            description: 'Hambúrguer + Batata + Açaí por R$39,90',
-            corsys: 'd_am_acento'
-        },
-        {
-            id: '2',
-            imageUrl: '/files/banners/banner2.jpg',
-            title: 'Novidade!',
-            description: 'Experimente o novo Burger CPX com pão de brioche.',
-            corsys: 'd_am_acento'
-        },
-    ];
-
-    const Promocionals = [
-        {
-            id: '1',
-            imageUrl: '/files/banners/banner1.jpg',
-            title: 'Super Combo Gourmet',
-            description: 'Hambúrguer + Batata + Açaí por R$39,90',
-        },
-        {
-            id: '2',
             imageUrl: '/files/imagens/cardapio/1.png',
-            title: 'Novidade!',
-            description: 'Experimente o novo Burger CPX com pão de brioche.',
-            corsys: 'd_primary'
+            title: 'Novidades chegando aí!',
+            description: `
+    O <b>Mês de dezembro</b> chegou e com ele vem o <b>novo Burger CPX</b> com pão de brioche artesanal.\n\n
+    Aproveite nossa <b>oferta especial de lançamento:</b> combo com fritas e bebida por <b>R$29,90</b>!\n\n
+    Não perca a chance de experimentar essa delícia exclusiva só neste mês.\n
+    Venha para o CPX e surpreenda seu paladar!
+  `,
+            corsys: 'd_am_acento',
+        },
+
+        {
+            id: '2',
+            imageUrl: '/files/imagens/cardapio/4.png',
+            title: 'Esfirra de Frango com Cream Cheasse!',
+            description: 'Combo de <b>20 esfirras</b> de frango com cream cheese. + <b>Açaí por R$39,90</b>',
+        },
+        {
+            id: '3',
+            imageUrl: '/files/imagens/cardapio/6.png',
+            title: 'Costelinha Barbecue!',
+            description: 'Experimente nossa especialidade de costelinha barbecue. Acompanhado de fritas + <b>Açaí por R$39,90</b>',
+
         },
     ];
-    return (
-        <>
-            <BannerSlider banners={banners} />
 
-            <PromocionalSlider Promocionals={Promocionals} />
-        </>
+    
+    return (
+        <div className='grid grid-cols-1 gap-4'>
+            
+            <BannerSlider banners={banners} />
+            <Delivery />
+
+        </div>
     )
 }
 

@@ -8,66 +8,79 @@ import Image from 'next/image';
 import './styles.css';
 import { useAuthStore } from '@/store/authStore';
 import { useDeliveryStore } from '@/store/deliveryStore';
+import { useRouter } from 'next/navigation';
+import { useCategoriasStore } from '@/store/categoriasStore';
 
 const Header = () => {
+    const router = useRouter();
     const [openDrawer, setOpenDrawer] = useState(false);
     const [open, setOpen] = useState(false);
+    const categorias = useCategoriasStore((state) => state.categorias);
 
     const user = useAuthStore((state) => state.user);
     const itensPedido = useDeliveryStore((state) => state.itensPedido);
     const totalItens = itensPedido.reduce((acc, item) => acc + item.quantidade, 0);
+
+    const cardapioChildren = categorias
+        .filter((cat) => cat !== 'Todos')
+        .map((cat) => ({
+            key: `/cardapio/${cat.toLowerCase()}`,
+            label: cat,
+        }));
 
     const showDrawer = () => setOpen(true);
     const closeDrawer = () => setOpen(false);
 
     const handleDrawerToggle = () => setOpenDrawer(!openDrawer);
 
+    const onMenuClick = (e: any) => {
+        if (e.key === 'carrinho') {
+            showDrawer();
+        } else {
+            router.push(e.key);
+            setOpenDrawer(false); // Fecha o drawer do menu no mobile ao navegar
+        }
+    };
+
     const menuItemsDesktop = [
-        { key: 'home', label: 'Início' },
+        { key: '/', label: 'Início' },
         {
             key: '/cardapio',
-            href: '/cardapio',
             label: 'Cardápio',
-            children: [
-                { key: '/cardapio', hrfef: '/cardapio', label: 'Hambúrgueres' },
-                { key: 'combos', label: 'Combos' },
-                { key: 'bebidas', label: 'Bebidas' },
-                { key: 'sobremesas', label: 'Sobremesas' },
-            ],
+            children: cardapioChildren,
+
         },
-        { key: 'promo', label: 'Promoções' },
-        { key: 'sobre', label: 'Sobre Nós' },
-        {
-            key: 'carrinho', label: 'Carrinho',
-        },
+        { key: '/promocoes', label: 'Promoções' },
+        { key: '/sobre', label: 'Sobre Nós' },
+        { key: 'carrinho', label: 'Carrinho' }, // abre drawer
     ];
 
     const menuItemsMobile = [
-        { key: 'home', label: 'Início' },
+        { key: '/', label: 'Início' },
         {
-            key: 'menu',
+            key: '/cardapio',
             label: 'Cardápio',
             children: [
-                { key: 'burgers', label: 'Hambúrgueres' },
-                { key: 'combos', label: 'Combos' },
-                { key: 'bebidas', label: 'Bebidas' },
-                { key: 'sobremesas', label: 'Sobremesas' },
+                { key: '/cardapio/hamburgueres', label: 'Hambúrgueres' },
+                { key: '/cardapio/combos', label: 'Combos' },
+                { key: '/cardapio/bebidas', label: 'Bebidas' },
+                { key: '/cardapio/sobremesas', label: 'Sobremesas' },
             ],
         },
-        { key: 'promo', label: 'Promoções' },
-        { key: 'carrinho', label: <span onClick={showDrawer}>Carrinho</span> },
+        { key: '/promocoes', label: 'Promoções' },
+        { key: 'carrinho', label: 'Carrinho' }, // abre drawer
     ];
 
     return (
         <header className="bg-d_am_fundo_c text-d_primary shadow-md px-4 lg:px-12 py-3 flex items-center justify-between">
             <div className='absolute right-[250px] top-[15px] flex flex-row items-center'>
-                <span
-                    className=" flex items-start gap-2 cursor-pointer"
-                >
+                <span className="flex items-start gap-2 cursor-pointer">
                     {totalItens > 0 && (
-                        <span onClick={showDrawer} className="absolute -top-[-10px] -right-20 bg-red-600 text-white text-[26px] font-bold rounded-md h-12 w-[100px] p-3 flex items-center justify-between">
+                        <span
+                            onClick={showDrawer}
+                            className="absolute -top-[-10px] -right-20 bg-red-600 text-white text-[26px] font-bold rounded-md h-12 w-[100px] p-3 flex items-center justify-between"
+                        >
                             {totalItens} <FaShoppingCart />
-
                         </span>
                     )}
                 </span>
@@ -86,7 +99,8 @@ const Header = () => {
                 <Menu
                     mode="horizontal"
                     items={menuItemsDesktop}
-                    className="border-none bg-transparent text-white w-1/4"
+                    onClick={onMenuClick}
+                    className="border-none bg-transparent text-white w-1/3"
                 />
             </nav>
 
@@ -104,9 +118,14 @@ const Header = () => {
                 closable
                 onClose={handleDrawerToggle}
                 open={openDrawer}
-                styles={{ body: { padding: 0, backgroundColor: '#1C1C1E' } }}
+                bodyStyle={{ padding: 0, backgroundColor: '#1C1C1E' }}
             >
-                <Menu mode="vertical" items={menuItemsMobile} className="text-white bg-[#1C1C1E]" />
+                <Menu
+                    mode="vertical"
+                    items={menuItemsMobile}
+                    onClick={onMenuClick}
+                    className="text-white bg-[#1C1C1E]"
+                />
             </Drawer>
 
             <Drawer
@@ -115,12 +134,10 @@ const Header = () => {
                 onClose={closeDrawer}
                 open={open}
                 width="40%"
-                styles={{ body: { padding: 0 } }}
+                bodyStyle={{ padding: 0 }}
             >
                 <CarrinhoPedido />
             </Drawer>
-
-
         </header>
     );
 };

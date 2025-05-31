@@ -3,7 +3,8 @@
 import React from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
-import 'slick-carousel/slick/slick.css';
+import DOMPurify from 'dompurify';
+import 'slick-carousel/slick/slick.css'; // Mantém só o css básico do slick
 
 interface Promocional {
   id: string;
@@ -27,25 +28,58 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ Promocionals }) =
     autoplay: true,
     autoplaySpeed: 4000,
     arrows: false,
+    customPaging: () => (
+      <div className="w-3 h-3 bg-gray-400 rounded-full" />
+    ),
+    dotsClass: 'slick-dots flex justify-center gap-3 mt-4',
   };
+
+  function createMarkup(description?: string) {
+    if (!description) return { __html: '' };
+
+    let html = description
+      .replace(/\n\n/g, '</p><p>')  // quebras duplas viram parágrafos
+      .replace(/\n/g, '<br />');    // quebras simples viram <br />
+
+    html = `<p>${html}</p>`;
+
+    const cleanHTML = DOMPurify.sanitize(html);
+
+    return { __html: cleanHTML };
+  }
+
 
   return (
     <div className="w-full max-w-screen-2xl mx-auto mt-4 px-2">
       <Slider {...settings}>
         {Promocionals.map((Promocional) => (
-          <div key={Promocional.id} className="relative h-[250px] md:h-[400px] rounded-xl overflow-hidden shadow-lg">
+          <div
+            key={Promocional.id}
+            className="relative h-[250px] md:h-[400px] rounded-xl overflow-hidden shadow-lg"
+          >
             <Image
-              src={Promocional.imageUrl}
+              src={`/files/imagens/cardapio/${Promocional.id}.png`}
               alt={Promocional.title || 'Promocional'}
               fill
-              className="object-cover"
+              className="object-cover  "
               sizes="(max-width: 768px) 100vw, 1200px"
               priority
             />
             {(Promocional.title || Promocional.description) && (
-              <div className={`absolute inset-0 bg-${Promocional.corsys} flex flex-col justify-center p-6 text-white`}>
-                {Promocional.title && <h2 className="text-2xl md:text-4xl font-bold">{Promocional.title}</h2>}
-                {Promocional.description && <p className="text-sm md:text-lg mt-2">{Promocional.description}</p>}
+              <div
+                className={`absolute inset-0 bg-${Promocional.corsys} flex flex-col justify-center p-6 text-white`}
+              >
+                {Promocional.title && (
+                  <h2 className="text-2xl md:text-4xl font-bold">
+                    {Promocional.title}
+                  </h2>
+                )}
+                {Promocional.description && (
+                  <p
+                    className="text-sm md:text-lg mt-2"
+                    dangerouslySetInnerHTML={createMarkup(Promocional.description)}
+                  />
+                )}
               </div>
             )}
           </div>

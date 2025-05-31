@@ -1,10 +1,16 @@
-import React, { useMemo, useState } from 'react';
+'use client';
+
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, Button, Divider, Select, Input, Modal, Checkbox } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { useDeliveryStore } from '@/store/deliveryStore';
 import { IItem } from '@/interfaces/IPedido';
+import { useCategoriasStore } from '@/store/categoriasStore';
+import { useProdutosStore } from '@/store/produtosStore';
+
 import { IProduto } from '@/interfaces/IProduto';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface CardapioProps {
     produtos: IProduto[];
@@ -13,6 +19,8 @@ interface CardapioProps {
 const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
     const [filtroCategoria, setFiltroCategoria] = useState<string>('Todos');
     const [busca, setBusca] = useState<string>('');
+    const setProdutos = useProdutosStore(state => state.setProdutos);
+    const router = useRouter();
 
     const [modalAberto, setModalAberto] = useState(false);
     const [produtoSelecionado, setProdutoSelecionado] = useState<IProduto | null>(null);
@@ -56,7 +64,9 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
 
     const categorias = useMemo(() => {
         const únicas = [...new Set(produtos.map(p => p.categoria || 'Outros'))];
-        return ['Todos', ...únicas];
+        const todasCategorias = ['Todos', ...únicas];
+        useCategoriasStore.getState().setCategorias(todasCategorias); // Atualiza o Zustand
+        return todasCategorias;
     }, [produtos]);
 
     const produtosFiltrados = useMemo(() => {
@@ -69,7 +79,9 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
     }, [produtos, filtroCategoria, busca]);
 
     const categoriasFiltradas = [...new Set(produtosFiltrados.map(p => p.categoria || 'Outros'))];
-
+    useEffect(() => {
+        setProdutos(produtos); // Atualiza a store ao montar
+    }, [produtos, setProdutos]);
     return (
         <div className="p-4 sm:px-40 space-y-6">
             <div className="flex flex-col gap-4">
@@ -77,12 +89,22 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                     {categorias.map((categoria) => (
                         <button
                             key={categoria}
-                            onClick={() => setFiltroCategoria(categoria)}
+                            onClick={() => {
+                                if (categoria === 'Todos') {
+                                    setFiltroCategoria('Todos');
+                                    setBusca('');
+                                    router.push('/cardapio'); 
+
+                                } else {
+                                    setFiltroCategoria(categoria);
+                                }
+                            }}
                             className={`flex-shrink-0 px-4 py-2 rounded-full border whitespace-nowrap transition 
-          ${filtroCategoria === categoria ? 'bg-d_primary text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+    ${filtroCategoria === categoria ? 'bg-d_primary text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
                         >
                             {categoria}
                         </button>
+
                     ))}
                 </div>
 
@@ -93,7 +115,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                     className="w-full"
                 />
             </div>
-            
+
             {categoriasFiltradas.map(categoria => (
                 <div key={categoria}>
                     <h2 className="text-2xl font-bold text-d_primary mb-4">{categoria}</h2>

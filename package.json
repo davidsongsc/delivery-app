@@ -23,6 +23,7 @@
     "axios": "^1.7.9",
     "cep-promise": "^4.4.1",
     "dayjs": "^1.11.13",
+    "dompurify": "^3.2.6",
     "framer-motion": "^12.5.0",
     "grapesjs": "^0.22.5",
     "grapesjs-blocks-basic": "^1.0.2",
