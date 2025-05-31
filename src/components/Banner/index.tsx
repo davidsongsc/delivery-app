@@ -37,21 +37,21 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
   };
 
   // Função para converter \n em <br> e sanitizar o HTML
-  function createMarkup(description?: string) {
+  const createMarkup = (description?: string) => {
     if (!description) return { __html: '' };
 
-    // Substitui \n\n por fechamento e abertura de parágrafo, \n por <br />
     let html = description
-      .replace(/\n\n/g, '</p><p>')  // quebras duplas viram parágrafos
-      .replace(/\n/g, '<br />');    // quebras simples viram <br />
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br />');
 
-    // Envolve todo em <p> para manter consistência
     html = `<p>${html}</p>`;
 
-    const cleanHTML = DOMPurify.sanitize(html);
+    if (typeof window !== 'undefined') {
+      return { __html: DOMPurify.sanitize(html) };
+    }
+    return { __html: '' };
+  };
 
-    return { __html: cleanHTML };
-  }
 
   return (
     <div className="w-full max-w-screen-2xl mx-auto mt-4 px-2 ">

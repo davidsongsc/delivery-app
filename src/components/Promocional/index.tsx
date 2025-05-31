@@ -34,19 +34,20 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ Promocionals }) =
     dotsClass: 'slick-dots flex justify-center gap-3 mt-4',
   };
 
-  function createMarkup(description?: string) {
+  const createMarkup = (description?: string) => {
     if (!description) return { __html: '' };
 
     let html = description
-      .replace(/\n\n/g, '</p><p>')  // quebras duplas viram parágrafos
-      .replace(/\n/g, '<br />');    // quebras simples viram <br />
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br />');
 
     html = `<p>${html}</p>`;
 
-    const cleanHTML = DOMPurify.sanitize(html);
-
-    return { __html: cleanHTML };
-  }
+    if (typeof window !== 'undefined') {
+      return { __html: DOMPurify.sanitize(html) };
+    }
+    return { __html: '' };
+  };
 
 
   return (
