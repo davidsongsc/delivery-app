@@ -51,7 +51,9 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ Promocionals }) =
 
 
   return (
-    <div className="w-full max-w-screen-2xl mx-auto mt-4 px-2">
+    <div className="w-full 
+     mx-auto mt-4 px-2 overflow-hidden">
+
       <Slider {...settings}>
         {Promocionals.map((Promocional) => (
           <div

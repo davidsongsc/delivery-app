@@ -1,9 +1,16 @@
-header{
+header {
     height: 132px;
 
 }
+
 .logo-empresa {
-    position: absolute;
-    transform: translate(135px, 5px);
-    
+    position: relative;
+
+    @media (max-width: 768px) {
+        span {
+            display: none;
+        }
+
+    }
+
 }

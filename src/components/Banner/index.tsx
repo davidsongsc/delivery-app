@@ -54,7 +54,7 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
 
 
   return (
-    <div className="w-full max-w-screen-2xl mx-auto mt-4 px-2 ">
+    <div className="w-full max-w-screen-2xl mx-auto mt-4 px-2 overflow-hidden">
       <Slider {...settings}>
         {banners.map((banner) => (
           <div key={banner.id} className='grid grid-cols-12 rounded overflow-hidden'>

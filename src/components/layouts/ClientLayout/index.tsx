@@ -1,7 +1,7 @@
 'use client';
 
 import { ConfigProvider, App as AntdApp, Layout } from "antd";
-import AppHeader from "@/components/header/internal";
+
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../../tailwind.config";
 
@@ -34,6 +34,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 <Layout className="flex-row">
 
                     <Layout.Content >
+                        
                         {children}
                     </Layout.Content>
                 </Layout>

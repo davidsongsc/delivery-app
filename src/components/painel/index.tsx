@@ -46,7 +46,7 @@ const PainelPedido: React.FC = () => {
             <Layout className='d-layout'>
                 
                 <Cardapio produtos={listaProdutos} />
-                <Footer style={footerStyle}>Footer</Footer>
+                
             </Layout>
         </>
     );

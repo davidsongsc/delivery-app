@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useDeliveryStore } from '@/store/deliveryStore';
 import { useRouter } from 'next/navigation';
 import { useCategoriasStore } from '@/store/categoriasStore';
+import { useBreakpoint } from '@/utils/useBreakpoint';
 
 const Header = () => {
     const router = useRouter();
@@ -38,7 +39,7 @@ const Header = () => {
             showDrawer();
         } else {
             router.push(e.key);
-            setOpenDrawer(false); // Fecha o drawer do menu no mobile ao navegar
+            setOpenDrawer(false);
         }
     };
 
@@ -52,24 +53,22 @@ const Header = () => {
         },
         { key: '/promocoes', label: 'Promoções' },
         { key: '/sobre', label: 'Sobre Nós' },
-        { key: 'carrinho', label: 'Carrinho' }, // abre drawer
+        { key: 'carrinho', label: 'Carrinho' },
     ];
 
     const menuItemsMobile = [
         { key: '/', label: 'Início' },
-        {
-            key: '/cardapio',
-            label: 'Cardápio',
-            children: [
-                { key: '/cardapio/hamburgueres', label: 'Hambúrgueres' },
-                { key: '/cardapio/combos', label: 'Combos' },
-                { key: '/cardapio/bebidas', label: 'Bebidas' },
-                { key: '/cardapio/sobremesas', label: 'Sobremesas' },
-            ],
-        },
+        { key: '/cardapio', label: 'Cardápio' },
+        ...categorias
+            .filter((cat) => cat !== 'Todos')
+            .map((cat) => ({
+                key: `/cardapio/${cat.toLowerCase()}`,
+                label: `- ${cat}`, // visualmente mostra hierarquia
+            })),
         { key: '/promocoes', label: 'Promoções' },
-        { key: 'carrinho', label: 'Carrinho' }, // abre drawer
+        { key: 'carrinho', label: 'Carrinho' },
     ];
+
 
     return (
         <header className="bg-d_am_fundo_c text-d_primary shadow-md px-4 lg:px-12 py-3 flex items-center justify-between">
@@ -78,7 +77,7 @@ const Header = () => {
                     {totalItens > 0 && (
                         <span
                             onClick={showDrawer}
-                            className="absolute -top-[-10px] -right-20 bg-red-600 text-white text-[26px] font-bold rounded-md h-12 w-[100px] p-3 flex items-center justify-between"
+                            className="absolute -top-[-27px] -right-20 bg-red-600 text-white text-[26px] font-bold rounded-md h-12 w-[100px] p-3 flex items-center justify-between"
                         >
                             {totalItens} <FaShoppingCart />
                         </span>
@@ -92,7 +91,7 @@ const Header = () => {
                     width={100}
                     height={100}
                 />
-                <span className="text-lg font-bold text-black">Gourmet CPX</span>
+                <span className="text-lg' font-bold text-black">Gourmet CPX</span>
             </div>
 
             <nav className="flex-1 justify-center hidden lg:flex ">
@@ -100,17 +99,18 @@ const Header = () => {
                     mode="horizontal"
                     items={menuItemsDesktop}
                     onClick={onMenuClick}
-                    className="border-none bg-transparent text-white w-1/3"
+                    className="border-none bg-transparent text-white w-1/2"
                 />
             </nav>
 
-            <div className="lg:hidden">
-                <Button
-                    type="text"
-                    icon={<MenuOutlined style={{ color: 'white', fontSize: 24 }} />}
+            {useBreakpoint() === 'mobile' && (
+                <button
                     onClick={handleDrawerToggle}
-                />
-            </div>
+                    className="fixed bottom-4 right-4 z-50 bg-d_am_acento text-white p-4 rounded-full shadow-lg hover:bg-d_am_acento/90 transition"
+                >
+                    <MenuOutlined style={{ fontSize: 24 }} />
+                </button>
+            )}
 
             <Drawer
                 title="Menu"
@@ -119,25 +119,28 @@ const Header = () => {
                 onClose={handleDrawerToggle}
                 open={openDrawer}
                 bodyStyle={{ padding: 0, backgroundColor: '#1C1C1E' }}
+                width={useBreakpoint() === 'mobile' ? '100%' : '300px'}
             >
                 <Menu
                     mode="vertical"
                     items={menuItemsMobile}
                     onClick={onMenuClick}
-                    className="text-white bg-[#1C1C1E]"
+                    className="text-white"
                 />
             </Drawer>
+
 
             <Drawer
                 title="Seu Pedido"
                 placement="right"
                 onClose={closeDrawer}
                 open={open}
-                width="40%"
+                width={useBreakpoint() === 'mobile' ? '100%' : '50%'}
                 bodyStyle={{ padding: 0 }}
             >
                 <CarrinhoPedido />
             </Drawer>
+
         </header>
     );
 };

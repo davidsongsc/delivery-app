@@ -4,14 +4,14 @@ import { cliente, loja, pedido } from '@/components/serverside';
 import CarrinhoTotalVenda from './TotalSale';
 import CarrinhoItens from './Itens';
 import CarrinhoHeader from './header';
+import { useBreakpoint } from '@/utils/useBreakpoint';
 
 import './styles.css';
 import { IPedido } from '@/interfaces/IPedido';
 
 const CarrinhoPedido: React.FC = () => {
     const { Header, Footer, Sider, Content } = Layout;
-    const [taxaEntrega, setTaxaEntrega] = useState(6.5);
-    const [itensPedido, setItensPedido] = useState(pedido.itens);
+
     const pedidoCorrigido: IPedido = {
         ...pedido,
         itens: pedido.itens.map(item => ({
@@ -21,24 +21,13 @@ const CarrinhoPedido: React.FC = () => {
             )
         }))
     };
-    const alterarQuantidade = useCallback((index: number, operacao: 'incrementar' | 'decrementar') => {
-        setItensPedido((prev) =>
-            prev.map((item, i) => {
-                if (i !== index) return item;
-                const novaQuantidade =
-                    operacao === 'incrementar'
-                        ? item.quantidade + 1
-                        : Math.max(1, item.quantidade - 1);
-                return { ...item, quantidade: novaQuantidade };
-            })
-        );
-    }, []);
+
 
     return (
-        <Sider width="40%" className='bg-d_am_acento slider-fixed'>
+        <Sider width={useBreakpoint() === 'mobile' ? '100%' : '50%'} className='bg-d_am_acento slider-fixed'>
             <div className='d-layout-slider'>
                 <CarrinhoHeader loja={loja} cliente={cliente} pedido={pedidoCorrigido} />
-                <div className='px-2 border-b border-gray-200 text-left h-[55vh] overflow-y-scroll scroll-bar'>
+                <div className={`px-2 border-b border-gray-200 text-left ${useBreakpoint() === 'mobile' ? 'h-[39vh]' : 'h-[55vh]'}  overflow-y-scroll scroll-bar`}>
 
                     <CarrinhoItens />
 
