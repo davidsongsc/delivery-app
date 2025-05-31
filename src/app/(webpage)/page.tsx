@@ -1,14 +1,5 @@
 'use client';
-
-import Galeria from "@/components/InstagramGallery";
-
-//import DashboardPage from "@/templates/dashboard";
-
-
-
-export default function Dashboard() {
-
-  return (
-    <Galeria />
-  );
+import HomePageDelivery from '@/templates/delivery/homepage';
+export default function DeliveryPage() {
+  return <HomePageDelivery />;
 }

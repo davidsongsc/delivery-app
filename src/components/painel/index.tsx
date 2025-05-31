@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Flex, Layout, Button, Drawer } from 'antd';
 import './styles.css';
 import { useAuthStore } from '@/store/authStore';
-import CarrinhoPedido from '@/components/SalesCart/Cart';
-import { FaShoppingCart } from "react-icons/fa";
 import Cardapio from '../Cardapio';
 import { useDeliveryStore } from '@/store/deliveryStore';
 
@@ -42,45 +40,11 @@ const PainelPedido: React.FC = () => {
     return (
         <>
 
-            <Button
-                type="primary"
-                onClick={showDrawer}
-                icon={<FaShoppingCart size={20} />}
-                className='bg-d_am_acento relative'
-                style={{
-                    position: 'fixed',
-                    right: 20,
-                    bottom: 20,
-                    zIndex: 1000,
-                    borderRadius: '50%',
-                    height: 50,
-                    width: 50,
-                }}
-            >
-                {totalItens > 0 && (
-                    <span
-                        className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center"
-                    >
-                        {totalItens}
-                    </span>
-                )}
-            </Button>
+           
 
-
-            <Drawer
-                title="Seu Pedido"
-                placement="right"
-                onClose={closeDrawer}
-                open={open}
-                width="40%"
-
-                bodyStyle={{ padding: 0 }}
-            >
-                <CarrinhoPedido />
-            </Drawer>
 
             <Layout className='d-layout'>
-                <Header style={headerStyle}>Header</Header>
+                
                 <Cardapio produtos={listaProdutos} />
                 <Footer style={footerStyle}>Footer</Footer>
             </Layout>
