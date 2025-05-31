@@ -223,6 +223,6 @@ export const listaCupons: ICupom[] = [
     { codigo: 'desconto20', tipo: 'valor', valor: 20, usosRestantes: 3 },
     { codigo: '35off', tipo: 'porcentagem', valor: 35, usosRestantes: 100 },
     { codigo: 'entregaOff', tipo: 'valor', valor: 6.5, usosRestantes: 100 },
-    { codigo: 'patraomaluco', tipo: 'porcentagem', valor: 90, usosRestantes: 100 },
+    { codigo: 'teste2255', tipo: 'porcentagem', valor: 99, usosRestantes: 100 },
 ];
 
