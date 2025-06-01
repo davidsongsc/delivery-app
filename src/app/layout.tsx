@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${montserrat.variable} antialiased h-screen ocultar-scroll`}>
-        <AppHeader />
+     
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

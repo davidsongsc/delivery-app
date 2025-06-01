@@ -93,7 +93,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
                                 if (categoria === 'Todos') {
                                     setFiltroCategoria('Todos');
                                     setBusca('');
-                                    router.push('/cardapio');
+                                    router.push('/loja/cardapio');
 
                                 } else {
                                     setFiltroCategoria(categoria);

@@ -25,7 +25,7 @@ const Header = () => {
     const cardapioChildren = categorias
         .filter((cat) => cat !== 'Todos')
         .map((cat) => ({
-            key: `/cardapio/${cat.toLowerCase()}`,
+            key: `/loja/cardapio/${cat.toLowerCase()}`,
             label: cat,
         }));
 
@@ -44,28 +44,28 @@ const Header = () => {
     };
 
     const menuItemsDesktop = [
-        { key: '/', label: 'Início' },
+        { key: '/loja', label: 'Início' },
         {
-            key: '/cardapio',
+            key: '/loja/cardapio',
             label: 'Cardápio',
             children: cardapioChildren,
 
         },
-        { key: '/promocoes', label: 'Promoções' },
-        { key: '/sobre', label: 'Sobre Nós' },
+        { key: '/loja/promocoes', label: 'Promoções' },
+        { key: '/loja/sobre', label: 'Sobre Nós' },
         { key: 'carrinho', label: 'Carrinho' },
     ];
 
     const menuItemsMobile = [
-        { key: '/', label: 'Início' },
-        { key: '/cardapio', label: 'Cardápio' },
+        { key: '/loja', label: 'Início' },
+        { key: '/loja/cardapio', label: 'Cardápio' },
         ...categorias
             .filter((cat) => cat !== 'Todos')
             .map((cat) => ({
-                key: `/cardapio/${cat.toLowerCase()}`,
-                label: `- ${cat}`, // visualmente mostra hierarquia
+                key: `/loja/cardapio/${cat.toLowerCase()}`,
+                label: `- ${cat}`, 
             })),
-        { key: '/promocoes', label: 'Promoções' },
+        { key: '/loja/promocoes', label: 'Promoções' },
         { key: 'carrinho', label: 'Carrinho' },
     ];
 
