@@ -186,7 +186,7 @@ const Home: NextPage = () => {
         </Content>
 
         <Footer className="text-center text-gray-500 bg-white py-6 mt-12">
-          © {new Date().getFullYear()} MinhaEmpresa. Todos os direitos reservados.
+          © {new Date().getFullYear()} DutoSaas. Todos os direitos reservados.
         </Footer>
       </Layout>
     </>
