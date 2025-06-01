@@ -20,14 +20,18 @@ const HeaderPage: NextPage = () => {
           </div>
 
 
-          <div className="hidden md:flex flex-1 justify-end">
+          <div className="flex flex-1 justify-end">
             <Menu
               mode="horizontal"
-              className="border-b-0 w-1/2"
+              className="border-b-0 w-2/3"
               items={[
                 { key: 'home', label: <Link href="/">Início</Link> },
-                { key: 'contact', label: <Link href="/loja">Loja</Link> },
-                { key: 'contact', label: <Link href="/login">Login</Link> },
+                { key: 'social', label: <Link href="/">Faleconosco</Link> },
+                { key: 'marketing', label: <Link href="/">Marketing</Link> },
+                { key: 'store', label: <Link href="/loja">Loja</Link> },
+                { key: 'login', label: <Link href="/login">Login</Link> },
+                { key: 'register', label: <Link href="/">Cadastre-se</Link> },
+                { key: 'support', label: <Link href="/">Suporte</Link> },
               ]}
             />
           </div>
