@@ -57,38 +57,42 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
     <div className="w-full max-w-screen-2xl mx-auto mt-4 px-2 overflow-hidden">
       <Slider {...settings}>
         {banners.map((banner) => (
-          <div key={banner.id} className='grid grid-cols-12 rounded overflow-hidden'>
+          <div key={banner.id} className='grid grid-cols-12 rounded overflow-hidden w-full'>
 
-            <div className='col-span-6'>
+            <div className=''>
               {(banner.title || banner.description) && (
-                <div
-                  className={` bg-${banner.corsys} flex flex-col justify-center p-6 text-white`}
-                >
-                  {banner.title && (
-                    <h2 className="text-2xl md:text-4xl font-bold">{banner.title}</h2>
-                  )}
-                  {banner.description && (
-                    <p
-                      className="text-sm md:text-lg mt-2"
-                      dangerouslySetInnerHTML={createMarkup(banner.description)}
+                <div className='grid grid-cols-6 xl:grid-cols-12'>
+                  <div
+                    className={` bg-${banner.corsys} flex flex-col justify-center p-2 text-white col-span-6 mx-8 rounded-xl`}
+                  >
+                    <Image
+                      src={banner.imageUrl}
+                      alt={banner.title || 'Banner'}
+                      height={500}
+                      width={500}
+                      className="mx-auto rounded-lg shadow-lg object-contain"
+                      priority
                     />
-                  )}
+
+                  </div>
+                  <div
+                    className={` bg-white flex flex-col justify-center p-6 text-white col-span-6 rounded-lg mx-8 h-full`}
+                  >
+                    {banner.title && (
+                      <h2 className="text-2xl md:text-4xl font-bold text-grafite">{banner.title}</h2>
+                    )}
+                    {banner.description && (
+                      <p
+                        className="text-sm md:text-lg mt-2 text-aço"
+                        dangerouslySetInnerHTML={createMarkup(banner.description)}
+                      />
+                    )}
+                  </div>
                 </div>
               )}
 
             </div>
-            <div
-              className={` bg-${banner.corsys} flex flex-col justify-center p-6 text-white`}
-            >
-              <Image
-                src={banner.imageUrl}
-                alt={banner.title || 'Banner'}
-                height={500}
-                width={500}
-                className="mx-auto rounded-lg shadow-lg object-contain"
-                priority
-              />
-            </div>
+
           </div>
         ))}
 

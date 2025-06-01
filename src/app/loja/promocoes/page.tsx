@@ -34,7 +34,7 @@ export default function DeliveryPage() {
   ];
   return (
 
-    <div>
+    <div className='grid grid-cols-1 gap-4'>
       <BannerSlider banners={banners} />
       <HomePageDelivery />
     </div>

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 type Breakpoint = 'mobile' | 'tablet' | 'desktop';
 
 const getBreakpoint = (width: number): Breakpoint => {
-  if (width < 768) return 'mobile';        // Mobile
-  if (width < 1024) return 'tablet';       // Tablet
-  return 'desktop';                        // Desktop
+  if (width < 768) return 'mobile';
+  if (width < 1024) return 'tablet';
+  return 'desktop';
 };
 
 export function useBreakpoint(): Breakpoint {
@@ -13,14 +13,14 @@ export function useBreakpoint(): Breakpoint {
     typeof window !== 'undefined' ? getBreakpoint(window.innerWidth) : 'desktop'
   );
 
-  useEffect(() => {
-    const handleResize = () => {
-      setBreakpoint(getBreakpoint(window.innerWidth));
-    };
+  const handleResize = useCallback(() => {
+    setBreakpoint(getBreakpoint(window.innerWidth));
+  }, []);
 
+  useEffect(() => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [handleResize]);
 
   return breakpoint;
 }

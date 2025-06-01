@@ -9,6 +9,10 @@ import tailwindConfig from "../../../../tailwind.config";
 const fullConfig = resolveConfig(tailwindConfig);
 const theme = {
     token: {
+        //colorPrimary: fullConfig.theme?.colors?.d_am_acento || "#7D1E2E",
+        //colorBgBase: fullConfig.theme?.colors?.grafite || "#1C1C1E",
+        //colorTextBase: fullConfig.theme?.colors?.gelo || "#F5F5F5",
+        //colorText: fullConfig.theme?.colors?.gelo || "#F5F5F5",
         borderRadius: 8,
     },
     components: {
@@ -16,13 +20,13 @@ const theme = {
             colorBgContainer: fullConfig.theme?.colors?.grafite || "#1C1C1E",
         },
         Input: {
-            colorBgContainer: fullConfig.theme?.colors?.aço || "#1C1C1E",
+           // colorBgContainer: fullConfig.theme?.colors?.aço || "#1C1C1E",
         }
     },
 };
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-
+    
 
     return (
         <ConfigProvider theme={theme}>
@@ -30,7 +34,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 <Layout className="flex-row">
 
                     <Layout.Content >
-
+                        
                         {children}
                     </Layout.Content>
                 </Layout>

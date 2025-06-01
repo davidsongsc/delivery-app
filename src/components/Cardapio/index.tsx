@@ -83,7 +83,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
         setProdutos(produtos);
     }, [produtos, setProdutos]);
     return (
-        <div className="p-4 mx-auto sm:px-40 space-y-6">
+        <div className="p-4 mx-auto md:px-20 xl:px-40 2xl:px-60 space-y-6">
             <div className="flex flex-col gap-4">
                 <div className="flex overflow-x-auto gap-2 pb-2">
                     {categorias.map((categoria) => (
@@ -119,7 +119,7 @@ const Cardapio: React.FC<CardapioProps> = ({ produtos }) => {
             {categoriasFiltradas.map(categoria => (
                 <div key={categoria}>
                     <h2 className="text-2xl font-bold text-d_primary mb-4">{categoria}</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                         {produtosFiltrados
                             .filter(p => (p.categoria || 'Outros') === categoria)
                             .map(produto => (

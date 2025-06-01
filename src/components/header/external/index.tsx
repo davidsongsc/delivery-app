@@ -17,6 +17,8 @@ const Header = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [open, setOpen] = useState(false);
     const categorias = useCategoriasStore((state) => state.categorias);
+    const breakpoint = useBreakpoint();
+    const isSmallScreen = breakpoint === 'mobile' || breakpoint === 'tablet';
 
     const user = useAuthStore((state) => state.user);
     const itensPedido = useDeliveryStore((state) => state.itensPedido);
@@ -63,7 +65,7 @@ const Header = () => {
             .filter((cat) => cat !== 'Todos')
             .map((cat) => ({
                 key: `/loja/cardapio/${cat.toLowerCase()}`,
-                label: `- ${cat}`, 
+                label: `- ${cat}`,
             })),
         { key: '/loja/promocoes', label: 'Promoções' },
         { key: 'carrinho', label: 'Carrinho' },
@@ -71,8 +73,8 @@ const Header = () => {
 
 
     return (
-        <header className="bg-d_am_fundo_c text-d_primary shadow-md px-4 lg:px-12 py-3 flex items-center justify-between">
-            <div className='absolute right-[250px] top-[15px] flex flex-row items-center'>
+        <header className="m_fundo_c text-d_primary shadow-md md:px-20 xl:px-40 2xl:px-60 py-3 flex items-center justify-between">
+            <div className='absolute right-[250px] top-[15px] flex flex-row items-center justify-Start'>
                 <span className="flex items-start gap-2 cursor-pointer">
                     {totalItens > 0 && (
                         <span
@@ -103,7 +105,7 @@ const Header = () => {
                 />
             </nav>
 
-            {useBreakpoint() === 'mobile' && (
+            {isSmallScreen && (
                 <button
                     onClick={handleDrawerToggle}
                     className="fixed bottom-4 right-4 z-50 bg-d_am_acento text-white p-4 rounded-full shadow-lg hover:bg-d_am_acento/90 transition"
