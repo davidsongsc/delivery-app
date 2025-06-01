@@ -16,7 +16,7 @@ const HeaderPage: NextPage = () => {
 
           <div className="flex items-center gap-2 shrink-0">
             <Image src="/files/imagens/logo.png" width={40} height={40} alt="Logo" />
-            <span className="text-xl font-bold text-blue-600">DutoSaas</span>
+            <span className="text-xl font-bold text-blue-600">DrSaas</span>
           </div>
 
 
