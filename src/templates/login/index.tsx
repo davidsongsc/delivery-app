@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import React, { useState } from 'react';
 
-export default function LoginPage() {
+const PerfilPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { login, loading, error } = useAuthStore();
@@ -14,7 +14,7 @@ export default function LoginPage() {
         e.preventDefault();
         try {
             await login(username, password);
-            router.push('/');
+            router.push('/dashboard');
         } catch (error) {
             console.error('Login failed:', error);
         }
@@ -83,3 +83,5 @@ export default function LoginPage() {
         </Box>
     </div>;
 }
+
+export default React.memo(PerfilPage);

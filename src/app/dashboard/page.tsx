@@ -1,15 +1,12 @@
-'use client';
 
-import Galeria from "@/components/InstagramGallery";
+import React from "react";
+import PerfilPage from "@/templates/perfil";
 
-//import DashboardPage from "@/templates/dashboard";
-
-
-
-export default function Dashboard() {
+const Dashboard = () => {
 
 
   return (
-    <Galeria />
+    <PerfilPage />
   );
 }
+export default React.memo(Dashboard);  

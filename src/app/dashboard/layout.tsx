@@ -1,9 +1,13 @@
 // app/dashboard/layout.tsx
 
-//import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import HeaderPage from '@/components/header/site';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
 
-  return <>{children}</>
+  return <>
+    <HeaderPage />
+
+    {children}
+    </>
 }

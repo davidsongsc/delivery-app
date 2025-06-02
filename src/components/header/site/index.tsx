@@ -4,10 +4,12 @@ import { NextPage } from 'next';
 import { Layout, Menu, Card, Button, Tooltip } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuthStore } from '@/store/authStore';
 
 const { Header } = Layout;
 
 const HeaderPage: NextPage = () => {
+  const { user, logout } = useAuthStore((state) => state);
   return (
     <>
       <Header className="bg-white shadow-md sticky top-0 z-50">
@@ -29,8 +31,19 @@ const HeaderPage: NextPage = () => {
                 { key: 'social', label: <Link href="/">Faleconosco</Link> },
                 { key: 'marketing', label: <Link href="/">Marketing</Link> },
                 { key: 'store', label: <Link href="/loja">Loja</Link> },
-                { key: 'login', label: <Link href="/login">Login</Link> },
-                { key: 'register', label: <Link href="/">Cadastre-se</Link> },
+                {
+                  key: 'login',
+                  label: user ? (
+                    <button onClick={logout}>
+                      <span>Sair</span>
+                    </button>
+                  ) : (
+                    <Link href="/login">
+                      <span>Login</span>
+                    </Link>
+                  )
+                },
+                { key: 'register', label: <Link href={user ? '/dashboard' : '/register'}>{user ? 'Perfil' : 'Cadastre-se'}</Link> },
                 { key: 'support', label: <Link href="/">Suporte</Link> },
               ]}
             />
