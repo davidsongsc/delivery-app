@@ -2,6 +2,10 @@
 
 import React, { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import WalletSummaryCard from '@/components/WalletSummaryCard';
+import TransactionsList from '@/components/TransactionsItem';
+import AddTransactionForm from '@/components/TransactionsItem/form';
+
 import { Card, Spin, Typography, Avatar, Tag, Divider, Space, Button } from 'antd';
 import {
   UserOutlined,
@@ -129,6 +133,21 @@ const PerfilPage = () => {
                     Relatórios
                   </Button>
                 </div>
+              </div>
+              <Divider />
+              <div className="p-6 space-y-6">
+                <h1 className="text-2xl font-bold">Minha Carteira</h1>
+                <WalletSummaryCard />
+                <h2 className="text-xl font-semibold mt-8">Últimos Lançamentos</h2>
+                <TransactionsList />
+              </div>
+              <Divider />
+              <div className="p-6 space-y-6">
+                <div className="flex justify-between items-center">
+                  <h1 className="text-2xl font-bold">Lançamentos</h1>
+                  <AddTransactionForm />
+                </div>
+                <TransactionsList />
               </div>
             </>
           )}
