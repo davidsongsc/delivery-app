@@ -28,7 +28,7 @@ const HeaderPage: NextPage = () => {
               className="border-b-0 w-2/3"
               items={[
                 { key: 'home', label: <Link href="/">Início</Link> },
-                { key: 'social', label: <Link href="/">Faleconosco</Link> },
+                { key: 'social', label: <Link href="/">Fale Conosco</Link> },
                 { key: 'marketing', label: <Link href="/">Marketing</Link> },
                 { key: 'store', label: <Link href="/loja">Loja</Link> },
                 {
