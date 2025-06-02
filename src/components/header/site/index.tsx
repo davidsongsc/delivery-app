@@ -44,6 +44,7 @@ const HeaderPage: NextPage = () => {
                   )
                 },
                 { key: 'register', label: <Link href={user ? '/dashboard' : '/register'}>{user ? 'Perfil' : 'Cadastre-se'}</Link> },
+                { key: 'work', label: <Link href="/">Trabalhe Conosco</Link> },
                 { key: 'support', label: <Link href="/">Suporte</Link> },
               ]}
             />
