@@ -1,7 +1,4 @@
 @import "slick-carousel/slick/slick.css";
-
-
-/* Sobrescrevendo o caminho das fontes para funcionar no Next.js */
 @font-face {
   font-family: 'slick';
   src: url('/fonts/slick/slick.eot');
