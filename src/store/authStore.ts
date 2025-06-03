@@ -142,7 +142,6 @@ export const useAuthStore = create<AuthState>()(
             },
             checkAuth: async () => {
                 const token = get().token;
-
                 if (!token) {
                     set({
                         token: null,
@@ -152,17 +151,15 @@ export const useAuthStore = create<AuthState>()(
                     });
                     return;
                 }
-
                 set({ loading: true });
                 try {
                     const { user } = await authService.checkAuth(token);
-
                     set({
                         user,
                         isAuthenticated: true,
                         loading: false,
                     });
-                } catch (error: any) {
+                } catch {
                     set({
                         token: null,
                         user: null,
@@ -175,6 +172,9 @@ export const useAuthStore = create<AuthState>()(
         {
             name: 'auth-storage',
             skipHydration: false,
+            onRehydrateStorage: () => (state) => {
+                state?.checkAuth();
+            },
         }
     )
 );
