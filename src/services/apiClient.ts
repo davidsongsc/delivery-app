@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/authStore';
-import Router from 'next/router';
+import { redirect } from 'next/navigation';
 import { notification } from 'antd';
 
 const apiClient = axios.create({
@@ -29,12 +29,15 @@ apiClient.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             notification.error({ message: 'Sua sessão expirou!' });
+
             if (typeof window !== 'undefined') {
-                Router.push('/login');
+                window.localStorage.removeItem('authToken'); 
+                window.location.href = '/login'; 
             }
         }
         return Promise.reject(error);
     }
 );
+
 
 export default apiClient;

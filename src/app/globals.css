@@ -61,8 +61,7 @@ body {
 }
 
 .ant-modal-content {
-  background-color: theme('colors.d_am_fundo_c') !important;
-  color: theme('colors.d_tx_primary') !important;
+
 
   label {
     color: theme('colors.d_tx_primary') !important;

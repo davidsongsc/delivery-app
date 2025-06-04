@@ -5,6 +5,8 @@ import { authService } from '@/services/authService';
 import { notification } from 'antd';
 import { User } from '@/types/User';
 import { parseJwt } from '@/utils/parseJwt';
+import { CorporationForm } from './CorporationRegisterForm';
+import { corporationService } from '@/services/corporationService';
 
 interface AuthState {
     token: string | null;
@@ -22,6 +24,9 @@ interface AuthState {
     setUser: (user: User | null) => void;
     refreshToken: string | null;
     setRefreshToken: (token: string | null) => void;
+    registerCorporation: (data: CorporationForm) => Promise<void>;
+    corporationLoading: boolean;
+    corporationError: string | null;
 }
 
 // Mensagens de erro
@@ -48,7 +53,28 @@ export const useAuthStore = create<AuthState>()(
             setToken: (token) => set({ token }),
             setRefreshToken: (token) => set({ refreshToken: token }),
             refreshToken: null,
-
+            corporationLoading: false,
+            corporationError: null,
+            registerCorporation: async (data) => {
+                set({ corporationLoading: true, corporationError: null });
+                try {
+                    await corporationService.registerCorporation(data);
+                    notification.success({
+                        message: 'Empresa cadastrada com sucesso!',
+                    });
+                    set({ corporationLoading: false });
+                } catch (error: any) {
+                    set({
+                        corporationLoading: false,
+                        corporationError: error.response?.data?.detail || error.message || 'Erro desconhecido',
+                    });
+                    notification.error({
+                        message: 'Erro ao cadastrar empresa',
+                        description: error.response?.data?.detail || error.message || 'Tente novamente mais tarde',
+                    });
+                    throw error;
+                }
+            },
             login: async (username, password) => {
                 set({ loading: true, error: null });
                 try {

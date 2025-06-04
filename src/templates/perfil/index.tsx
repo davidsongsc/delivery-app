@@ -126,6 +126,13 @@ const PerfilPage = () => {
                     Gerenciar Usuários
                   </Button>
                   <Button
+                    type="primary"
+                    icon={<FileSearchOutlined />}
+                    onClick={() => router.push('/admin/register/')}
+                  >
+                    Cadastrar Empresa
+                  </Button>
+                  <Button
                     type="dashed"
                     icon={<FileDoneOutlined />}
                     onClick={() => router.push('/admin/relatorios')}
