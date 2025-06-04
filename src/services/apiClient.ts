@@ -1,21 +1,24 @@
 import axios from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/authStore';
 import Router from 'next/router';
+import { notification } from 'antd';
 
 const apiClient = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL,
-    withCredentials: true, 
-    timeout: 30000, 
+    timeout: 30000,
+    //withCredentials: true,  
+
 });
 
 apiClient.interceptors.request.use(
-    (config) => {
-        if (typeof window !== 'undefined') {
-            const token = useAuthStore.getState().token;
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
+    (config: InternalAxiosRequestConfig) => {
+        const token = useAuthStore.getState().token;
+
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
         }
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -25,7 +28,7 @@ apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            console.error('Sessão expirada ou não autorizada');
+            notification.error({ message: 'Sua sessão expirou!' });
             if (typeof window !== 'undefined') {
                 Router.push('/login');
             }

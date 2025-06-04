@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 import { authService } from '@/services/authService';
 import { notification } from 'antd';
 import { User } from '@/types/User';
+import { parseJwt } from '@/utils/parseJwt';
 
 interface AuthState {
     token: string | null;
@@ -18,6 +19,9 @@ interface AuthState {
     checkAuth: () => Promise<void>;
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     setToken: (token: string | null) => void;
+    setUser: (user: User | null) => void;
+    refreshToken: string | null;
+    setRefreshToken: (token: string | null) => void;
 }
 
 // Mensagens de erro
@@ -29,7 +33,6 @@ const errorMessages = {
     unknownError: 'Ocorreu um erro inesperado',
 };
 
-// Store de autenticação
 export const useAuthStore = create<AuthState>()(
     persist(
         (set, get) => ({
@@ -39,18 +42,37 @@ export const useAuthStore = create<AuthState>()(
             loading: false,
             error: null,
             hydrated: false,
+            setUser: (user) => set({ user }),
 
             setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
             setToken: (token) => set({ token }),
+            setRefreshToken: (token) => set({ refreshToken: token }),
+            refreshToken: null,
 
             login: async (username, password) => {
                 set({ loading: true, error: null });
                 try {
-                    const { user, token } = await authService.login(username, password);
+                    // Obtém os tokens
+                    const { access, refresh } = await authService.login(username, password);
 
+                    // Decodifica o token JWT para extrair o usuário
+                    const decoded = parseJwt(access);
+                    const user: User = {
+                        uid: decoded.user_id ?? decoded.uid,
+                        username: decoded.username,
+                        email: decoded.email,
+                        is_superuser: decoded.is_superuser ?? false,
+                        is_staff: decoded.is_staff ?? false,
+                    };
+
+                    // Salva os tokens, se quiser, você pode armazenar o refresh também se for usar depois
+                    localStorage.setItem('authToken', access);
+                    localStorage.setItem('refreshToken', refresh);
+
+                    // Atualiza o Zustand store
                     set({
                         user,
-                        token,
+                        token: access,
                         isAuthenticated: true,
                         loading: false,
                     });
@@ -63,12 +85,10 @@ export const useAuthStore = create<AuthState>()(
                         error: error.message || errorMessages.loginFailed,
                         loading: false,
                     });
-
                     notification.error({
                         message: 'Erro ao fazer login',
                         description: error.message || 'Verifique suas credenciais e tente novamente.',
                     });
-
                     throw error;
                 }
             },

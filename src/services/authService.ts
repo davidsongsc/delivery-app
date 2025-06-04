@@ -1,6 +1,10 @@
 // src/services/authService.ts
-import { User } from '@/types/User';
 import apiClient from '@/services/apiClient';
+import { useAuthStore } from '@/store/authStore';
+import { AuthResponse } from '@/types/auth';
+import { parseJwt } from '@/utils/parseJwt';
+import type { User } from '@/types/User';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface LoginResponse {
     user: {
@@ -13,13 +17,30 @@ interface LoginResponse {
 }
 
 export const authService = {
-    login: async (username: string, password: string): Promise<{ user: User, token: string }> => {
+    login: async (username: string, password: string): Promise<{ user: User; access: string; refresh: string }> => {
         try {
-            const response = await apiClient.post('/usuarios/login/', { username, password });
-            return {
-                user: response.data.user,
-                token: response.data.token,
+            // Altere o endpoint para usar o SimpleJWT
+            const response = await apiClient.post<AuthResponse>('/api/token/', {
+                username,
+                password,
+            });
+
+            const { access, refresh } = response.data;
+            const decoded = parseJwt(access);
+
+            const user: User = {
+                uid: decoded.user_id ?? decoded.uid,
+                username: decoded.username,
+                email: decoded.email,
+                is_superuser: decoded.is_superuser ?? false,
+                is_staff: decoded.is_staff ?? false,
             };
+
+            localStorage.setItem('authToken', access);
+            useAuthStore.getState().setToken(access);
+            useAuthStore.getState().setUser(user);
+
+            return { user, access, refresh };
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao fazer login');
         }
