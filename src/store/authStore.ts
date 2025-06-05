@@ -80,15 +80,20 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     // Obtém os tokens
                     const { access, refresh } = await authService.login(username, password);
-
                     // Decodifica o token JWT para extrair o usuário
                     const decoded = parseJwt(access);
+                    console.log('Dados:', access, refresh, decoded);
+
                     const user: User = {
                         uid: decoded.user_id ?? decoded.uid,
                         username: decoded.username,
                         email: decoded.email,
                         is_superuser: decoded.is_superuser ?? false,
                         is_staff: decoded.is_staff ?? false,
+                        is_active: decoded.is_active ?? false,
+                        first_name: decoded.first_name ?? null,
+                        last_name: decoded.last_name ?? null,
+                        phone_number: decoded.phone_number ?? null,
                     };
 
                     // Salva os tokens, se quiser, você pode armazenar o refresh também se for usar depois

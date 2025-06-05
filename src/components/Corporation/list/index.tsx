@@ -35,7 +35,7 @@ const CorporationListPage = () => {
 
         fetchCorporations();
     }, []);
-
+    console.log(data);
     return (
         <div className="p-6">
             <CorporationRegisterModal

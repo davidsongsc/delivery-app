@@ -28,6 +28,12 @@ export const columns: ColumnsType<CorporationForm> = [
         key: 'representante_nome',
     },
     {
+        title: 'Captador',
+        dataIndex: 'registrado_por',
+        key: 'registrado_por',
+        render: (registrado_por) => registrado_por?.first_name || '—',
+    },
+    {
         title: 'Criado em',
         dataIndex: 'created_at',
         key: 'created_at',
