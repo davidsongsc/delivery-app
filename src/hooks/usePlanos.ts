@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
-import { getPlanosPublicos, Plano } from '@/services/planos.service';
+import { getPlanosCompletos, Plano, PlanosCompletosResponse } from '@/services/planos.service';
 
-export const usePlanosPublicos = () => {
-  const [data, setData] = useState<Plano[]>([]);
+export const usePlanosCompletos = () => {
+  const [plans, setPlans] = useState<Plano[]>([]);
+  const [features, setFeatures] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const result = await getPlanosPublicos();
-        setData(result);
+        const result: PlanosCompletosResponse = await getPlanosCompletos();
+        setPlans(result.plans);
+        setFeatures(result.features);
       } catch (err) {
-        setError('Erro ao carregar os planos');
+        setError('Erro ao carregar os planos completos');
       } finally {
         setLoading(false);
       }
@@ -20,5 +22,5 @@ export const usePlanosPublicos = () => {
     fetch();
   }, []);
 
-  return { data, loading, error };
+  return { plans, features, loading, error };
 };
