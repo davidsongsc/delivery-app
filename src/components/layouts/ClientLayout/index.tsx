@@ -1,9 +1,11 @@
 'use client';
 
-import { ConfigProvider, App as AntdApp, Layout } from "antd";
+import { ConfigProvider, App as AntdApp, Layout, Spin } from "antd";
 
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../../tailwind.config";
+import { useEffect } from "react";
+import { usePlanStore } from "@/store/planosStore";
 
 
 const fullConfig = resolveConfig(tailwindConfig);
@@ -19,27 +21,31 @@ const theme = {
         Layout: {
             colorBgContainer: fullConfig.theme?.colors?.grafite || "#1C1C1E",
         },
-       
+
         Input: {
-           // colorBgContainer: fullConfig.theme?.colors?.aço || "#1C1C1E",
+            // colorBgContainer: fullConfig.theme?.colors?.aço || "#1C1C1E",
         }
     },
 };
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-    
 
+    const { loading, fetchPlanos } = usePlanStore();
+
+    useEffect(() => {
+        fetchPlanos();
+    }, []);
     return (
-        <ConfigProvider theme={theme}>
-            <AntdApp>
-                <Layout className="flex-row">
+        loading ? <><Spin /></> :
+            <ConfigProvider theme={theme}>
+                <AntdApp>
+                    <Layout className="flex-row">
 
-                    <Layout.Content >
-                        
-                        {children}
-                    </Layout.Content>
-                </Layout>
-            </AntdApp>
-        </ConfigProvider>
+                        <Layout.Content >
+                            {children}
+                        </Layout.Content>
+                    </Layout>
+                </AntdApp>
+            </ConfigProvider>
     );
 }

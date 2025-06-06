@@ -21,6 +21,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${montserrat.variable} antialiased h-screen ocultar-scroll`}>

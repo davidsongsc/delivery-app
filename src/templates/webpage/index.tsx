@@ -1,8 +1,10 @@
 import React from 'react';
 import { NextPage } from 'next';
-import { Layout, Menu, Card, Button, Tooltip } from 'antd';
-import { DollarOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Layout, Menu, Card, Button, Tooltip, Spin } from 'antd';
+import { DollarOutlined, CheckOutlined, CloseOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { usePlanStore } from '@/store/planosStore';
 
 const { Header, Content, Footer } = Layout;
 
@@ -80,6 +82,9 @@ const clients = [
 ];
 
 const Home: NextPage = () => {
+  const { planos, featuresGlobais, loading, fetchPlanos } = usePlanStore();
+
+  console.log(planos);
   return (
     <>
       <Content className="bg-gray-50 py-12">
@@ -93,49 +98,82 @@ const Home: NextPage = () => {
         <section id="plans" className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Nossos Planos</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {plans.map((plan) => (
-              <Card
-                key={plan.name}
-                className="rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out "
-                actions={[
-                  <Button type="primary" icon={<DollarOutlined />} key="buy">
-                    Assinar
-                  </Button>,
-                ]}
-              >
-                <div className="text-sm font-semibold mb-2">
-                  <span className={`text-${plan.tagColor}-600 bg-${plan.tagColor}-100 px-2 py-1 rounded-md`}>
-                    {plan.tag}
-                  </span>
-                </div>
 
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{plan.name}</h3>
+            {planos.map((plan) => {
+              const getNumericPrice = (price: string) => {
+                const numbersOnly = price.replace(/\D/g, '');
+                return parseInt(numbersOnly || '0', 10);
+              };
 
-                <ul className="mt-2 space-y-2">
-                  {featureList.map((feature, index) => {
-                    const included = plan.features.includes(feature);
-                    return (
-                      <li
-                        key={index}
-                        className={`flex items-center ${included ? 'text-gray-700' : 'text-gray-400 line-through'
-                          }`}
+              const isSobDemanda = getNumericPrice(plan.price) === 0;
+
+              return (
+                <Card
+                  key={plan.name}
+                  className="rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out"
+                  actions={[
+                    isSobDemanda ? (
+                      <Button
+                        type="primary"
+                        icon={
+                          <WhatsAppOutlined style={{ color: '#25D366' }} />
+                        }
+                        key="whatsapp"
+                        href="https://wa.me/SEU_NUMERO_AQUI" // <-- coloque seu número de WhatsApp com DDI
+                        target="_blank"
                       >
-                        {included ? (
-                          <CheckOutlined className="text-green-500 mr-2" />
-                        ) : (
-                          <CloseOutlined className="text-red-400 mr-2" />
-                        )}
-                        {feature}
-                      </li>
-                    );
-                  })}
-                </ul>
+                        
+                      </Button>
+                    ) : (
+                      <Button type="primary" icon={<DollarOutlined />} key="buy">
+                        Assinar
+                      </Button>
+                    ),
+                  ]}
+                >
+                  <div className="text-sm font-semibold mb-2">
+                    {plan.tag && (
+                      <span
+                        className={`text-${plan.tagColor}-600 bg-${plan.tagColor}-100 px-2 py-1 rounded-md`}
+                      >
+                        {plan.tag}
+                      </span>
+                    )}
+                  </div>
 
-                <p className="text-sm text-gray-500 mt-4">{plan.observations}</p>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">
+                    {plan.name}
+                  </h3>
 
-                <p className="text-2xl font-bold text-blue-600 mt-4">{plan.price}</p>
-              </Card>
-            ))}
+                  <ul className="mt-2 space-y-2">
+                    {featuresGlobais.map((feature, index) => {
+                      const included = plan.features.includes(feature);
+                      return (
+                        <li
+                          key={index}
+                          className={`flex items-center ${included ? 'text-gray-700' : 'text-gray-400 line-through'
+                            }`}
+                        >
+                          {included ? (
+                            <CheckOutlined className="text-green-500 mr-2" />
+                          ) : (
+                            <CloseOutlined className="text-red-400 mr-2" />
+                          )}
+                          {feature}
+                        </li>
+                      );
+                    })}
+                  </ul>
+
+                  <p className="text-sm text-gray-500 mt-4">{plan.observations}</p>
+
+                  <p className="text-2xl font-bold text-blue-600 mt-4">
+                    {isSobDemanda ? 'Sob demanda' : plan.price}
+                  </p>
+                </Card>
+              );
+            })}
+
           </div>
         </section>
 
