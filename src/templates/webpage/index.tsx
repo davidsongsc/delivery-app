@@ -5,7 +5,7 @@ import { DollarOutlined, CheckOutlined, CloseOutlined, WhatsAppOutlined } from '
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { usePlanStore } from '@/store/planosStore';
-
+import './styles.css';
 const { Header, Content, Footer } = Layout;
 
 const featureList = [
@@ -97,7 +97,7 @@ const Home: NextPage = () => {
 
         <section id="plans" className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Nossos Planos</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 container">
 
             {planos.map((plan) => {
               const getNumericPrice = (price: string) => {
@@ -110,7 +110,7 @@ const Home: NextPage = () => {
               return (
                 <Card
                   key={plan.name}
-                  className="rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out"
+                  className="rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out card"
                   actions={[
                     isSobDemanda ? (
                       <Button
@@ -119,7 +119,7 @@ const Home: NextPage = () => {
                           <WhatsAppOutlined style={{ color: '#25D366' }} />
                         }
                         key="whatsapp"
-                        href="https://wa.me/SEU_NUMERO_AQUI" // <-- coloque seu número de WhatsApp com DDI
+                        href="https://wa.me/21958725380" // <-- coloque seu número de WhatsApp com DDI
                         target="_blank"
                       >
                         
