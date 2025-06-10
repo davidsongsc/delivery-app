@@ -198,7 +198,7 @@ const Home: NextPage = () => {
       </Content>
 
       <Footer className="text-center text-gray-500 bg-white py-6 mt-12">
-        © {new Date().getFullYear()} DrSaas. Todos os direitos reservados.
+        © {new Date().getFullYear()} DrSaaS. Todos os direitos reservados.
       </Footer>
     </>
   );
