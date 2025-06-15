@@ -3,6 +3,11 @@ import type { ColumnsType } from 'antd/es/table';
 
 export const columns: ColumnsType<CorporationForm> = [
     {
+        title: 'Pagina',
+        dataIndex: 'page',
+        key: 'page',
+    },
+    {
         title: 'Nome Fantasia',
         dataIndex: 'nome_fantasia',
         key: 'nome_fantasia',

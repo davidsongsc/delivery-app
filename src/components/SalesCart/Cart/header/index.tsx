@@ -5,6 +5,7 @@ import { formatCNPJ } from '@/utils/formatCnpj';
 import { ILoja } from '@/interfaces/ILoja';
 import { ICliente } from '@/interfaces/ICliente';
 import { IPedido } from '@/interfaces/IPedido';
+import { useLojaStore } from '@/store/useLojaStore';
 
 interface ICarrinhoHeaderProps {
     loja: ILoja;
@@ -13,31 +14,25 @@ interface ICarrinhoHeaderProps {
 };
 
 
-/**
- * Componente que renderiza o cabeçalho do carrinho de compras,
- * contendo informa es sobre a loja, o cliente e o pedido.
- *
- * @param {ICarrinhoHeaderProps} props
- * @returns {React.ReactElement}
- */
-const CarrinhoHeader: React.FC<ICarrinhoHeaderProps> = ({ loja, cliente, pedido }) => {
 
+const CarrinhoHeader: React.FC<ICarrinhoHeaderProps> = ({ loja, cliente, pedido }) => {
+    const { loja: lojaStore } = useLojaStore();
     return (
         <div>
             <div className='grid grid-cols-4 px-2 border-b border-gray-200 text-left'>
 
                 <div className='col-span-2 '>
                     <span className='mr-2'>Loja:</span>
-                    <span className='font-bold '>{loja?.nome}</span>
+                    <span className='font-bold '>{lojaStore?.nome_fantasia}</span>
                 </div>
                 <div className='col-span-2'>
                     <span className='mr-2'>Telefone:</span>
-                    <span className='font-bold'>{formatPhoneNumberWeb(loja?.telefone)}</span>
+                    <span className='font-bold'>{formatPhoneNumberWeb(lojaStore?.telefone!)}</span>
                 </div>
 
                 <div className='col-span-4'>
                     <span className='mr-2'>CNPJ:</span>
-                    <span className='font-bold'>{formatCNPJ(loja?.cnpj)}</span>
+                    <span className='font-bold'>{formatCNPJ(lojaStore?.cnpj!)}</span>
                 </div>
             </div>
             <div className='grid grid-cols-4 px-2 border-b-4 border-gray-200 text-left mt-2'>

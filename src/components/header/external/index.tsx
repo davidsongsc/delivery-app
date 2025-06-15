@@ -11,9 +11,15 @@ import { useDeliveryStore } from '@/store/deliveryStore';
 import { useRouter } from 'next/navigation';
 import { useCategoriasStore } from '@/store/categoriasStore';
 import { useBreakpoint } from '@/utils/useBreakpoint';
+import { useLojaStore } from '@/store/useLojaStore';
+
 
 const Header = () => {
     const router = useRouter();
+    const loja = useLojaStore((state) => state.loja);
+    if (!loja) {
+        return <p>Loja não carregada</p>;
+    }
     const [openDrawer, setOpenDrawer] = useState(false);
     const [open, setOpen] = useState(false);
     const categorias = useCategoriasStore((state) => state.categorias);
@@ -93,7 +99,7 @@ const Header = () => {
                     width={100}
                     height={100}
                 />
-                <span className="text-lg' font-bold text-black">Gourmet CPX</span>
+                <span className="text-lg' font-bold text-black">{loja?.nome_fantasia}</span>
             </div>
 
             <nav className="flex-1 justify-center hidden lg:flex ">
