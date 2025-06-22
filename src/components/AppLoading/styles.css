@@ -1,0 +1,12 @@
+@keyframes pulse-slow {
+  0%, 100% {
+    transform: scale(.95);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s infinite ease-in-out;
+}

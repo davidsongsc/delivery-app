@@ -93,3 +93,18 @@ body {
   font-weight: 700;
   color: theme('colors.d_tx_primary');
 }
+
+@keyframes pulse-frown {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-frown {
+  animation: pulse-frown 2s ease-in-out infinite;
+}

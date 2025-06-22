@@ -94,7 +94,7 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-2 logo-empresa w-1/4">
                 <Image
-                    src="/files/logo/novocpx.png"
+                    src={`/files/imagens/logo/${loja?.page}.png`}
                     alt="Logo"
                     width={100}
                     height={100}

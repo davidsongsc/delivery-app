@@ -5,6 +5,7 @@ import { Layout, Menu, Card, Button, Tooltip } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
+import LogoIcon from '@/components/MiniComponents/LogoIcon';
 
 const { Header } = Layout;
 
@@ -16,11 +17,7 @@ const HeaderPage: NextPage = () => {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
 
 
-          <div className="flex items-center gap-2 shrink-0">
-            <Image src="/files/imagens/logo.png" width={40} height={40} alt="Logo" />
-            <span className="text-xl font-bold text-blue-600">DrSaas</span>
-          </div>
-
+          <LogoIcon />
 
           <div className="flex flex-1 justify-end">
             <Menu

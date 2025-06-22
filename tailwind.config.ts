@@ -28,7 +28,7 @@ export default {
                 erro: '#F44336',
                 azulEscuro: '#1E3A8A',
 
-                d_primary: '#B80000',            // Vermelho escuro vivo para textos (forte, apetite, destaque moderno)
+                d_primary: '#142579',            // Vermelho escuro vivo para textos (forte, apetite, destaque moderno)
                 d_secondary: '#FFB100',          // Amarelo queimado (molhos, calor, jovial)
                 d_am_acento: '#1B9C85',          // Verde teal profundo (frescura com personalidade)
                 d_am_fundo_c: '#FFF3E0',         // Bege claro com toque quente (acolhedor e limpo)

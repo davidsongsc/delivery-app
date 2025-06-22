@@ -83,8 +83,7 @@ const clients = [
 
 const Home: NextPage = () => {
   const { planos, featuresGlobais, loading, fetchPlanos } = usePlanStore();
-
-  console.log(planos);
+  
   return (
     <>
       <Content className="bg-gray-50 py-12">
