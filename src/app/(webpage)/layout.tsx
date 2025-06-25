@@ -1,4 +1,5 @@
 import HeaderPage from '@/components/header/site';
+import FooterSection from '@/components/MiniComponents/Footer';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
@@ -7,5 +8,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <>
       <HeaderPage />
       {children}
+      <FooterSection />
     </>)
 }
