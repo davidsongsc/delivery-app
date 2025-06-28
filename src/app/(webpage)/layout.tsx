@@ -6,8 +6,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <>
-      <HeaderPage />
+      {/* <HeaderPage />*/}
       {children}
-      <FooterSection />
+      {/*  <FooterSection />*/}
     </>)
 }
