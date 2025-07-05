@@ -6,9 +6,6 @@ import Image from 'next/image';
 import DOMPurify from 'dompurify';
 import 'slick-carousel/slick/slick.css'; // Mantém só o css básico do slick
 
-interface PromocionalSliderProps {
-  className?: string;
-}
 interface Promocional {
   id: string;
   imageUrl: string;
@@ -18,7 +15,9 @@ interface Promocional {
 }
 
 interface PromocionalSliderProps {
-  Promocionals: Promocional[];
+  Promocionals?: Promocional[];
+  className?: string;
+
 }
 
 const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ className }) => {
