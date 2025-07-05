@@ -6,6 +6,9 @@ import Image from 'next/image';
 import DOMPurify from 'dompurify';
 import 'slick-carousel/slick/slick.css'; // Mantém só o css básico do slick
 
+interface PromocionalSliderProps {
+  className?: string;
+}
 interface Promocional {
   id: string;
   imageUrl: string;
@@ -18,7 +21,7 @@ interface PromocionalSliderProps {
   Promocionals: Promocional[];
 }
 
-const PromocionalSlider: React.FC = () => {
+const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ className }) => {
   const Promocionals = [
     {
       id: '1',
@@ -67,19 +70,19 @@ const PromocionalSlider: React.FC = () => {
 
 
   return (
-    <div className=" mt-4 mx-auto px-2 overflow-hidden w-[90%]">
+    <div className={`mt-4 xl:mt-48 mx-auto px-2 overflow-hidden w-screen xl:w-full ${className}`}>
 
       <Slider {...settings}>
         {Promocionals.map((Promocional) => (
           <div
             key={Promocional.id}
-            className="relative h-[250px] md:h-[400px] rounded-xl overflow-hidden shadow-lg"
+            className="relative h-[250px] xl:h-[400px] rounded-xl overflow-hidden shadow-lg mx-auto"
           >
             <Image
               src={`/files/imagens/cardapio/${Promocional.id}.png`}
               alt={Promocional.title || 'Promocional'}
               fill
-              className="object-cover  "
+              className="object-cover w-full h-full"
               sizes="(max-width: 768px) 100vw, 1200px"
               priority
             />

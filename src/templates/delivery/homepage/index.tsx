@@ -2,15 +2,17 @@
 
 import React from 'react';
 import Delivery from '../delivery';
+interface HomePageDeliveryProps {
+    className?: string
+}
+const HomePageDelivery: React.FC<HomePageDeliveryProps> = ({ className }) => {
 
-const HomePageDelivery: React.FC = () => {
-    
 
-    
+
     return (
-        <div className='grid grid-cols-1 gap-4'>
-            
-       
+        <div className={className}>
+
+
             <Delivery />
 
         </div>

@@ -24,6 +24,8 @@ const Header = () => {
     const [open, setOpen] = useState(false);
     const categorias = useCategoriasStore((state) => state.categorias);
     const breakpoint = useBreakpoint();
+    const isMobile = breakpoint === 'mobile';
+    const isTablet = breakpoint === 'tablet';
     const isSmallScreen = breakpoint === 'mobile' || breakpoint === 'tablet';
 
     const user = useAuthStore((state) => state.user);
@@ -98,8 +100,10 @@ const Header = () => {
                     alt="Logo"
                     width={100}
                     height={100}
+                    onError={(e) => (e.currentTarget.src = "/files/imagens/logo/lojavel_logo2.png")}
+
                 />
-                <span className="text-lg' font-bold text-black">{loja?.nome_fantasia}</span>
+                <span className="text-lg font-bold text-black">{loja?.nome_fantasia}</span>
             </div>
 
             <nav className="flex-1 justify-center hidden lg:flex ">
@@ -127,7 +131,7 @@ const Header = () => {
                 onClose={handleDrawerToggle}
                 open={openDrawer}
                 bodyStyle={{ padding: 0, backgroundColor: '#1C1C1E' }}
-                width={useBreakpoint() === 'mobile' ? '100%' : '300px'}
+                width={isMobile ? '100%' : '300px'}
             >
                 <Menu
                     mode="vertical"
@@ -143,7 +147,7 @@ const Header = () => {
                 placement="right"
                 onClose={closeDrawer}
                 open={open}
-                width={useBreakpoint() === 'mobile' ? '100%' : '50%'}
+                width={isMobile ? '100%' : '300px'}
                 bodyStyle={{ padding: 0 }}
             >
                 <CarrinhoPedido />

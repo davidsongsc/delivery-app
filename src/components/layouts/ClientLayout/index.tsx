@@ -35,17 +35,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     useEffect(() => {
         fetchPlanos();
     }, []);
-    return (
-        loading ? <><Spin /></> :
-            <ConfigProvider theme={theme}>
-                <AntdApp>
-                    <Layout className="flex-row">
-
-                        <Layout.Content >
-                            {children}
-                        </Layout.Content>
-                    </Layout>
-                </AntdApp>
-            </ConfigProvider>
+    return loading ? (
+        <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary" />
+        </div>
+    ) : (
+        <ConfigProvider theme={theme}>
+            <AntdApp>
+                <Layout className="flex-row">
+                    <Layout.Content>{children}</Layout.Content>
+                </Layout>
+            </AntdApp>
+        </ConfigProvider>
     );
+
 }

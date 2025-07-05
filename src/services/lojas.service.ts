@@ -8,13 +8,23 @@ export type Loja = {
   telefone: string;
 };
 
+type ApiResponse = Loja[];
+
 export const getLojaByPage = async (page: string): Promise<Loja | null> => {
   try {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/corporation-user/?page=${page}`);
+    const res = await axios.get<ApiResponse>(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/corporation-user/?page=${page}`
+    );
+
     const lojas = res.data;
-    return lojas.length ? lojas[0] : null;
+
+    if (Array.isArray(lojas) && lojas.length > 0) {
+      return lojas[0];
+    }
+
+    return null;
   } catch (error) {
-    console.error("Erro ao buscar loja:", error);
+    console.error('Erro ao buscar loja:', error);
     return null;
   }
 };
