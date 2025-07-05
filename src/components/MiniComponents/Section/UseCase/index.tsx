@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircleTwoTone } from '@ant-design/icons';
+import useMediaQuery from '@/hooks/useMediaQuery';
 
 const useCases = [
     {
@@ -42,13 +43,17 @@ const useCases = [
 
 
 export default function UseCasesSection() {
+    const isMediumUp = useMediaQuery('(min-width: 768px)'); // md breakpoint
+
+    const visibleItems = isMediumUp ? useCases : useCases.slice(0, 3);
+
     return (
         <section className="w-full py-16 bg-white text-gray-800">
             <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">Para quem é o sistema?</h2>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {useCases.map((item, index) => (
+                    {visibleItems.map((item, index) => (
                         <div key={index} className="bg-gray-50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer">
                             <CheckCircleTwoTone twoToneColor="#52c41a" className="text-3xl mb-4" />
                             <h3 className="text-xl font-semibold mb-2">{item.title}</h3>

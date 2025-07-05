@@ -20,9 +20,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
     const router = useRouter();
     return (
-        <section className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-20">
-            <div className="container mx-auto px-6 md:px-12 lg:px-24 flex flex-col-reverse md:flex-row items-center">
-                <div className="w-full md:w-1/2 text-center md:text-left mt-8 md:mt-0">
+        <section className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-10">
+            <div className="container mx-auto px-6 md:px-12 lg:px-24 flex flex-col-reverse md:flex-row items-center justify-between">
+                <div className="w-full md:w-1/2 text-center md:text-left mt-8 md:mt-0 px-4">
                     <h1 className="text-4xl md:text-5xl font-extrabold leading-tight mb-4">
                         <SplitText text={title} />
                     </h1>
@@ -38,13 +38,20 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     </div>
                 </div>
 
-                <div className="w-full md:w-1/2 flex justify-center md:justify-end">
+                <div className="w-full md:w-1/4 flex justify-center md:justify-end px-4 gap-2">
                     <Image
-                        src="/images/hero-illustration.svg"
+                        src="/files/logo/saas.png"
                         alt="Dashboard demo"
                         height={200}
                         width={400}
-                        className="w-3/4 md:w-full"
+                        className="w-2/4 md:w-full rounded-full"
+                    />
+                    <Image
+                        src="/files/logo/saas2.png"
+                        alt="Dashboard demo"
+                        height={200}
+                        width={400}
+                        className="w-2/4 md:w-full rounded-full"
                     />
                 </div>
             </div>

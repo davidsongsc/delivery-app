@@ -4,7 +4,7 @@ import Home from '@/templates/webpage';
 const DeliveryPage: React.FC = () => {
   return (
 
-    <QuickHelp />
+    <Home />
   );
 }
 export default DeliveryPage;

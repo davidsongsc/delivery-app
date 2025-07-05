@@ -25,8 +25,6 @@ const HeaderPage: NextPage = () => {
               className="border-b-0 w-2/3"
               items={[
                 { key: 'home', label: <Link href="/">Início</Link> },
-                { key: 'social', label: <Link href="/">Fale Conosco</Link> },
-                { key: 'marketing', label: <Link href="/">Marketing</Link> },
                 { key: 'store', label: <Link href="/loja">Loja</Link> },
                 {
                   key: 'login',
@@ -41,8 +39,7 @@ const HeaderPage: NextPage = () => {
                   )
                 },
                 { key: 'register', label: <Link href={user ? '/dashboard' : '/register'}>{user ? 'Perfil' : 'Cadastre-se'}</Link> },
-                { key: 'work', label: <Link href="/">Trabalhe Conosco</Link> },
-                { key: 'support', label: <Link href="/">Suporte</Link> },
+
               ]}
             />
           </div>
