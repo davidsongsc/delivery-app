@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Spin, Result, Button, Typography } from 'antd'
-import { activateAccount } from '@/services/authService'
+import { authService } from '@/services/authService'
 
 export default function AtivarContaPage() {
   const searchParams = useSearchParams()
@@ -22,7 +22,7 @@ export default function AtivarContaPage() {
 
     const activate = async () => {
       try {
-        const data = await activateAccount(token)
+        const data = await authService.activateAccount(token)
         setStatus('success')
         setMessage(data.message)
       } catch (error: any) {
