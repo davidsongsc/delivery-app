@@ -35,6 +35,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                         <Button size="large" ghost className="px-6 py-3 rounded-2xl border-white text-white" onClick={() => router.push('/planos')}>
                             {secondaryCtaText}
                         </Button>
+
+                        <Button size="large" ghost className="px-6 py-3 rounded-2xl border-white text-white" onClick={() => router.push('/loja')}>
+                            Loja
+                        </Button>
                     </div>
                 </div>
 
