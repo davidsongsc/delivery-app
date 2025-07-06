@@ -17,8 +17,10 @@ import { useLojaStore } from '@/store/useLojaStore';
 const Header = () => {
     const router = useRouter();
     const loja = useLojaStore((state) => state.loja);
+    const [imageSrc, setImageSrc] = useState(`/files/imagens/logo/${loja?.page}.png`);
+
     if (!loja) {
-        return <p>Loja não carregada</p>;
+        return null;
     }
     const [openDrawer, setOpenDrawer] = useState(false);
     const [open, setOpen] = useState(false);
@@ -96,12 +98,11 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-2 logo-empresa w-1/4">
                 <Image
-                    src={`/files/imagens/logo/${loja?.page}.png`}
+                    src={imageSrc}
                     alt="Logo"
                     width={100}
                     height={100}
-                    onError={(e) => (e.currentTarget.src = "/files/imagens/logo/lojavel_logo2.png")}
-
+                    onError={() => setImageSrc("/files/imagens/logo/lojavel_logo2.png")}
                 />
                 <span className="text-lg font-bold text-black">{loja?.nome_fantasia}</span>
             </div>

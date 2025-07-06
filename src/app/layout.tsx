@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Montserrat } from "next/font/google";
 import ClientLayout from "@/components/layouts/ClientLayout";
-import AppHeader from "@/components/header/external";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
 const montserrat = Montserrat({
@@ -25,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${montserrat.variable} antialiased h-screen ocultar-scroll`}>
-     
+      
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
