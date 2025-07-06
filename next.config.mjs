@@ -29,3 +29,7 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+export const config = {
+  matcher: ['/dashboard/:path*', '/admin/:path*'], 
+};

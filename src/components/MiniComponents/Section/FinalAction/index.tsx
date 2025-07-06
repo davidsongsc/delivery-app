@@ -9,7 +9,7 @@ export default function FinalCTASection() {
           Pronto para transformar sua gestão?
         </h2>
         <p className="text-lg md:text-xl mb-10 opacity-90">
-          Comece agora mesmo com 7 dias grátis. Sem compromisso e sem cartão de crédito.
+          Comece agora mesmo com 30 dias grátis. Sem compromisso e sem cartão de crédito. Faça o cadastro e comece a usar, experimente agora mesmo. 
         </p>
         <div className="flex justify-center gap-4">
           <Button type="primary" size="large" className="bg-white text-indigo-600 font-semibold px-8 py-3 rounded-2xl">

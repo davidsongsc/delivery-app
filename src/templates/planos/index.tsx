@@ -22,10 +22,10 @@ const Planos: NextPage = () => {
 
   return (
     <>
-      <Content className='flex flex-col gap-4 py-10'>
+      <Content className='flex flex-col gap-4 py-2'>
 
 
-        <section className="max-w-4xl mx-auto text-center px-4 mb-12">
+        <section className="max-w-4xl mx-auto text-center px-4 mb-2">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">Tecnologia e Serviço de Qualidade</h1>
           <p className="text-gray-600 text-lg">
             Fornecemos soluções digitais sob medida para impulsionar seu negócio.
@@ -47,17 +47,18 @@ const Planos: NextPage = () => {
               return (
                 <Card
                   key={plan.name}
-                  className="rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out card"
+                  className="rounded-xl shadow-md hover:shadow-lg transition duration-300 ease-in-out card py-2"
                   actions={[
                     isSobDemanda ? (
                       <Button
                         type="primary"
                         icon={
-                          <WhatsAppOutlined style={{ color: '#25D366' }} />
+                          <WhatsAppOutlined style={{ color: '#25D366', scale: 1.8, transform: 'translateY(2px)' }} />
                         }
                         key="whatsapp"
                         href="https://wa.me/21958725380" // <-- coloque seu número de WhatsApp com DDI
                         target="_blank"
+                        className='bg-green-600 hover:bg-green-700'
                       >
 
                       </Button>

@@ -16,7 +16,7 @@
     position: absolute;
     top: -4%;
     left: -85%;
-    width: 820px;
+    width: 920px;
     height: 820px;
     background: conic-gradient(theme('colors.d_am_acento'), theme('colors.d_secondary'));
     animation: rotating 10s linear infinite;

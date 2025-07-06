@@ -106,7 +106,7 @@ export default function TestimonialsSection() {
   return (
     <section className="w-full bg-gray-50 py-20 text-gray-800">
       <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12">O que estão dizendo?</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-12">O que estão dizendo em nosso feedback?</h2>
 
         <div className="grid gap-10 md:grid-cols-3">
           {visibleTestimonials.map((item, idx) => (
@@ -123,8 +123,13 @@ export default function TestimonialsSection() {
               </div>
 
               <div className="flex gap-1 mb-2">
+                {/* Render filled stars */}
                 {Array.from({ length: item.rating }).map((_, i) => (
-                  <StarFilled key={i} className="text-yellow-400" />
+                  <StarFilled key={`filled-${i}`} className="text-yellow-400" />
+                ))}
+                {/* Render empty stars */}
+                {Array.from({ length: 5 - item.rating }).map((_, i) => (
+                  <StarFilled key={`empty-${i}`} className="text-gray-300" /> // Use a gray class for empty stars
                 ))}
               </div>
 

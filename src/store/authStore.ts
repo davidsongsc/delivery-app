@@ -14,22 +14,26 @@ interface AuthState {
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
+
     login: (username: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
     logout: () => void;
     verifyEmail: (token: string) => Promise<void>;
     checkAuth: () => Promise<void>;
+
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     setToken: (token: string | null) => void;
     setUser: (user: User | null) => void;
+
     refreshToken: string | null;
     setRefreshToken: (token: string | null) => void;
+
     registerCorporation: (data: CorporationForm) => Promise<void>;
     corporationLoading: boolean;
     corporationError: string | null;
 }
 
-// Mensagens de erro
+
 const errorMessages = {
     loginFailed: 'Falha no login',
     registrationFailed: 'Falha no cadastro',
@@ -38,6 +42,11 @@ const errorMessages = {
     unknownError: 'Ocorreu um erro inesperado',
 };
 
+const getTokenFromCookie = () => {
+    if (typeof document === 'undefined') return null;
+    const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
+    return match ? match[2] : null;
+};
 export const useAuthStore = create<AuthState>()(
     persist(
         (set, get) => ({
@@ -75,14 +84,11 @@ export const useAuthStore = create<AuthState>()(
                     throw error;
                 }
             },
-            login: async (username, password) => {
+            login: async (username: string, password: string): Promise<void> => {
                 set({ loading: true, error: null });
                 try {
-                    // Obtém os tokens
                     const { access, refresh } = await authService.login(username, password);
-                    // Decodifica o token JWT para extrair o usuário
                     const decoded = parseJwt(access);
-                    console.log('Dados:', access, refresh, decoded);
 
                     const user: User = {
                         uid: decoded.user_id ?? decoded.uid,
@@ -96,11 +102,6 @@ export const useAuthStore = create<AuthState>()(
                         phone_number: decoded.phone_number ?? null,
                     };
 
-                    // Salva os tokens, se quiser, você pode armazenar o refresh também se for usar depois
-                    localStorage.setItem('authToken', access);
-                    localStorage.setItem('refreshToken', refresh);
-
-                    // Atualiza o Zustand store
                     set({
                         user,
                         token: access,
@@ -108,22 +109,40 @@ export const useAuthStore = create<AuthState>()(
                         loading: false,
                     });
 
+                    // 🔐 Salva o token no cookie para o middleware
+                    document.cookie = `token=${access}; path=/; max-age=3600; SameSite=Lax`;
+
+                    localStorage.setItem('authToken', access);
+                    localStorage.setItem('refreshToken', refresh);
+
                     notification.success({
                         message: 'Login realizado com sucesso',
                     });
+
                 } catch (error: any) {
                     set({
-                        error: error.message || errorMessages.loginFailed,
+                        error: error.message || 'Erro ao fazer login',
                         loading: false,
                     });
+
                     notification.error({
                         message: 'Erro ao fazer login',
                         description: error.message || 'Verifique suas credenciais e tente novamente.',
                     });
+
                     throw error;
                 }
             },
 
+            clearAuth: () => {
+                set({
+                    user: null,
+                    token: null,
+                    isAuthenticated: false,
+                    loading: false,
+                });
+                document.cookie = 'token=; path=/; max-age=0';
+            },
             register: async (userData) => {
                 set({ loading: true, error: null });
                 try {
@@ -139,11 +158,6 @@ export const useAuthStore = create<AuthState>()(
                     set({
                         error: error.message || errorMessages.registrationFailed,
                         loading: false,
-                    });
-
-                    notification.error({
-                        message: 'Erro ao cadastrar',
-                        description: error.message || 'Tente novamente mais tarde.',
                     });
 
                     throw error;
@@ -192,7 +206,7 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             checkAuth: async () => {
-                const token = get().token;
+                const token = getTokenFromCookie();
                 if (!token) {
                     set({
                         token: null,
@@ -207,6 +221,7 @@ export const useAuthStore = create<AuthState>()(
                     const { user } = await authService.checkAuth(token);
                     set({
                         user,
+                        token,
                         isAuthenticated: true,
                         loading: false,
                     });
@@ -218,7 +233,7 @@ export const useAuthStore = create<AuthState>()(
                         loading: false,
                     });
                 }
-            },
+            }
         }),
         {
             name: 'auth-storage',

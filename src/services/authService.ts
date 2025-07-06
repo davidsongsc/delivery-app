@@ -4,17 +4,6 @@ import { useAuthStore } from '@/store/authStore';
 import { AuthResponse } from '@/types/auth';
 import { parseJwt } from '@/utils/parseJwt';
 import type { User } from '@/types/User';
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-interface LoginResponse {
-    user: {
-        uid: string;
-        username: string;
-        email: string;
-        is_superuser: boolean;
-        is_staff: boolean;
-    };
-}
 
 export const authService = {
     login: async (username: string, password: string): Promise<{ user: User; access: string; refresh: string }> => {
@@ -48,7 +37,12 @@ export const authService = {
 
     register: async (userData: any): Promise<void> => {
         try {
-            await apiClient.post('/usuarios/register/', userData);
+            await apiClient.post('/api/auth/register/', userData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao cadastrar usuário');
         }
@@ -83,4 +77,15 @@ export const authService = {
             throw error.response?.data || new Error('Erro ao verificar autenticação');
         }
     },
+
+    activateAccount: async (token: string): Promise<{ message: string }> => {
+        try {
+            const response = await apiClient.get('/api/auth/activate/', { params: { token } });
+
+            return response.data; // espera { message: string }
+        } catch (error: any) {
+            throw error.response?.data || new Error('Erro ao ativar conta');
+        }
+    },
 };
+

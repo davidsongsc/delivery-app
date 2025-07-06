@@ -3,9 +3,11 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
-import { 
-  TextField, Button, Box, Typography, Alert, 
-  CircularProgress, Grid 
+import { notification } from 'antd'
+
+import {
+  TextField, Button, Box, Typography, Alert,
+  CircularProgress, Grid
 } from '@mui/material'
 import Link from 'next/link'
 
@@ -17,11 +19,13 @@ const RegisterForm = () => {
     password2: '',
     phone_number: ''
   })
-  
+
   const { register, loading, error } = useAuthStore()
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -30,15 +34,35 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (formData.password1 !== formData.password2) {
+      notification.error({
+        message: 'Senhas não coincidem',
+      })
+      return
+    }
+
     try {
-      await register(formData)
-      router.push('/verificar-email')
-    } catch (error) {
-      console.error('Registration failed:', error)
+      const { username, email, password1, phone_number } = formData
+      await register({
+        username,
+        email,
+        password: password1,
+        phone_number
+      })
+      router.push('/dashboard')
+    } catch (error: any) {
+      console.error('Erro ao registrar usuário:', error)
+      notification.warning({
+        message: 'Erro ao registrar usuário',
+        description: error.error
+      })
     }
   }
 
+
   return (
+
     <Box
       component="form"
       onSubmit={handleSubmit}
@@ -55,13 +79,13 @@ const RegisterForm = () => {
       <Typography variant="h5" component="h1" gutterBottom textAlign="center">
         Registrar
       </Typography>
-      
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
-      
+
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
@@ -116,7 +140,7 @@ const RegisterForm = () => {
           />
         </Grid>
       </Grid>
-      
+
       <Button
         type="submit"
         fullWidth
@@ -126,7 +150,7 @@ const RegisterForm = () => {
       >
         {loading ? <CircularProgress size={24} /> : 'Register'}
       </Button>
-      
+
       <Typography variant="body2" textAlign="center">
         Já tem uma conta?{' '}
         <Link href="/login" passHref>

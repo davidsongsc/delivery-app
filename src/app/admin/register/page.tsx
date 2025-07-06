@@ -1,12 +1,22 @@
 'use client';
-import React from "react";
-import CorporationListPage from "@/components/Corporation/list";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
+import CorporationListPage from '@/components/Corporation/list';
 
 const RegisterCorporation = () => {
+  const user = useAuthStore((state) => state.user);
+  const router = useRouter();
 
+  useEffect(() => {
+    if (!user) {
+      router.replace('/login');
+    }
+  }, [user]);
 
-  return (
-    <CorporationListPage />
-  );
-}
-export default React.memo(RegisterCorporation);  
+  if (!user) return null; 
+
+  return <CorporationListPage />;
+};
+
+export default React.memo(RegisterCorporation);
