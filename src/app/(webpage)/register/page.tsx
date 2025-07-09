@@ -9,9 +9,7 @@ const RegisterPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Registro | Sistema</title>
-      </Head>
+    
       <RegisterForm />
     </>
   )

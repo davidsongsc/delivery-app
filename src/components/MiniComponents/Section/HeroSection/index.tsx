@@ -36,9 +36,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                             {secondaryCtaText}
                         </Button>
 
-                        <Button size="large" ghost className="px-6 py-3 rounded-2xl border-white text-white" onClick={() => router.push('/loja')}>
+                        <Button
+                            size="large"
+                            ghost
+                            className="px-6 py-3 rounded-2xl border-white text-white"
+                            onClick={() => window.open('/loja', '_blank')}
+                        >
                             Loja
                         </Button>
+
                     </div>
                 </div>
 
@@ -48,14 +54,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                         alt="Dashboard demo"
                         height={200}
                         width={400}
-                        className="w-2/4 md:w-full rounded-full"
+                        className="w-1/4 md:w-full rounded-full"
                     />
                     <Image
                         src="/files/logo/saas2.png"
                         alt="Dashboard demo"
                         height={200}
                         width={400}
-                        className="w-2/4 md:w-full rounded-full"
+                        className="w-1/4 md:w-full rounded-full"
                     />
                 </div>
             </div>
