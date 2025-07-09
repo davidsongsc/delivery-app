@@ -30,13 +30,13 @@ export default function FooterSection() {
           <h4 className="text-lg font-semibold text-white mb-2">Contato</h4>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
-              <MailOutlined /> suporte@barbersaas.com
+              <MailOutlined /> suporte@lojavel.com
             </li>
             <li className="flex items-center gap-2">
-              <PhoneOutlined /> (21) 95872-5380
+              <PhoneOutlined /> (21) 98310-8439
             </li>
             <li className="flex items-center gap-2">
-              <EnvironmentOutlined /> São Paulo, SP
+              <EnvironmentOutlined /> Rio de Janeiro, RJ
             </li>
           </ul>
         </div>
