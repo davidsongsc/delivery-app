@@ -1,6 +1,5 @@
 'use client'
 
-
 import TransactionsList from "@/components/TransactionsItem";
 import { useTransactions } from "@/hooks/useTransactions";
 

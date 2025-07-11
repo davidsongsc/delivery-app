@@ -1,4 +1,3 @@
-// components/Header.tsx
 'use client'
 import React from 'react'
 import {
@@ -10,25 +9,28 @@ import {
     IconButton,
     Drawer,
     List,
-    ListItem,
     ListItemText,
     ListItemButton,
     useTheme,
+    Stepper,
+    Step,
+    StepLabel,
 } from '@mui/material'
 import Link from 'next/link'
 import useMediaQuery from '@/hooks/useMediaQuery'
 import { MenuIcon } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
-import LogoIcon from '@/components/MiniComponents/LogoIcon'
-
-export default function HeaderFinanceira() {
+interface SimuladorFinanceiraProps {
+    etapaAtual: number;
+}
+export default function HeaderFinanceira({ etapaAtual }: SimuladorFinanceiraProps) {
     const [mobileOpen, setMobileOpen] = React.useState(false)
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('md'))
     const { user } = useAuthStore((state) => state)
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen)
-    }
+
+    const handleDrawerToggle = () => setMobileOpen(!mobileOpen)
+    const steps = ['Preencher Dados', 'Simulação', 'Proposta', 'Avaliação', 'Sugestões de Bancos', 'Resultados'];
 
     const navLinks = [
         { label: 'Simulador', href: '/simulador' },
@@ -37,59 +39,59 @@ export default function HeaderFinanceira() {
     ]
 
     const drawer = (
-        <Box sx={{ width: 250 }} onClick={handleDrawerToggle}>
+        <Box sx={{ width: 250, p: 2 }} onClick={handleDrawerToggle}>
             <List>
                 {navLinks.map(({ label, href }) => (
                     <ListItemButton key={label} component={Link} href={href}>
                         <ListItemText primary={label} />
                     </ListItemButton>
                 ))}
+                {!user && (
+                    <ListItemButton component={Link} href="/login">
+                        <ListItemText primary="Entrar" />
+                    </ListItemButton>
+                )}
             </List>
         </Box>
     )
 
     return (
         <>
-            <AppBar position="relative" color="primary" elevation={3}>
-                <Toolbar sx={{ justifyContent: 'space-between' }}>
-                    {/* Logo ou título */}
-                    <Box display="flex" alignItems="center">
-                        <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <Typography variant="h6" fontWeight="bold">
-                                <LogoIcon
-                                    texto=' '
-                                    tcor='text-white ' />
-                            </Typography>
-                        </Link>
-                    </Box>
-
-                    {/* Navegação normal (desktop) */}
+            <AppBar
+                position="relative"
+                color="default"
+            >
+                <Toolbar sx={{ justifyContent: 'space-between', minHeight: 6 }}>
                     {!isMobile && (
-                        <Box display="flex" gap={2}>
+                        <Box display="flex" alignItems="center" gap={2}>
                             {navLinks.map(({ label, href }) => (
                                 <Button
                                     key={label}
                                     color="inherit"
-                                    href={href}
                                     component={Link}
-                                    sx={{ textTransform: 'none' }}
+                                    href={href}
+                                    sx={{ textTransform: 'none', fontSize: '0.9rem' }}
                                 >
                                     {label}
                                 </Button>
                             ))}
-
-                            {user ? <div className='flex items-center justify-center px-2'>Usuario:  <span className='font-bold'> {user.first_name}</span> </div> : <Button variant="outlined" color="inherit" href="/login">
-                                Entrar
-                            </Button>}
-
+                            {user ? (
+                                <Typography variant="body2" sx={{ ml: 2, fontWeight: 500 }}>
+                                    Olá, <strong>{user.first_name}</strong>
+                                </Typography>
+                            ) : (
+                                <Button variant="outlined" color="inherit" href="/login" size="small">
+                                    Entrar
+                                </Button>
+                            )}
                         </Box>
                     )}
 
-                    {/* Ícone para menu mobile */}
+                    {/* Ícone Mobile */}
                     {isMobile && (
                         <IconButton
-                            color="inherit"
                             edge="end"
+                            color="inherit"
                             onClick={handleDrawerToggle}
                             aria-label="menu"
                         >
@@ -97,16 +99,20 @@ export default function HeaderFinanceira() {
                         </IconButton>
                     )}
                 </Toolbar>
+                <Stepper activeStep={etapaAtual} alternativeLabel sx={{ mb: 6 }}>
+                    {steps.map((label) => (
+                        <Step key={label}>
+                            <StepLabel>{label}</StepLabel>
+                        </Step>
+                    ))}
+                </Stepper>
             </AppBar>
 
-            {/* Drawer para mobile */}
-            <Drawer
-                anchor="right"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-            >
+            <Drawer anchor="right" open={mobileOpen} onClose={handleDrawerToggle}>
                 {drawer}
             </Drawer>
+
+
         </>
     )
 }

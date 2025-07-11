@@ -120,7 +120,7 @@ const PerfilPage = () => {
                   <Button
                     type="primary"
                     icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/dashboard/financeira/')}
+                    onClick={() => router.push('/simulador/')}
                   >
                     Simular Financiamento                  </Button>
                   <Button

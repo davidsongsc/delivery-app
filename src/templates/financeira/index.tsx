@@ -9,9 +9,7 @@ import {
     Paper,
     Alert,
     Divider,
-    Stepper,
-    Step,
-    StepLabel
+
 } from '@mui/material'
 import InputMask from 'react-input-mask'
 import ParcelasCards from '@/components/MiniComponents/Parcelas'
@@ -24,13 +22,14 @@ const formatarReal = (valor: number) =>
         style: 'currency',
         currency: 'BRL'
     }).format(valor)
-
-export default function SimuladorFinanceira() {
+interface SimuladorFinanceiraProps {
+    setEtapaAtual: React.Dispatch<React.SetStateAction<number>>;
+}
+export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinanceiraProps) {
     const [cpf, setCpf] = useState('')
     const [dataNasc, setDataNasc] = useState('')
     const [etapaLiberada, setEtapaLiberada] = useState(false)
     const [classeSocial, setClasseSocial] = useState('')
-    const [etapaAtual, setEtapaAtual] = useState(0);
 
     const [valor, setValor] = useState('')
     const [entrada, setEntrada] = useState('')
@@ -105,18 +104,11 @@ export default function SimuladorFinanceira() {
         })
     }
 
-    const steps = ['Preencher Dados', 'Simular', 'Resultado', 'Sugestões de Bancos'];
 
 
     return (
         <div className="min-h-screen bg-gray-100 p-6 mt-10">
-            <Stepper activeStep={etapaAtual} alternativeLabel sx={{ mb: 4 }}>
-                {steps.map((label) => (
-                    <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
+
             <Grid container spacing={4}>
                 {/* Coluna 1: Simulador */}
                 <Grid item xs={12} md={7}>
@@ -219,37 +211,39 @@ export default function SimuladorFinanceira() {
                         {resultado ? (
                             <>
                                 <Typography variant="h6" gutterBottom>
-                                    3. Recomendações de Financiamento
+                                    3. Observações Técnicas da Simulação
                                 </Typography>
 
                                 <Alert severity="warning" sx={{ mb: 2 }}>
-                                    ⚠️ Esta simulação pode representar um <strong>alto risco de crédito</strong> dependendo do histórico financeiro.
+                                    ⚠️ Esta simulação apresenta indícios de <strong>alto risco de crédito</strong>, dependendo do histórico financeiro do cliente.
                                 </Alert>
 
                                 <Typography variant="body2" gutterBottom>
-                                    Recomendamos que você:
+                                    Recomendações para conduzir o atendimento:
                                 </Typography>
                                 <ul style={{ paddingLeft: '1rem', marginBottom: '1rem' }}>
-                                    <li>Adicione um <strong>co-participante (CPF com bom score)</strong> ao financiamento para reforçar a análise de crédito.</li>
-                                    <li>Evite comprometer mais de <strong>30% da sua renda</strong> com parcelas mensais.</li>
-                                    <li>Aumente o valor da <strong>entrada</strong> para reduzir o valor financiado e os juros totais.</li>
-                                    <li>Tenha uma <strong>comprovação de renda estável</strong> (holerite, declaração MEI, extrato bancário, etc).</li>
-                                    <li>Evite atrasos ou dívidas ativas nos meses anteriores à solicitação do financiamento.</li>
+                                    <li>Sugira a inclusão de um <strong>co-participante com bom score</strong> para reforçar a proposta (composição de CPF).</li>
+                                    <li>Verifique se a parcela final não compromete mais de <strong>30% da renda declarada</strong> do cliente.</li>
+                                    <li>Oriente o cliente a aumentar a <strong>entrada</strong> para reduzir juros e facilitar a aprovação.</li>
+                                    <li>Confirme se há <strong>comprovação de renda estável</strong> (extrato, MEI, holerite, etc.).</li>
+                                    <li>Cheque se o cliente possui <strong>atrasos ou restrições recentes</strong> no histórico.</li>
                                 </ul>
 
                                 <Typography variant="body2" gutterBottom>
-                                    Após <strong>6 meses de pagamentos em dia</strong>, será possível solicitar uma <strong>transferência de titularidade</strong> para outra pessoa. O novo titular deve atender aos seguintes requisitos:
+                                    Após <strong>6 meses de pagamento regular</strong>, é possível solicitar a <strong>transferência de titularidade</strong> (ex: troca de CPF), desde que o novo responsável atenda aos seguintes critérios:
                                 </Typography>
                                 <ul style={{ paddingLeft: '1rem', marginBottom: '1rem' }}>
-                                    <li>Possuir <strong>CNH ativa</strong> (em caso de financiamento de veículos).</li>
-                                    <li>Ter <strong>renda comprovada compatível</strong> com o valor da parcela.</li>
-                                    <li>Estar com <strong>nome limpo</strong> e <strong>bom score de crédito</strong> no mercado.</li>
-                                    <li>Não possuir restrições recentes nos órgãos de proteção ao crédito (SPC/Serasa).</li>
+                                    <li>Possuir <strong>CNH ativa</strong> (para veículos).</li>
+                                    <li>Comprovar renda compatível com a parcela vigente.</li>
+                                    <li>Estar com <strong>nome limpo</strong> e score adequado no mercado.</li>
+                                    <li>Sem restrições recentes nos órgãos de proteção ao crédito (SPC/Serasa).</li>
                                 </ul>
+
                                 <Alert severity="info">
-                                    💡 Caso tenha dúvidas, entre em contato com um de nossos especialistas para orientação personalizada.
+                                    ℹ️ Para dúvidas ou casos fora do padrão, consulte a equipe responsável pela formalização ou análise de crédito.
                                 </Alert>
                             </>
+
                         ) : null}
                         <Typography variant="h6" gutterBottom>
                             4. Forma de parcelamento
@@ -261,16 +255,33 @@ export default function SimuladorFinanceira() {
                                 setParcelaSelecionada={setParcelas}
                             />
                         </Grid>
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{ mt: 3 }}
-                            onClick={simular}
-                            disabled={!etapaLiberada}
-                        >
-                            Simular e obter sugestão
-                        </Button>
+                        <Grid container spacing={2} className='p-4'>
+                            <Grid item xs={12} md={6}>
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{ mt: 3 }}
+                                    onClick={simular}
+                                    disabled={!etapaLiberada}
+                                >
+                                    Simular e obter sugestão
+                                </Button>
 
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={2} className='p-4'>
+                            <Grid item xs={12} md={6}>
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{ mt: 3 }}
+                                    onClick={simular}
+                                    disabled={false}
+                                >
+                                    Avaliar crédito
+                                </Button>
+                            </Grid>
+                        </Grid>
                         {!etapaLiberada && (
                             <Alert severity="warning" sx={{ mt: 3 }}>
                                 Preencha CPF e data de nascimento para simular.
@@ -303,38 +314,60 @@ export default function SimuladorFinanceira() {
                                     <strong>CPF:</strong> {cpf}
                                 </Typography>
                                 <Divider sx={{ my: 2 }} />
+
+                                <Grid item xs={12}>
+                                    <Alert severity="success" sx={{ mt: 2 }}>
+
+                                        <small>
+                                            <strong>✅ Pré-aprovação identificada para o CPF informado. </strong> <br />
+                                            <br />
+                                            Agende a visita presencial do cliente para <strong>finalização da proposta</strong>.
+                                            <br />
+                                            Reforce que a liberação depende da apresentação dos documentos no local.
+                                        </small>
+                                    </Alert>
+                                </Grid>
+
+                                <Divider sx={{ my: 3 }} />
+
+                                <Typography variant="h6" gutterBottom>
+                                    Solicitação de Ficha Cadastral
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Para dar continuidade ao atendimento, é necessário realizar a <strong>abertura da ficha cadastral</strong> do cliente no sistema.
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Essa etapa inclui coleta de <strong>dados pessoais, informações de renda</strong> e demais dados complementares para envio ao banco e análise formal da proposta.
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Oriente o cliente de forma clara e cordial, explicando que esta etapa é obrigatória para avançar com a análise e formalização do financiamento.
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Em caso de dúvidas ou impedimentos, escale o atendimento para o responsável pela formalização ou análise de crédito.
+                                </Typography>
+
+
+                                <Divider sx={{ my: 2 }} />
+
                                 {valor && entrada && Number(entrada) < Number(valor) * 0.50 && (
                                     <Grid item xs={12}>
                                         <Alert severity="error" sx={{ mt: 2 }}>
-                                            ⚠️ A entrada mínima exigida é de <strong>{formatarReal(Number(valor) * 0.50)}</strong>.
+                                            ⚠️ Entrada abaixo do mínimo recomendado: <strong>{formatarReal(Number(valor) * 0.50)}</strong>.
                                             <br />
                                             <small>
-                                                Por implicações no score e risco de crédito, este financiamento só será aprovado com valor de entrada suficiente
-                                                ou com composição de CPF (consórcio familiar). Realize uma nova simulação se necessário.
+                                                Com base no valor informado, essa proposta tem <strong>baixa chance de aprovação</strong> devido ao score ou risco de crédito.
+                                                <br />
+                                                Oriente o cliente a considerar uma entrada maior ou apresentar <strong>composição de CPF</strong> (ex: cônjuge ou familiar).
+                                                <br />
+                                                Uma nova simulação pode ser necessária.
                                             </small>
                                         </Alert>
                                     </Grid>
                                 )}
-                                <Divider sx={{ my: 3 }} />
-
-                                <Typography variant="h6" gutterBottom>
-                                    Solicitação de Abertura de Ficha Cadastral
-                                </Typography>
-
-                                <Typography variant="body2" sx={{ mb: 2 }}>
-                                    Para avançar com o seu pedido de financiamento, é necessário abrir uma ficha cadastral em nosso sistema.
-                                    Essa etapa é fundamental para realizarmos a análise detalhada do seu perfil financeiro e garantir a melhor proposta.
-                                </Typography>
-
-                                <Typography variant="body2" sx={{ mb: 2 }}>
-                                    A ficha cadastral inclui dados pessoais, comprovação de renda e informações adicionais que ajudam a reduzir riscos e acelerar a aprovação.
-                                </Typography>
-
-                                <Typography variant="body2" sx={{ mb: 2 }}>
-                                    Nossa equipe está disponível para ajudar você durante esse processo. Entre em contato conosco para tirar dúvidas ou iniciar a abertura da ficha.
-                                </Typography>
-
-                            
                                 <Divider sx={{ my: 2 }} />
                                 <Typography variant="body1">
                                     Valor Financiado:{' '}
