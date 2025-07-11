@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
     Box,
     Grid,
@@ -16,6 +16,24 @@ import ParcelasCards from '@/components/MiniComponents/Parcelas'
 import NumericInput from '@/components/NumericInput'
 import { notification } from 'antd'
 
+function validarCPF(cpf: string): boolean {
+    cpf = cpf.replace(/[^\d]+/g, '');
+
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+
+    let soma = 0;
+    for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
+    let resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.charAt(9))) return false;
+
+    soma = 0;
+    for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    return resto === parseInt(cpf.charAt(10));
+}
+
 
 const formatarReal = (valor: number) =>
     new Intl.NumberFormat('pt-BR', {
@@ -25,8 +43,8 @@ const formatarReal = (valor: number) =>
 interface SimuladorFinanceiraProps {
     setEtapaAtual: React.Dispatch<React.SetStateAction<number>>;
 }
-export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinanceiraProps) {
-    const [cpf, setCpf] = useState('')
+export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinanceiraProps) {    const [cpf, setCpf] = useState('')
+    const [cpfErro, setCpfErro] = useState(false);
     const [dataNasc, setDataNasc] = useState('')
     const [etapaLiberada, setEtapaLiberada] = useState(false)
     const [classeSocial, setClasseSocial] = useState('')
@@ -48,7 +66,36 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
         D: 0.034,
         E: 0.042
     }
-    const calcularIdade = (data: string): number => {
+    const validarCPF = useCallback((cpf: string): boolean => {
+        cpf = cpf.replace(/[^\d]+/g, '');
+
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+
+        let soma = 0;
+        for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
+        let resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf.charAt(9))) return false;
+
+        soma = 0;
+        for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        return resto === parseInt(cpf.charAt(10));
+    }, []);
+
+    const handleCpfChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setCpf(value);
+
+        if (value.replace(/\D/g, '').length === 11) {
+            setCpfErro(!validarCPF(value));
+        } else {
+            setCpfErro(false);
+        }
+    }, [validarCPF]);
+
+    const calcularIdade = useCallback((data: string): number => {
         const hoje = new Date()
         const partes = data.split('-')
         const nascimento = new Date(+partes[0], +partes[1] - 1, +partes[2])
@@ -59,7 +106,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
             idade--
         }
         return idade
-    }
+    }, [])
 
     useEffect(() => {
         const cpfValido = cpf.replace(/\D/g, '').length === 11
@@ -69,7 +116,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
         setEtapaLiberada(cpfValido && dataOk && maiorIdade)
     }, [cpf, dataNasc])
 
-    const simular = () => {
+    const simular = useCallback(() => {
         const vTotal = parseFloat(valor)
         const vEntrada = parseFloat(entrada)
         const nParcelas = parseInt(parcelas)
@@ -82,10 +129,11 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
         if (vEntrada < entradaMinima) {
             notification.warning({
                 message: 'Entrada insuficiente',
-                description: `A entrada deve ser no mínimo ${formatarReal(entradaMinima)}`
+                description: `A entrada deve ser no mínimo ${formatarReal(entradaMinima)}`
             })
-
+            return
         }
+
         const taxaBase = mapaDeJuros[classeSocial] || 0.02
         const taxaExtra = ((nParcelas / 12) - 1) * 0.008
         const taxaJuros = taxaBase + (taxaExtra > 0 ? taxaExtra : 0)
@@ -96,14 +144,14 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
             (1 - Math.pow(1 + taxaJuros, -nParcelas))
 
         const total = parcela * nParcelas
-        setEtapaAtual(2);
+
+        setEtapaAtual(2)
         setResultado({
             valorFinanciado: financiado,
             parcela,
             total
         })
-    }
-
+    }, [valor, entrada, parcelas, classeSocial, setEtapaAtual, setResultado])
 
 
     return (
@@ -127,7 +175,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                 <InputMask
                                     mask="999.999.999-99"
                                     value={cpf}
-                                    onChange={(e) => setCpf(e.target.value)}
+                                    onChange={handleCpfChange}
                                 >
                                     {(inputProps) => (
                                         <TextField
@@ -135,6 +183,8 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                             label="CPF"
                                             fullWidth
                                             required
+                                            error={cpfErro}
+                                            helperText={cpfErro ? "CPF inválido" : ""}
                                         />
                                     )}
                                 </InputMask>
