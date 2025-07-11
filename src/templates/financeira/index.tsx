@@ -315,6 +315,26 @@ export default function SimuladorFinanceira() {
                                         </Alert>
                                     </Grid>
                                 )}
+                                <Divider sx={{ my: 3 }} />
+
+                                <Typography variant="h6" gutterBottom>
+                                    Solicitação de Abertura de Ficha Cadastral
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Para avançar com o seu pedido de financiamento, é necessário abrir uma ficha cadastral em nosso sistema.
+                                    Essa etapa é fundamental para realizarmos a análise detalhada do seu perfil financeiro e garantir a melhor proposta.
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    A ficha cadastral inclui dados pessoais, comprovação de renda e informações adicionais que ajudam a reduzir riscos e acelerar a aprovação.
+                                </Typography>
+
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Nossa equipe está disponível para ajudar você durante esse processo. Entre em contato conosco para tirar dúvidas ou iniciar a abertura da ficha.
+                                </Typography>
+
+                            
                                 <Divider sx={{ my: 2 }} />
                                 <Typography variant="body1">
                                     Valor Financiado:{' '}
