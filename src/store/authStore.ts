@@ -7,6 +7,7 @@ import { User } from '@/types/User';
 import { parseJwt } from '@/utils/parseJwt';
 import { CorporationForm } from './CorporationRegisterForm';
 import { corporationService } from '@/services/corporationService';
+import { isStrongPassword, isValidEmail } from '@/utils/login';
 
 interface AuthState {
     token: string | null;
@@ -24,6 +25,8 @@ interface AuthState {
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     setToken: (token: string | null) => void;
     setUser: (user: User | null) => void;
+
+    hydrated: boolean; 
 
     refreshToken: string | null;
     setRefreshToken: (token: string | null) => void;
@@ -57,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
             error: null,
             hydrated: false,
             setUser: (user) => set({ user }),
-
+            setHydrated: () => set({ hydrated: true }),
             setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
             setToken: (token) => set({ token }),
             setRefreshToken: (token) => set({ refreshToken: token }),
@@ -89,7 +92,6 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     const { access, refresh } = await authService.login(username, password);
                     const decoded = parseJwt(access);
-
                     const user: User = {
                         uid: decoded.user_id ?? decoded.uid,
                         username: decoded.username,
@@ -145,6 +147,20 @@ export const useAuthStore = create<AuthState>()(
             },
             register: async (userData) => {
                 set({ loading: true, error: null });
+
+                const { email, password } = userData;
+
+                // Validações manuais antes de enviar
+                if (!isValidEmail(email)) {
+                    set({ loading: false, error: 'Email inválido ou de domínio não permitido.' });
+                    return;
+                }
+
+                if (!isStrongPassword(password)) {
+                    set({ loading: false, error: 'Senha fraca. Use letras, números e símbolos com no mínimo 6 caracteres.' });
+                    return;
+                }
+
                 try {
                     await authService.register(userData);
 
@@ -233,13 +249,17 @@ export const useAuthStore = create<AuthState>()(
                         loading: false,
                     });
                 }
-            }
+            },
         }),
         {
             name: 'auth-storage',
             skipHydration: false,
-            onRehydrateStorage: () => (state) => {
-                state?.checkAuth();
+            onRehydrateStorage: (context) => {
+                return () => {
+                    const store = context as unknown as { getState: () => AuthState };
+                    store.getState().checkAuth();         // chama checkAuth
+                    return context;
+                };
             },
         }
     )

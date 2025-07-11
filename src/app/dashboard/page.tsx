@@ -4,7 +4,6 @@ import PerfilPage from "@/templates/perfil";
 
 const Dashboard = () => {
 
-
   return (
     <PerfilPage />
   );

@@ -11,8 +11,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Sistema Frontend",
-  description: "Sistema Financeiro com Next.js + Zustand + Django",
+  title: "Lojavel Tech",
+  description: "Sistema Financeiro com controle de estoque e vendas.",
 };
 
 export default function RootLayout({

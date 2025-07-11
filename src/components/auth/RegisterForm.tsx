@@ -64,7 +64,7 @@ const RegisterForm = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
-      <div className='bg-gradient-to-br from-d_primary to-d_am_fundo_c flex items-center justify-center'>
+      <div className=' flex items-center justify-center'>
         <Box
           component="form"
           onSubmit={handleSubmit}

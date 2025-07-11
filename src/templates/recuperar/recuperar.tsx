@@ -19,11 +19,6 @@ const RecuperarContaPage = () => {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
 
-  /**
-   * Função para tratar o formulário de recuperação de senha.
-   * @param {React.FormEvent} e - Evento do formulário.
-   * @returns {Promise<void>}
-   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -31,8 +26,7 @@ const RecuperarContaPage = () => {
     setError('')
 
     try {
-      // Aqui você chama sua API de recuperação
-      await new Promise((res) => setTimeout(res, 1500)) // simulação
+      await new Promise((res) => setTimeout(res, 1500)) // Simulando uma requisição assíncrona
 
       setSuccess('Se encontrarmos esse e-mail, enviaremos as instruções para redefinir a senha.')
     } catch (err) {

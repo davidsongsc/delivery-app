@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
-import { Form, Input, Checkbox, Button, message } from 'antd'
+import { Form, Input, Checkbox, Button, message, notification } from 'antd'
 import type { CheckboxChangeEvent } from 'antd/es/checkbox'
 import apiClient from '@/services/apiClient'
 import axios from 'axios'
@@ -25,8 +25,8 @@ interface CorporationForm {
 }
 
 const CorporationRegister: React.FC = () => {
-     const router = useRouter();
-    
+    const router = useRouter();
+
     const { registerCorporation, loading } = useCorporationStore();
 
     const onFinish = async (values: CorporationForm) => {
@@ -35,7 +35,7 @@ const CorporationRegister: React.FC = () => {
             return
         }
 
-        
+
 
         try {
             const response = await apiClient.post('/api/corporation-user/', values);
@@ -49,11 +49,14 @@ const CorporationRegister: React.FC = () => {
                 // Outro tipo de erro JS padrão
                 message.error(error.message);
             } else {
-                message.error('Erro desconhecido ao cadastrar empresa');
+                notification.error({
+                    message: 'Erro ao cadastrar empresa',
+                    description: 'Tente novamente mais tarde',
+                })
             }
             console.error(error);
         } finally {
-            
+
         }
 
     }

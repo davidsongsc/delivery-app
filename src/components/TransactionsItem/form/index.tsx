@@ -3,9 +3,14 @@
 import React, { useState } from 'react';
 import { createTransaction } from '@/services/financialService';
 import { formatCurrencyToNumber, formatDisplayCurrency } from '@/utils/formatForm';
-
-export default function AddTransactionForm() {
+import { notification } from 'antd';
+import { useTransactions } from '@/hooks/useTransactions';
+interface Props {
+  refresh: () => void;
+}
+const AddTransactionForm: React.FC<Props> = ({ refresh }) => {
     const [open, setOpen] = useState(false);
+
     const [formData, setFormData] = useState({
         amount: '',
         description: '',
@@ -35,22 +40,31 @@ export default function AddTransactionForm() {
         const numericAmount = formatCurrencyToNumber(formData.amount);
 
         if (!numericAmount || isNaN(numericAmount)) {
-            alert('Por favor, insira um valor válido.');
+            notification.error({
+                message: 'Erro ao criar transação',
+                description: 'Por favor, insira um valor numérico para a transação.'
+            })
             return;
         }
 
         try {
             await createTransaction({
                 ...formData,
-                amount: numericAmount.toString(), 
+                amount: numericAmount.toString(),
             });
 
-            alert('Transação criada com sucesso!');
+            notification.success({
+                message: 'Transação criada com sucesso!',
+            });
+            refresh();
             setOpen(false);
         } catch (err: any) {
             const errorMsg = err.response?.data ? JSON.stringify(err.response.data) : 'Erro desconhecido';
             console.error('Erro ao criar transação:', errorMsg);
-            alert(`Falha ao criar transação:\n${errorMsg}`);
+            notification.error({
+                message: 'Erro ao criar transação',
+                description: errorMsg
+            })
         }
     };
 
@@ -124,3 +138,5 @@ export default function AddTransactionForm() {
         </div>
     );
 }
+
+export default React.memo(AddTransactionForm);

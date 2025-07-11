@@ -1,3 +1,4 @@
+import External from '@/components/header/external';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -9,6 +10,7 @@ export default function DashboardLayout({ children: children }: { children: Reac
     redirect('/login');
   }
 
-
-  return <>{children}</>;
+  return <>
+  <External />
+  {children}</>;
 }

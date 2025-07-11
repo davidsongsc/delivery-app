@@ -1,10 +1,6 @@
 import React from 'react';
 import { NextPage } from 'next';
 import { Layout, Menu, Card, Button, Tooltip, Spin } from 'antd';
-import { DollarOutlined, CheckOutlined, CloseOutlined, WhatsAppOutlined } from '@ant-design/icons';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { usePlanStore } from '@/store/planosStore';
 import './styles.css';
 import HeroSection from '@/components/MiniComponents/Section/HeroSection';
 import UseCasesSection from '@/components/MiniComponents/Section/UseCase';
@@ -12,7 +8,7 @@ import TestimonialsSection from '@/components/MiniComponents/Section/Testimonial
 import ComparisonSection from '@/components/MiniComponents/Section/Comparation';
 import FAQSection from '@/components/MiniComponents/Section/Faq';
 import FinalCTASection from '@/components/MiniComponents/Section/FinalAction';
-import FooterSection from '@/components/MiniComponents/Footer';
+
 const { Header, Content, Footer } = Layout;
 
 const featureList = [
@@ -80,16 +76,8 @@ const plans = [
   },
 ];
 
-const clients = [
-  { nome: 'Hamburgueria Cracker', logo: 'hcracker' },
-  { nome: 'Lanchonete Barroso', logo: 'barroso' },
-  { nome: 'Cozinha da Vó Nadir', logo: 'vonadir' },
-  { nome: 'Sorvetes Sonya', logo: 'sorvetesonya' },
-
-];
 
 const Home: NextPage = () => {
-  const { planos, featuresGlobais, loading, fetchPlanos } = usePlanStore();
 
   return (
     <>

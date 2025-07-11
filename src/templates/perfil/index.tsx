@@ -3,9 +3,6 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import WalletSummaryCard from '@/components/WalletSummaryCard';
-import TransactionsList from '@/components/TransactionsItem';
-import AddTransactionForm from '@/components/TransactionsItem/form';
-
 import { Card, Spin, Typography, Avatar, Tag, Divider, Space, Button } from 'antd';
 import {
   UserOutlined,
@@ -19,6 +16,7 @@ import {
   SafetyOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import TransactionsPage from '@/components/TransactionsItem/TranactionPage';
 
 const { Title, Text } = Typography;
 
@@ -48,7 +46,7 @@ const PerfilPage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
-      <Card className="w-full max-w-2xl shadow-2xl rounded-2xl p-6">
+      <Card className="w-full shadow-2xl rounded-2xl p-6">
         <div className="flex flex-col items-center gap-4">
           <Avatar size={80} icon={<UserOutlined />} />
           <Title level={3}>
@@ -117,45 +115,95 @@ const PerfilPage = () => {
               <Divider />
               <div className="w-full">
                 <Title level={4}>Área Administrativa</Title>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-3 mt-2">
+
                   <Button
                     type="primary"
                     icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/admin/usuarios')}
+                    onClick={() => router.push('/dashboard/financeira/')}
                   >
-                    Gerenciar Usuários
-                  </Button>
+                    Simular Financiamento                  </Button>
+                  <Button
+                    type="dashed"
+                    icon={<FileDoneOutlined />}
+                    onClick={() => router.push('/admin/relatorios')}
+                  >
+                    Relatórios Financiamento                 </Button> 
                   <Button
                     type="primary"
                     icon={<FileSearchOutlined />}
                     onClick={() => router.push('/admin/register/')}
                   >
-                    Cadastrar Empresa
+                    Cadastrar Cliente (Empresa)
                   </Button>
                   <Button
                     type="dashed"
                     icon={<FileDoneOutlined />}
                     onClick={() => router.push('/admin/relatorios')}
                   >
-                    Relatórios
+                    Relatórios                  </Button>
+                  <Button
+                    type="primary"
+                    icon={<FileSearchOutlined />}
+                    onClick={() => router.push('/admin/register/')}
+                  >
+                    Cadastrar Afiliados (Empresa)
                   </Button>
+                  <Button
+                    type="dashed"
+                    icon={<FileDoneOutlined />}
+                    onClick={() => router.push('/admin/relatorios')}
+                  >
+                    Produtos
+                  </Button>
+
+                  <Button
+                    type="primary"
+                    icon={<FileSearchOutlined />}
+                    onClick={() => router.push('/admin/register/')}
+                  >
+                    Planos
+                  </Button>
+                  <Button
+                    type="dashed"
+                    icon={<FileDoneOutlined />}
+                    onClick={() => router.push('/admin/relatorios')}
+                  >
+                    Administrativo
+                  </Button>
+
+
+                  <Button
+                    type="primary"
+                    icon={<FileSearchOutlined />}
+                    onClick={() => router.push('/admin/register/')}
+                  >
+                    Feedback
+                  </Button>
+                  <Button
+                    type="dashed"
+                    icon={<FileDoneOutlined />}
+                    onClick={() => router.push('/admin/relatorios')}
+                  >
+                    Serviços
+                  </Button>
+
                 </div>
               </div>
               <Divider />
-              <div className="p-6 space-y-6">
-                <h1 className="text-2xl font-bold">Minha Carteira</h1>
-                <WalletSummaryCard />
-                <h2 className="text-xl font-semibold mt-8">Últimos Lançamentos</h2>
-                <TransactionsList />
+
+              <div className='grid grid-cols-1 sm:grid-cols-2 '>
+                <div className="p-6 space-y-6">
+                  <h1 className="text-2xl font-bold">Minha Carteira</h1>
+                  <WalletSummaryCard />
+                </div>
+
+
+                <div className="p-6 space-y-6">
+                  <TransactionsPage />
+                </div>
               </div>
               <Divider />
-              <div className="p-6 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-bold">Lançamentos</h1>
-                  <AddTransactionForm />
-                </div>
-                <TransactionsList />
-              </div>
             </>
           )}
         </div>
