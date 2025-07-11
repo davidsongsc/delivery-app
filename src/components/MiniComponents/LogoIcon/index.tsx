@@ -4,15 +4,17 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 
 interface LogoIconProps {
-    texto?: string
-    tamanho?: number
-    animacao?: boolean
+    texto?: string;
+    tamanho?: number;
+    animacao?: boolean;
+    tcor?: string;
 }
 
 const LogoIcon: NextPage<LogoIconProps> = ({
     texto = 'Lojavel',
     tamanho = 40,
-    animacao = false
+    animacao = false,
+    tcor = 'text-d_primary',
 }) => {
     return (
         <div className="flex items-center gap-2 shrink-0">
@@ -22,7 +24,7 @@ const LogoIcon: NextPage<LogoIconProps> = ({
                 height={tamanho}
                 alt="Logo"
                 className={animacao ? 'animate-pulse' : ''} />
-            <span className={`text-xl font-bold text-d_primary ${animacao ? 'animate-pulse' : ''}`}>{texto}</span>
+            <span className={`text-xl font-bold ${tcor} ${animacao ? 'animate-pulse' : ''}`}>{texto}</span>
         </div>
     );
 };

@@ -56,7 +56,9 @@ export default function HeaderFinanceira() {
                     <Box display="flex" alignItems="center">
                         <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                             <Typography variant="h6" fontWeight="bold">
-                                <LogoIcon />
+                                <LogoIcon
+                                    texto=' '
+                                    tcor='text-white ' />
                             </Typography>
                         </Link>
                     </Box>
@@ -75,6 +77,7 @@ export default function HeaderFinanceira() {
                                     {label}
                                 </Button>
                             ))}
+
                             {user ? <div className='flex items-center justify-center px-2'>Usuario:  <span className='font-bold'> {user.first_name}</span> </div> : <Button variant="outlined" color="inherit" href="/login">
                                 Entrar
                             </Button>}

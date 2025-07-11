@@ -15,6 +15,9 @@ import {
 } from '@mui/material'
 import InputMask from 'react-input-mask'
 import ParcelasCards from '@/components/MiniComponents/Parcelas'
+import NumericInput from '@/components/NumericInput'
+import { notification } from 'antd'
+
 
 const formatarReal = (valor: number) =>
     new Intl.NumberFormat('pt-BR', {
@@ -25,9 +28,8 @@ const formatarReal = (valor: number) =>
 export default function SimuladorFinanceira() {
     const [cpf, setCpf] = useState('')
     const [dataNasc, setDataNasc] = useState('')
-    const [nomeCliente, setNomeCliente] = useState('')
     const [etapaLiberada, setEtapaLiberada] = useState(false)
-    const [classeSocial, setClasseSocial] = useState('C')
+    const [classeSocial, setClasseSocial] = useState('')
     const [etapaAtual, setEtapaAtual] = useState(0);
 
     const [valor, setValor] = useState('')
@@ -47,14 +49,26 @@ export default function SimuladorFinanceira() {
         D: 0.034,
         E: 0.042
     }
+    const calcularIdade = (data: string): number => {
+        const hoje = new Date()
+        const partes = data.split('-')
+        const nascimento = new Date(+partes[0], +partes[1] - 1, +partes[2])
 
+        let idade = hoje.getFullYear() - nascimento.getFullYear()
+        const m = hoje.getMonth() - nascimento.getMonth()
+        if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+            idade--
+        }
+        return idade
+    }
 
     useEffect(() => {
         const cpfValido = cpf.replace(/\D/g, '').length === 11
         const dataOk = dataNasc.length === 10
-        const nomeOk = nomeCliente.trim().length > 2
-        setEtapaLiberada(cpfValido && dataOk && nomeOk)
-    }, [cpf, dataNasc, nomeCliente])
+        const maiorIdade = calcularIdade(dataNasc) >= 18
+
+        setEtapaLiberada(cpfValido && dataOk && maiorIdade)
+    }, [cpf, dataNasc])
 
     const simular = () => {
         const vTotal = parseFloat(valor)
@@ -65,7 +79,17 @@ export default function SimuladorFinanceira() {
             return
         }
 
-        const taxaJuros = mapaDeJuros[classeSocial] || 0.02
+        const entradaMinima = vTotal * 0.50
+        if (vEntrada < entradaMinima) {
+            notification.warning({
+                message: 'Entrada insuficiente',
+                description: `A entrada deve ser no mínimo ${formatarReal(entradaMinima)}`
+            })
+
+        }
+        const taxaBase = mapaDeJuros[classeSocial] || 0.02
+        const taxaExtra = ((nParcelas / 12) - 1) * 0.008
+        const taxaJuros = taxaBase + (taxaExtra > 0 ? taxaExtra : 0)
         const financiado = vTotal - vEntrada
 
         const parcela =
@@ -106,15 +130,7 @@ export default function SimuladorFinanceira() {
                         </Typography>
 
                         <Grid container spacing={2} mb={4}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    label="Nome completo"
-                                    fullWidth
-                                    value={nomeCliente}
-                                    onChange={(e) => setNomeCliente(e.target.value)}
-                                    required
-                                />
-                            </Grid>
+
                             <Grid item xs={12} md={6}>
                                 <InputMask
                                     mask="999.999.999-99"
@@ -142,6 +158,7 @@ export default function SimuladorFinanceira() {
                                     required
                                 />
                             </Grid>
+
                             {classeSocial === '' && (
                                 <Grid item xs={12} md={6}>
                                     <TextField
@@ -153,7 +170,7 @@ export default function SimuladorFinanceira() {
                                         SelectProps={{ native: true }}
                                         required
                                     >
-                                        <option value="">Selecione</option>
+                                        <option value=""></option>
                                         <option value="A">Classe A</option>
                                         <option value="B">Classe B</option>
                                         <option value="C">Classe C</option>
@@ -162,39 +179,80 @@ export default function SimuladorFinanceira() {
                                     </TextField>
                                 </Grid>
                             )}
+                            {dataNasc && calcularIdade(dataNasc) < 18 && (
+                                <Alert severity="error" sx={{ mt: 2 }}>
+                                    Simulações só estão disponíveis para maiores de 18 anos.
+                                </Alert>
+                            )}
                         </Grid>
 
                         <Typography variant="h6" gutterBottom>
                             2. Condições do financiamento
                         </Typography>
 
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label="Valor do veículo"
-                                    type="number"
-                                    fullWidth
-                                    value={valor}
-                                    onChange={(e) => setValor(e.target.value)}
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    label="Entrada"
-                                    type="number"
-                                    fullWidth
-                                    value={entrada}
-                                    onChange={(e) => setEntrada(e.target.value)}
-                                    required
-                                />
+                        <Grid container spacing={2} className='p-4'>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
+                                    <NumericInput
+                                        label="Valor do veículo"
+                                        name="valor"
+                                        fullWidth
+                                        value={valor}
+                                        onChange={(e) => setValor(e.target.value)}
+                                        required
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <NumericInput
+                                        label="Entrada"
+                                        name="entrada"
+                                        fullWidth
+                                        value={entrada}
+                                        onChange={(e) => setEntrada(e.target.value)}
+                                        required
+                                    />
+                                </Grid>
                             </Grid>
 
 
                         </Grid>
+                        {resultado ? (
+                            <>
+                                <Typography variant="h6" gutterBottom>
+                                    3. Recomendações de Financiamento
+                                </Typography>
 
+                                <Alert severity="warning" sx={{ mb: 2 }}>
+                                    ⚠️ Esta simulação pode representar um <strong>alto risco de crédito</strong> dependendo do histórico financeiro.
+                                </Alert>
+
+                                <Typography variant="body2" gutterBottom>
+                                    Recomendamos que você:
+                                </Typography>
+                                <ul style={{ paddingLeft: '1rem', marginBottom: '1rem' }}>
+                                    <li>Adicione um <strong>co-participante (CPF com bom score)</strong> ao financiamento para reforçar a análise de crédito.</li>
+                                    <li>Evite comprometer mais de <strong>30% da sua renda</strong> com parcelas mensais.</li>
+                                    <li>Aumente o valor da <strong>entrada</strong> para reduzir o valor financiado e os juros totais.</li>
+                                    <li>Tenha uma <strong>comprovação de renda estável</strong> (holerite, declaração MEI, extrato bancário, etc).</li>
+                                    <li>Evite atrasos ou dívidas ativas nos meses anteriores à solicitação do financiamento.</li>
+                                </ul>
+
+                                <Typography variant="body2" gutterBottom>
+                                    Após <strong>6 meses de pagamentos em dia</strong>, será possível solicitar uma <strong>transferência de titularidade</strong> para outra pessoa. O novo titular deve atender aos seguintes requisitos:
+                                </Typography>
+                                <ul style={{ paddingLeft: '1rem', marginBottom: '1rem' }}>
+                                    <li>Possuir <strong>CNH ativa</strong> (em caso de financiamento de veículos).</li>
+                                    <li>Ter <strong>renda comprovada compatível</strong> com o valor da parcela.</li>
+                                    <li>Estar com <strong>nome limpo</strong> e <strong>bom score de crédito</strong> no mercado.</li>
+                                    <li>Não possuir restrições recentes nos órgãos de proteção ao crédito (SPC/Serasa).</li>
+                                </ul>
+                                <Alert severity="info">
+                                    💡 Caso tenha dúvidas, entre em contato com um de nossos especialistas para orientação personalizada.
+                                </Alert>
+                            </>
+                        ) : null}
                         <Typography variant="h6" gutterBottom>
-                            3. Forma de parcelamento
+                            4. Forma de parcelamento
                         </Typography>
                         <Grid container spacing={2} className='p-4'>
                             <ParcelasCards
@@ -210,14 +268,18 @@ export default function SimuladorFinanceira() {
                             onClick={simular}
                             disabled={!etapaLiberada}
                         >
-                            Simular
+                            Simular e obter sugestão
                         </Button>
 
                         {!etapaLiberada && (
                             <Alert severity="warning" sx={{ mt: 3 }}>
-                                Preencha nome, CPF e data de nascimento para simular.
+                                Preencha CPF e data de nascimento para simular.
                             </Alert>
                         )}
+
+                        <Divider sx={{ my: 3 }} />
+
+
                     </Paper>
                 </Grid>
 
@@ -238,16 +300,18 @@ export default function SimuladorFinanceira() {
                         {resultado ? (
                             <>
                                 <Typography variant="subtitle1">
-                                    <strong>Cliente:</strong> {nomeCliente}
-                                </Typography>
-                                <Typography variant="subtitle1">
                                     <strong>CPF:</strong> {cpf}
                                 </Typography>
                                 <Divider sx={{ my: 2 }} />
-                                {valor && (
+                                {valor && entrada && Number(entrada) < Number(valor) * 0.50 && (
                                     <Grid item xs={12}>
-                                        <Alert severity="warning">
-                                            💡 Entrada sugerida: <strong>{formatarReal(Number(valor) * 0.3)}</strong>
+                                        <Alert severity="error" sx={{ mt: 2 }}>
+                                            ⚠️ A entrada mínima exigida é de <strong>{formatarReal(Number(valor) * 0.50)}</strong>.
+                                            <br />
+                                            <small>
+                                                Por implicações no score e risco de crédito, este financiamento só será aprovado com valor de entrada suficiente
+                                                ou com composição de CPF (consórcio familiar). Realize uma nova simulação se necessário.
+                                            </small>
                                         </Alert>
                                     </Grid>
                                 )}
@@ -265,17 +329,44 @@ export default function SimuladorFinanceira() {
                                     <strong>{formatarReal(resultado.total)}</strong>
                                 </Typography>
                                 <Typography variant="body2" sx={{ mt: 2 }}>
-                                    Taxa aplicada: {mapaDeJuros[classeSocial] * 100}% ao mês
+                                    Taxa aplicada: {(mapaDeJuros[classeSocial] * 100).toFixed(2)}% ao mês
                                 </Typography>
+
 
                                 <Divider sx={{ my: 3 }} />
 
-                                <Typography variant="caption" color="textSecondary">
-                                    FinanPro Simulações LTDA<br />
-                                    CNPJ 12.345.678/0001-99<br />
-                                    Rua Financeira, 123 – São Paulo – SP<br />
-                                    suporte@finanpro.com.br
+                                <Typography variant="h6" gutterBottom>
+                                    Sugestões de Bancos
                                 </Typography>
+                                {['BV Financeira', 'Santander', 'Itaú'].map((banco) => {
+                                    const acrescimos: Record<string, number> = {
+                                        'BV Financeira': 0.004,   // +0.4%
+                                        'Santander': 0.002,       // +0.2%
+                                        'Itaú': 0.006             // +0.6%
+                                    }
+
+                                    const base = mapaDeJuros[classeSocial] || 0.02
+                                    const n = parseInt(parcelas)
+                                    const p = valorFinanciado
+                                    const taxaExtra = ((n / 12) - 1) * 0.008
+                                    const taxaFinal = base + (taxaExtra > 0 ? taxaExtra : 0) + acrescimos[banco]
+
+
+
+                                    const parcelaBanco = (p * taxaFinal) / (1 - Math.pow(1 + taxaFinal, -n))
+                                    const totalBanco = parcelaBanco * n
+
+                                    return (
+                                        <Box key={banco} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+                                            <Typography variant="subtitle1"><strong>{banco}</strong></Typography>
+                                            <Typography variant="body2">Juros: {(taxaFinal * 100).toFixed(2)}% a.m.</Typography>
+                                            <Typography variant="body2">
+                                                {n}x de <strong>{formatarReal(parcelaBanco)}</strong> — Total:{' '}
+                                                <strong>{formatarReal(totalBanco)}</strong>
+                                            </Typography>
+                                        </Box>
+                                    )
+                                })}
                             </>
                         ) : (
                             <Typography variant="body2" color="text.secondary">

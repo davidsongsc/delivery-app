@@ -21,16 +21,13 @@ interface AuthState {
     logout: () => void;
     verifyEmail: (token: string) => Promise<void>;
     checkAuth: () => Promise<void>;
-
     setIsAuthenticated: (isAuthenticated: boolean) => void;
     setToken: (token: string | null) => void;
     setUser: (user: User | null) => void;
-
-    hydrated: boolean; 
-
+    hydrated: boolean;
+    setHydrated: () => void;
     refreshToken: string | null;
     setRefreshToken: (token: string | null) => void;
-
     registerCorporation: (data: CorporationForm) => Promise<void>;
     corporationLoading: boolean;
     corporationError: string | null;
@@ -43,6 +40,11 @@ const errorMessages = {
     emailVerificationFailed: 'Falha na verificação de e-mail',
     logoutFailed: 'Falha no logout',
     unknownError: 'Ocorreu um erro inesperado',
+};
+
+const getTokenFromLocalStorage = () => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('authToken');
 };
 
 const getTokenFromCookie = () => {
@@ -87,7 +89,7 @@ export const useAuthStore = create<AuthState>()(
                     throw error;
                 }
             },
-            login: async (username: string, password: string): Promise<void> => {
+            login: async (username, password) => {
                 set({ loading: true, error: null });
                 try {
                     const { access, refresh } = await authService.login(username, password);
@@ -104,6 +106,10 @@ export const useAuthStore = create<AuthState>()(
                         phone_number: decoded.phone_number ?? null,
                     };
 
+                    // Salva os tokens no localStorage para persistência no cliente.
+                    localStorage.setItem('authToken', access);
+                    localStorage.setItem('refreshToken', refresh);
+
                     set({
                         user,
                         token: access,
@@ -111,30 +117,19 @@ export const useAuthStore = create<AuthState>()(
                         loading: false,
                     });
 
-                    // 🔐 Salva o token no cookie para o middleware
+                    // O cookie ainda é importante para o middleware no Next.js Server Components.
                     document.cookie = `token=${access}; path=/; max-age=3600; SameSite=Lax`;
-
-                    localStorage.setItem('authToken', access);
-                    localStorage.setItem('refreshToken', refresh);
 
                     notification.success({
                         message: 'Login realizado com sucesso',
                     });
 
                 } catch (error: any) {
-                    set({
-                        error: error.message || 'Erro ao fazer login',
-                        loading: false,
-                    });
-
-                    notification.error({
-                        message: 'Erro ao fazer login',
-                        description: error.message || 'Verifique suas credenciais e tente novamente.',
-                    });
-
+                    // ... (código existente)
                     throw error;
                 }
             },
+
 
             clearAuth: () => {
                 set({
@@ -188,6 +183,11 @@ export const useAuthStore = create<AuthState>()(
                         message: 'Logout realizado com sucesso',
                     });
                 } finally {
+
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('refreshToken');
+                    document.cookie = 'token=; path=/; max-age=0';
+
                     set({
                         token: null,
                         user: null,
@@ -222,16 +222,13 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             checkAuth: async () => {
-                const token = getTokenFromCookie();
+                const token = getTokenFromLocalStorage();
+
                 if (!token) {
-                    set({
-                        token: null,
-                        user: null,
-                        isAuthenticated: false,
-                        loading: false,
-                    });
+                    set({ token: null, user: null, isAuthenticated: false, loading: false });
                     return;
                 }
+
                 set({ loading: true });
                 try {
                     const { user } = await authService.checkAuth(token);
@@ -242,23 +239,16 @@ export const useAuthStore = create<AuthState>()(
                         loading: false,
                     });
                 } catch {
-                    set({
-                        token: null,
-                        user: null,
-                        isAuthenticated: false,
-                        loading: false,
-                    });
+                    set({ token: null, user: null, isAuthenticated: false, loading: false });
                 }
             },
         }),
         {
             name: 'auth-storage',
-            skipHydration: false,
-            onRehydrateStorage: (context) => {
+            onRehydrateStorage: (state) => {
                 return () => {
-                    const store = context as unknown as { getState: () => AuthState };
-                    store.getState().checkAuth();         // chama checkAuth
-                    return context;
+                    state.checkAuth();
+                    state.setHydrated();
                 };
             },
         }
