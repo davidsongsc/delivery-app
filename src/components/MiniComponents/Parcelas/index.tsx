@@ -34,7 +34,7 @@ const ParcelasCards = ({
                 const juros = total - valorFinanciado
 
                 return (
-                    <Grid item xs={12} sm={6} md={3} key={qtd}>
+                    <Grid item sm={2} md={6}  key={qtd}>
                         <Card
                             onClick={() => setParcelaSelecionada(qtd.toString())}
                             sx={{

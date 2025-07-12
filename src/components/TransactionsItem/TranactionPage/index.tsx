@@ -8,7 +8,7 @@ export default function TransactionsPage() {
     const { transactions, loading, error, refresh } = useTransactions();
 
     return (
-        <div>
+        <div className='flex gap-4 flex-col it justify-center'>
             <AddTransactionForm refresh={refresh} />
             <TransactionsList
                 transactions={transactions}

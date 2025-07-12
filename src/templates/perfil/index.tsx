@@ -112,6 +112,17 @@ const PerfilPage = () => {
 
           {(user.is_superuser || user.is_staff) && (
             <>
+
+              <Divider />
+
+              <div className='grid grid-cols-1 sm:grid-cols-2 '>
+                <div className="p-6 space-y-6">
+                  <h1 className="text-2xl font-bold">Minha Carteira</h1>
+                  <WalletSummaryCard />
+                </div>
+
+
+              </div>
               <Divider />
               <div className="w-full">
                 <Title level={4}>Área Administrativa</Title>
@@ -120,7 +131,7 @@ const PerfilPage = () => {
                   <Button
                     type="primary"
                     icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/simulador/')}
+                    onClick={() => router.push('/consulta-financeira/')}
                   >
                     Simular Financiamento                  </Button>
                   <Button
@@ -128,7 +139,7 @@ const PerfilPage = () => {
                     icon={<FileDoneOutlined />}
                     onClick={() => router.push('/admin/relatorios')}
                   >
-                    Relatórios Financiamento                 </Button> 
+                    Relatórios Financiamento                 </Button>
                   <Button
                     type="primary"
                     icon={<FileSearchOutlined />}
@@ -188,19 +199,6 @@ const PerfilPage = () => {
                     Serviços
                   </Button>
 
-                </div>
-              </div>
-              <Divider />
-
-              <div className='grid grid-cols-1 sm:grid-cols-2 '>
-                <div className="p-6 space-y-6">
-                  <h1 className="text-2xl font-bold">Minha Carteira</h1>
-                  <WalletSummaryCard />
-                </div>
-
-
-                <div className="p-6 space-y-6">
-                  <TransactionsPage />
                 </div>
               </div>
               <Divider />

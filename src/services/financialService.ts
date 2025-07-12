@@ -19,9 +19,23 @@ export const createTransaction = async (data: Partial<Transaction>) => {
 };
 
 // Estatísticas Financeiras (exemplo simples)
-export const getFinancialStats = async () => {
-    const res = await apiClient.get('/transactions/stats/');
-    return res.data as FinancialStats;
+export const getFinancialStats = async (): Promise<FinancialStats> => {
+    const res = await apiClient.get<Transaction[]>('/api/transactions/');
+    const transactions = res.data;
+
+    const total_income = transactions
+        .filter((t) => t.type === 'INCOME')
+        .reduce((acc, t) => acc + Number(t.amount), 0);
+
+    const total_expense = transactions
+        .filter((t) => t.type === 'EXPENSE')
+        .reduce((acc, t) => acc + Number(t.amount), 0);
+
+    return {
+        total_income,
+        total_expense,
+        balance: total_income - total_expense,
+    };
 };
 
 export const getGoals = async () => {

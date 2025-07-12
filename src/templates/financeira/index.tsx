@@ -16,25 +16,6 @@ import ParcelasCards from '@/components/MiniComponents/Parcelas'
 import NumericInput from '@/components/NumericInput'
 import { notification } from 'antd'
 
-function validarCPF(cpf: string): boolean {
-    cpf = cpf.replace(/[^\d]+/g, '');
-
-    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-
-    let soma = 0;
-    for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
-    let resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf.charAt(9))) return false;
-
-    soma = 0;
-    for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    return resto === parseInt(cpf.charAt(10));
-}
-
-
 const formatarReal = (valor: number) =>
     new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -43,11 +24,15 @@ const formatarReal = (valor: number) =>
 interface SimuladorFinanceiraProps {
     setEtapaAtual: React.Dispatch<React.SetStateAction<number>>;
 }
-export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinanceiraProps) {    const [cpf, setCpf] = useState('')
+export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinanceiraProps) {
+    const [cpf, setCpf] = useState('')
     const [cpfErro, setCpfErro] = useState(false);
     const [dataNasc, setDataNasc] = useState('')
     const [etapaLiberada, setEtapaLiberada] = useState(false)
     const [classeSocial, setClasseSocial] = useState('')
+    const pioresTaxasBancos = ['C6 Bank', 'Banco Inter', 'Bradesco'];
+    const melhoresTaxasBancos = ['BV Financeira', 'Santander'];
+
 
     const [valor, setValor] = useState('')
     const [entrada, setEntrada] = useState('')
@@ -122,6 +107,10 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
         const nParcelas = parseInt(parcelas)
 
         if (isNaN(vTotal) || isNaN(vEntrada) || isNaN(nParcelas) || nParcelas <= 0) {
+            notification.warning({
+                message: 'Dados inválidos',
+                description: 'Preencha todos os campos corretamente'
+            })
             return
         }
 
@@ -131,7 +120,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                 message: 'Entrada insuficiente',
                 description: `A entrada deve ser no mínimo ${formatarReal(entradaMinima)}`
             })
-            return
+
         }
 
         const taxaBase = mapaDeJuros[classeSocial] || 0.02
@@ -159,23 +148,25 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
 
             <Grid container spacing={4}>
                 {/* Coluna 1: Simulador */}
-                <Grid item xs={12} md={7}>
+                <Grid item xs={12} md={4}>
                     <Paper sx={{ p: 4, borderRadius: 3 }}>
                         <Typography variant="h5" mb={3}>
-                            Simulador de Financiamento
+                            Seu Plano de Financiamento
                         </Typography>
 
                         <Typography variant="h6" gutterBottom>
                             1. Dados do cliente
                         </Typography>
 
-                        <Grid container spacing={2} mb={4}>
+                        <Grid container spacing={2} mb={4} >
 
                             <Grid item xs={12} md={6}>
                                 <InputMask
+
                                     mask="999.999.999-99"
                                     value={cpf}
                                     onChange={handleCpfChange}
+                                    
                                 >
                                     {(inputProps) => (
                                         <TextField
@@ -185,6 +176,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                             required
                                             error={cpfErro}
                                             helperText={cpfErro ? "CPF inválido" : ""}
+                                            
                                         />
                                     )}
                                 </InputMask>
@@ -314,7 +306,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                     onClick={simular}
                                     disabled={!etapaLiberada}
                                 >
-                                    Simular e obter sugestão
+                                    Continuar
                                 </Button>
 
                             </Grid>
@@ -326,7 +318,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                     fullWidth
                                     sx={{ mt: 3 }}
                                     onClick={simular}
-                                    disabled={false}
+                                    disabled={true}
                                 >
                                     Avaliar crédito
                                 </Button>
@@ -355,7 +347,7 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                         }}
                     >
                         <Typography variant="h6" gutterBottom>
-                            Resultado da Simulação
+                            Resumo da Proposta
                         </Typography>
 
                         {resultado ? (
@@ -436,16 +428,41 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                 </Typography>
 
 
-                                <Divider sx={{ my: 3 }} />
 
+
+
+                            </>
+                        ) : (
+                            <Typography variant="body2" color="text.secondary">
+                                Descubra as condições ideais para o seu financiamento. Basta preencher os dados e clicar em <strong>Simular</strong>.
+                            </Typography>
+                        )}
+                    </Paper>
+                </Grid>
+
+                <Grid item xs={12} md={3}>
+                    <Paper
+                        sx={{
+                            p: 4,
+                            borderRadius: 3,
+                            bgcolor: '#f7fafc',
+                            minHeight: '100%'
+                        }}
+                    >
+
+                        {resultado ? (
+                            <>
                                 <Typography variant="h6" gutterBottom>
-                                    Sugestões de Bancos
+                                    Resumo para Apresentação ao Cliente
                                 </Typography>
-                                {['BV Financeira', 'Santander', 'Itaú'].map((banco) => {
+                                {['BV Financeira', 'Santander', 'Itaú', ...pioresTaxasBancos].map((banco) => {
                                     const acrescimos: Record<string, number> = {
                                         'BV Financeira': 0.004,   // +0.4%
-                                        'Santander': 0.002,       // +0.2%
-                                        'Itaú': 0.006             // +0.6%
+                                        'Santander': 0.002,      // +0.2%
+                                        'Itaú': 0.006,           // +0.6%
+                                        'C6 Bank': 0.008,        // +0.8%
+                                        'Banco Inter': 0.009,    // +0.9%
+                                        'Bradesco': 0.012        // +1.2%
                                     }
 
                                     const base = mapaDeJuros[classeSocial] || 0.02
@@ -454,13 +471,25 @@ export default function SimuladorFinanceira({ setEtapaAtual }: SimuladorFinancei
                                     const taxaExtra = ((n / 12) - 1) * 0.008
                                     const taxaFinal = base + (taxaExtra > 0 ? taxaExtra : 0) + acrescimos[banco]
 
-
-
                                     const parcelaBanco = (p * taxaFinal) / (1 - Math.pow(1 + taxaFinal, -n))
                                     const totalBanco = parcelaBanco * n
 
+                                    // Lógica para a cor da borda
+                                    const borderColor = melhoresTaxasBancos.includes(banco)
+                                        ? 'blue'
+                                        : pioresTaxasBancos.includes(banco)
+                                            ? 'red'
+                                            : '#ccc';
+
                                     return (
-                                        <Box key={banco} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+                                        <Box
+                                            key={banco}
+                                            sx={{
+                                                mb: 2,
+                                                p: 2,
+                                                border: `1px solid ${borderColor}`,
+                                                borderRadius: 2
+                                            }}>
                                             <Typography variant="subtitle1"><strong>{banco}</strong></Typography>
                                             <Typography variant="body2">Juros: {(taxaFinal * 100).toFixed(2)}% a.m.</Typography>
                                             <Typography variant="body2">
