@@ -11,7 +11,7 @@ import {
 import TransactionsPage from '../TransactionsItem/TranactionPage';
 
 const WalletSummaryCard = () => {
-    const { stats, loading } = useFinancialStats();
+    const { stats, loading, refetch } = useFinancialStats();
 
     if (loading) {
         return (
@@ -60,7 +60,7 @@ const WalletSummaryCard = () => {
                     </p>
                 </div>
             </div>
-            
+
             <div className="p-6 space-y-6 col-span-1 md:col-span-3 ">
                 <TransactionsPage />
             </div>

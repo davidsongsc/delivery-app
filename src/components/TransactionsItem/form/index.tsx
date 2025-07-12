@@ -6,6 +6,7 @@ import { formatCurrencyToNumber, formatDisplayCurrency } from '@/utils/formatFor
 import { notification } from 'antd';
 import { X, Car, Bike } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFinancialStats } from '@/hooks/useFinancialStats';
 
 interface Props {
     refresh: () => void;
@@ -13,7 +14,6 @@ interface Props {
 
 const AddTransactionForm: React.FC<Props> = ({ refresh }) => {
     const [open, setOpen] = useState(false);
-
     const [formData, setFormData] = useState({
         amount: '',
         description: '',
@@ -21,7 +21,7 @@ const AddTransactionForm: React.FC<Props> = ({ refresh }) => {
         type: 'EXPENSE' as 'INCOME' | 'EXPENSE',
         payment_method: 'CASH' as 'CASH' | 'BANK_TRANSFER' | 'PIX',
     });
-
+    const { refetch } = useFinancialStats();
     const modalRef = useRef(null);
 
     const handleChange = (
@@ -54,6 +54,7 @@ const AddTransactionForm: React.FC<Props> = ({ refresh }) => {
 
             notification.success({ message: 'Transação registrada com sucesso!' });
             refresh();
+            refetch();
             setOpen(false);
         } catch (err: any) {
             const errorMsg = err.response?.data ? JSON.stringify(err.response.data) : 'Erro desconhecido';
