@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useFinancialStats } from '@/hooks/useFinancialStats';
 import { formatCurrency } from '@/utils/formatCurrency';
 import {
@@ -9,9 +9,16 @@ import {
     Wallet,
 } from 'lucide-react';
 import TransactionsPage from '../TransactionsItem/TranactionPage';
+import { useTransactions } from '@/hooks/useTransactions';
 
 const WalletSummaryCard = () => {
     const { stats, loading, refetch } = useFinancialStats();
+    const { transactions, error, refresh } = useTransactions();
+
+    const handleReload = useCallback(() => {
+        refetch();
+        refresh();
+    }, [refetch, refresh]);
 
     if (loading) {
         return (
@@ -62,7 +69,7 @@ const WalletSummaryCard = () => {
             </div>
 
             <div className="p-6 space-y-6 col-span-1 md:col-span-3 ">
-                <TransactionsPage />
+                <TransactionsPage handleReload={handleReload} transactions={transactions} loading={loading} error={error} />
             </div>
         </div>
     );

@@ -4,12 +4,19 @@ import React from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import TransactionsList from '@/components/TransactionsItem';
 import AddTransactionForm from '@/components/TransactionsItem/form';
-export default function TransactionsPage() {
-    const { transactions, loading, error, refresh } = useTransactions();
+import { Transaction } from '@/types/Transaction';
+
+interface Props {
+    handleReload: () => void;
+    transactions: Transaction[];
+    loading: boolean;
+    error: Error | null;
+}
+const TransactionPage: React.FC<Props> = ({ handleReload, transactions, loading, error }) => {
 
     return (
         <div className='flex gap-4 flex-col justify-center'>
-            <AddTransactionForm refresh={refresh} />
+            <AddTransactionForm handleReload={handleReload} />
             <TransactionsList
                 transactions={transactions}
                 loading={loading}
@@ -18,3 +25,5 @@ export default function TransactionsPage() {
         </div>
     );
 }
+
+export default React.memo(TransactionPage);

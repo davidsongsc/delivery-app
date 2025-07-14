@@ -64,19 +64,17 @@ export const authService = {
         }
     },
 
-    checkAuth: async (token: string): Promise<{ user: any }> => {
+    checkAuth: async (): Promise<{ user: any }> => {
         try {
-            // Passando o token no header Authorization para autenticação
             const response = await apiClient.get('/home/', {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Passa o token na autorização
-                }
+                withCredentials: true, // envia cookies automaticamente
             });
             return response.data;
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao verificar autenticação');
         }
     },
+
 
     activateAccount: async (token: string): Promise<{ message: string }> => {
         try {

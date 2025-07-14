@@ -1,8 +1,9 @@
+// app/loja/[page]/page.tsx
 import { notFound } from 'next/navigation';
 import { getLojaByPage } from '@/services/lojas.service';
 import LojaClient from '@/components/loja';
 
-export const revalidate = 0; 
+export const revalidate = 0;
 
 interface LojaPageProps {
   params: {
@@ -15,5 +16,5 @@ export default async function LojaPage({ params }: LojaPageProps) {
 
   if (!loja) return notFound();
 
-  return <LojaClient loja={loja} />;
+  return <LojaClient loja={JSON.parse(JSON.stringify(loja))} />;
 }

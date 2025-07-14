@@ -4,7 +4,6 @@ import { persist } from 'zustand/middleware';
 import { authService } from '@/services/authService';
 import { notification } from 'antd';
 import { User } from '@/types/User';
-import { parseJwt } from '@/utils/parseJwt';
 import { CorporationForm } from './CorporationRegisterForm';
 import { corporationService } from '@/services/corporationService';
 import { isStrongPassword, isValidEmail } from '@/utils/login';
@@ -42,16 +41,7 @@ const errorMessages = {
     unknownError: 'Ocorreu um erro inesperado',
 };
 
-const getTokenFromLocalStorage = () => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('authToken');
-};
 
-const getTokenFromCookie = () => {
-    if (typeof document === 'undefined') return null;
-    const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
-    return match ? match[2] : null;
-};
 export const useAuthStore = create<AuthState>()(
     persist(
         (set, get) => ({
@@ -92,23 +82,7 @@ export const useAuthStore = create<AuthState>()(
             login: async (username, password) => {
                 set({ loading: true, error: null });
                 try {
-                    const { access, refresh } = await authService.login(username, password);
-                    const decoded = parseJwt(access);
-                    const user: User = {
-                        uid: decoded.user_id ?? decoded.uid,
-                        username: decoded.username,
-                        email: decoded.email,
-                        is_superuser: decoded.is_superuser ?? false,
-                        is_staff: decoded.is_staff ?? false,
-                        is_active: decoded.is_active ?? false,
-                        first_name: decoded.first_name ?? null,
-                        last_name: decoded.last_name ?? null,
-                        phone_number: decoded.phone_number ?? null,
-                    };
-
-                    // Salva os tokens no localStorage para persistência no cliente.
-                    localStorage.setItem('authToken', access);
-                    localStorage.setItem('refreshToken', refresh);
+                    const { user, access, refresh } = await authService.login(username, password);
 
                     set({
                         user,
@@ -117,7 +91,7 @@ export const useAuthStore = create<AuthState>()(
                         loading: false,
                     });
 
-                    // O cookie ainda é importante para o middleware no Next.js Server Components.
+                    // ⚠️ Se você estiver usando cookies HttpOnly no backend, esse cookie não precisa ser salvo aqui
                     document.cookie = `token=${access}; path=/; max-age=3600; SameSite=Lax`;
 
                     notification.success({
@@ -125,12 +99,14 @@ export const useAuthStore = create<AuthState>()(
                     });
 
                 } catch (error: any) {
-                    // ... (código existente)
+                    set({ loading: false });
+                    notification.error({
+                        message: 'Erro ao fazer login',
+                        description: error?.response?.data?.detail || error.message,
+                    });
                     throw error;
                 }
             },
-
-
             clearAuth: () => {
                 set({
                     user: null,
@@ -183,9 +159,6 @@ export const useAuthStore = create<AuthState>()(
                         message: 'Logout realizado com sucesso',
                     });
                 } finally {
-
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('refreshToken');
                     document.cookie = 'token=; path=/; max-age=0';
 
                     set({
@@ -222,35 +195,32 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             checkAuth: async () => {
-                const token = getTokenFromLocalStorage();
-
-                if (!token) {
-                    set({ token: null, user: null, isAuthenticated: false, loading: false });
-                    return;
-                }
-
                 set({ loading: true });
+
                 try {
-                    const { user } = await authService.checkAuth(token);
+                    // authService.checkAuth não recebe token, pois o cookie já é enviado automaticamente via withCredentials
+                    const { user } = await authService.checkAuth();
+
                     set({
                         user,
-                        token,
+                        token: null, // você pode remover ou manter o token, mas idealmente você não gerencia token no front
                         isAuthenticated: true,
                         loading: false,
                     });
                 } catch {
-                    set({ token: null, user: null, isAuthenticated: false, loading: false });
+                    set({
+                        token: null,
+                        user: null,
+                        isAuthenticated: false,
+                        loading: false,
+                    });
                 }
             },
+
         }),
         {
-            name: 'auth-storage',
-            onRehydrateStorage: (state) => {
-                return () => {
-                    state.checkAuth();
-                    state.setHydrated();
-                };
-            },
+            name: 'auth-storage', // chave no localStorage
+            // pode adicionar onRehydrateStorage etc.
         }
     )
 );
