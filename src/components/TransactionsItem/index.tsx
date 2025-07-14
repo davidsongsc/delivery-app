@@ -24,12 +24,12 @@ const TransactionsList: React.FC<Props> = ({ transactions, loading, error }) => 
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="bg-white p-6 rounded-lg shadow-md flex items-start">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">Transações Recentes</h2>
             </div>
 
-            <ul className="space-y-3">
+            <ul className="space-y-3 w-full">
                 {transactions
                     .slice()
                     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

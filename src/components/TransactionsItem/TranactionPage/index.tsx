@@ -15,7 +15,7 @@ interface Props {
 const TransactionPage: React.FC<Props> = ({ handleReload, transactions, loading, error }) => {
 
     return (
-        <div className='flex gap-4 flex-col justify-center'>
+        <div className='flex gap-4 flex-col md:flex-row items-start'>
             <AddTransactionForm handleReload={handleReload} />
             <TransactionsList
                 transactions={transactions}

@@ -16,7 +16,6 @@ import {
   SafetyOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
-import TransactionsPage from '@/components/TransactionsItem/TranactionPage';
 
 const { Title, Text } = Typography;
 
@@ -111,98 +110,101 @@ const PerfilPage = () => {
           </div>
 
           {(user.is_superuser || user.is_staff) && (
-            <>
+            <div className='grid grid-cols-1 sm:grid-cols-2 justify-center items-center'>
+              <div>
+                <Divider />
 
-              <Divider />
+                <div className='grid grid-cols-1 sm:grid-cols-2 '>
+                  <div className="p-6 space-y-6">
+                    <h1 className="text-2xl font-bold">Minha Carteira</h1>
+                    <WalletSummaryCard />
+                  </div>
 
-              <div className='grid grid-cols-1 sm:grid-cols-2 '>
-                <div className="p-6 space-y-6">
-                  <h1 className="text-2xl font-bold">Minha Carteira</h1>
-                  <WalletSummaryCard />
-                </div>
-
-
-              </div>
-              <Divider />
-              <div className="w-full">
-                <Title level={4}>Área Administrativa</Title>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  gap-3 mt-2">
-
-                  <Button
-                    type="primary"
-                    icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/consulta-financeira/')}
-                  >
-                    Simular Financiamento                  </Button>
-                  <Button
-                    type="dashed"
-                    icon={<FileDoneOutlined />}
-                    onClick={() => router.push('/admin/relatorios')}
-                  >
-                    Relatórios Financiamento                 </Button>
-                  <Button
-                    type="primary"
-                    icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/admin/register/')}
-                  >
-                    Cadastrar Cliente (Empresa)
-                  </Button>
-                  <Button
-                    type="dashed"
-                    icon={<FileDoneOutlined />}
-                    onClick={() => router.push('/admin/relatorios')}
-                  >
-                    Relatórios                  </Button>
-                  <Button
-                    type="primary"
-                    icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/admin/register/')}
-                  >
-                    Cadastrar Afiliados (Empresa)
-                  </Button>
-                  <Button
-                    type="dashed"
-                    icon={<FileDoneOutlined />}
-                    onClick={() => router.push('/admin/relatorios')}
-                  >
-                    Produtos
-                  </Button>
-
-                  <Button
-                    type="primary"
-                    icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/admin/register/')}
-                  >
-                    Planos
-                  </Button>
-                  <Button
-                    type="dashed"
-                    icon={<FileDoneOutlined />}
-                    onClick={() => router.push('/admin/relatorios')}
-                  >
-                    Administrativo
-                  </Button>
-
-
-                  <Button
-                    type="primary"
-                    icon={<FileSearchOutlined />}
-                    onClick={() => router.push('/admin/register/')}
-                  >
-                    Feedback
-                  </Button>
-                  <Button
-                    type="dashed"
-                    icon={<FileDoneOutlined />}
-                    onClick={() => router.push('/admin/relatorios')}
-                  >
-                    Serviços
-                  </Button>
 
                 </div>
               </div>
+              <div>
+                <Divider />
+                <div className="w-full">
+                  <Title level={4}>Área Administrativa</Title>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 ">
+
+                    <Button
+                      type="primary"
+                      icon={<FileSearchOutlined />}
+                      onClick={() => router.push('/consulta-financeira/')}
+                    >
+                      Simular Financiamento                  </Button>
+                    <Button
+                      type="dashed"
+                      icon={<FileDoneOutlined />}
+                      onClick={() => router.push('/admin/relatorios')}
+                    >
+                      Relatórios Financiamento                 </Button>
+                    <Button
+                      type="primary"
+                      icon={<FileSearchOutlined />}
+                      onClick={() => router.push('/admin/register/')}
+                    >
+                      Cadastrar Cliente (Empresa)
+                    </Button>
+                    <Button
+                      type="dashed"
+                      icon={<FileDoneOutlined />}
+                      onClick={() => router.push('/admin/relatorios')}
+                    >
+                      Relatórios                  </Button>
+                    <Button
+                      type="primary"
+                      icon={<FileSearchOutlined />}
+                      onClick={() => router.push('/admin/register/')}
+                    >
+                      Cadastrar Afiliados (Empresa)
+                    </Button>
+                    <Button
+                      type="dashed"
+                      icon={<FileDoneOutlined />}
+                      onClick={() => router.push('/admin/relatorios')}
+                    >
+                      Produtos
+                    </Button>
+
+                    <Button
+                      type="primary"
+                      icon={<FileSearchOutlined />}
+                      onClick={() => router.push('/admin/register/')}
+                    >
+                      Planos
+                    </Button>
+                    <Button
+                      type="dashed"
+                      icon={<FileDoneOutlined />}
+                      onClick={() => router.push('/admin/relatorios')}
+                    >
+                      Administrativo
+                    </Button>
+
+
+                    <Button
+                      type="primary"
+                      icon={<FileSearchOutlined />}
+                      onClick={() => router.push('/admin/register/')}
+                    >
+                      Feedback
+                    </Button>
+                    <Button
+                      type="dashed"
+                      icon={<FileDoneOutlined />}
+                      onClick={() => router.push('/admin/relatorios')}
+                    >
+                      Serviços
+                    </Button>
+
+                  </div>
+                </div>
+              </div>
               <Divider />
-            </>
+            </div>
           )}
         </div>
       </Card>

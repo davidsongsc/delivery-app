@@ -99,7 +99,10 @@ export const useAuthStore = create<AuthState>()(
                     });
 
                 } catch (error: any) {
-                    set({ loading: false });
+                    set({
+                        isAuthenticated: false,
+                        loading: false,
+                    });
                     notification.error({
                         message: 'Erro ao fazer login',
                         description: error?.response?.data?.detail || error.message,

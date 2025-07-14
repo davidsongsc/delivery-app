@@ -1,3 +1,5 @@
+import { CorporationMember } from "./Member";
+
 interface access {
     level?: string;
     permissions?: string[];
@@ -18,6 +20,6 @@ export interface User {
     cpf?: string | null;
     rg?: string | null;
     other_doc?: string | null;
-
+    corporation_member: CorporationMember;
 
 }

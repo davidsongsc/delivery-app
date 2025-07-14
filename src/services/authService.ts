@@ -1,20 +1,14 @@
-// src/services/authService.ts
 import apiClient from '@/services/apiClient';
 import { useAuthStore } from '@/store/authStore';
-import { AuthResponse } from '@/types/auth';
 import { parseJwt } from '@/utils/parseJwt';
 import type { User } from '@/types/User';
 
 export const authService = {
     login: async (username: string, password: string): Promise<{ user: User; access: string; refresh: string }> => {
         try {
-            // Altere o endpoint para usar o SimpleJWT
-            const response = await apiClient.post<AuthResponse>('/api/token/', {
-                username,
-                password,
-            });
+            const response = await apiClient.post('/api/token/', { username, password });
+            const { access, refresh, corporation_member } = response.data;
 
-            const { access, refresh } = response.data;
             const decoded = parseJwt(access);
 
             const user: User = {
@@ -23,6 +17,7 @@ export const authService = {
                 email: decoded.email,
                 is_superuser: decoded.is_superuser ?? false,
                 is_staff: decoded.is_staff ?? false,
+                corporation_member,  
             };
 
             localStorage.setItem('authToken', access);
