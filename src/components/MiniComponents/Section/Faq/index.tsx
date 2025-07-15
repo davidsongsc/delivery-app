@@ -32,17 +32,19 @@ const faqItems = [
 ];
 
 export default function FAQSection() {
+  const items = faqItems.map((item, index) => ({
+    key: String(index),
+    label: item.question,
+    children: <p className="text-gray-700 leading-relaxed">{item.answer}</p>,
+  }));
+
   return (
     <section className="w-full py-20 bg-gray-50 text-gray-800">
       <div className="container mx-auto px-6 md:px-12 lg:px-24">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Perguntas frequentes</h2>
-        <Collapse accordion bordered={false} className="bg-white rounded-xl shadow-md">
-          {faqItems.map((item, index) => (
-            <Panel header={item.question} key={index}>
-              <p className="text-gray-700 leading-relaxed">{item.answer}</p>
-            </Panel>
-          ))}
-        </Collapse>
+        <Collapse items={items} accordion bordered={false} className="bg-white rounded-xl shadow-md" />
+
+
       </div>
     </section>
   );

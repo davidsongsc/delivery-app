@@ -9,7 +9,7 @@ export function AuthWrapper({ children }: { children: React.ReactNode }) {
     const [hydrated, setHydrated] = useState(false);
 
     useEffect(() => {
-        useAuthStore.persist.rehydrate(); // ✅ Rehydrate é o método certo
+        useAuthStore.persist.rehydrate();
         setHydrated(true);
     }, []);
 

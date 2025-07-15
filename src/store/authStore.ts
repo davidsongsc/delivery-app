@@ -83,12 +83,13 @@ export const useAuthStore = create<AuthState>()(
                 set({ loading: true, error: null });
                 try {
                     const { user, access, refresh } = await authService.login(username, password);
-
+                    console.log(user)
                     set({
                         user,
                         token: access,
                         isAuthenticated: true,
                         loading: false,
+                        refreshToken: refresh
                     });
 
                     // ⚠️ Se você estiver usando cookies HttpOnly no backend, esse cookie não precisa ser salvo aqui

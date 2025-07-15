@@ -22,7 +22,7 @@ const { Title, Text } = Typography;
 const PerfilPage = () => {
   const { user, isAuthenticated, loading, checkAuth } = useAuthStore();
   const router = useRouter();
-
+  console.log(user);
   useEffect(() => {
     if (!isAuthenticated) {
       checkAuth();

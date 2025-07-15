@@ -45,7 +45,7 @@ export const authService = {
 
     logout: async (): Promise<void> => {
         try {
-            await apiClient.post('/logout/');
+            await apiClient.post('/usuarios/logout/');
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao fazer logout');
         }

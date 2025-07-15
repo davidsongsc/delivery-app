@@ -15,7 +15,7 @@ function decodeJwt(token: string): any {
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
-  const protectedPaths = ['/admin', '/dashboard'];
+  const protectedPaths = ['/admin'];
   const { pathname } = request.nextUrl;
   const isProtected = protectedPaths.some(path => pathname.startsWith(path));
 
@@ -45,5 +45,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/dashboard/:path*'],
+  matcher: ['/admin/:path*'],
 };

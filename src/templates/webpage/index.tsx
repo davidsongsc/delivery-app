@@ -82,16 +82,11 @@ const Home: NextPage = () => {
   return (
     <>
       <Content >
-
         <HeroSection />
         <UseCasesSection />
-
-
-
         <ComparisonSection />
         <FAQSection />
         <TestimonialsSection />
-
         <FinalCTASection />
       </Content>
     </>
