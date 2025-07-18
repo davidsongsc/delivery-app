@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import styles from './styles.module.css'
 import ClientOnly from '@/components/ClientOnly';
 
 import useParallaxEffect from '@/hooks/useParallaxEffect';
@@ -28,22 +27,22 @@ const LoginPage = () => {
     const starsLayer1Ref = useParallaxEffect(30);
     const starsLayer2Ref = useParallaxEffect(50);
     const starsLayer3Ref = useParallaxEffect(80);
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             await login(username, password);
-            router.push('/dashboard');
+
+            const isAuthenticated = useAuthStore.getState().isAuthenticated;
+
+            if (isAuthenticated) {
+                router.push('/dashboard');
+            }
         } catch (error) {
-            notification.error({
+            notification.warning({
                 message: 'Erro ao fazer login',
-                description: 'Verifique suas credenciais e tente novamente.',
-            });
+                description: 'Tente novamente mais tarde',
+            })
         }
     }, [login, username, password, router]);
 
@@ -122,94 +121,91 @@ const LoginPage = () => {
                     }}
 
                 >
-                    {isUser ? <TestimonialsSection /> : <Paper
-                        elevation={6}
-                        component="form"
-                        onSubmit={handleSubmit}
-                        sx={{
-                            width: '100%',
-                            maxWidth: 600,
-                            p: 4,
-                            borderRadius: 2,
-                            bgcolor: 'background.paper',
-                            boxShadow: 10,
-                            zIndex: 10,
-                            position: 'relative',
-                        }}
-                        style={{ border: error ? '1px solid red' : '' }}
-
-                    >
-                        <Typography variant="h4" textAlign="center" mb={3} fontWeight="bold" color="primary">
-                            Login de Usuário
-                        </Typography>
-
-                        <div>
-                            {error && (
-                                <Alert severity="error" sx={{ mb: 2 }}>
-                                    {error}
-                                </Alert>
-                            )}
-                        </div>
-
-                        <TextField
-                            label="Usuário"
-                            fullWidth
-                            margin="normal"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            autoComplete="username"
-                        />
-
-                        <TextField
-                            label="Senha"
-                            type="password"
-                            fullWidth
-                            margin="normal"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            autoComplete="current-password"
-
-                        />
+                    {isUser ? <TestimonialsSection /> :
+                        <Paper
+                            elevation={6}
+                            component="form"
+                            onSubmit={handleSubmit}
+                            sx={{
+                                width: '100%',
+                                maxWidth: 600,
+                                p: 4,
+                                borderRadius: 2,
+                                bgcolor: 'background.paper',
+                                boxShadow: 10,
+                                zIndex: 10,
+                                position: 'relative',
+                            }}
+                            style={{ border: error ? '1px solid red' : '' }}
+                        >
+                            <Typography variant="h4" textAlign="center" mb={3} fontWeight="bold" color="primary">
+                                Login de Usuário
+                            </Typography>
 
 
-                        <div className='grid grid-cols-2'>
-                            <div>
-                                <Typography variant="body2" textAlign="center" mt={2}>
-                                    Não tem uma conta?{' '}
-                                    <Link href="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
-                                        Registre-se
-                                    </Link>
-                                </Typography>
 
-                                <Typography variant="body2" textAlign="center" mt={1}>
-                                    Esqueceu a senha?{' '}
-                                    <Link href="/recuperar" style={{ color: '#1976d2', textDecoration: 'none' }}>
-                                        Recuperar conta
-                                    </Link>
-                                </Typography>
+                            <TextField
+                                label="Usuário"
+                                fullWidth
+                                margin="normal"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                autoComplete="username"
+                            />
+
+                            <TextField
+                                label="Senha"
+                                type="password"
+                                fullWidth
+                                margin="normal"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                autoComplete="current-password"
+
+                            />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{
+                                    mt: 3,
+                                    mb: 2,
+                                    height: 45,
+                                    transition: '0.3s ease',
+                                    ':hover': { transform: 'scale(1.02)' },
+                                }}
+                            >
+                                {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
+                            </Button>
+
+                            <div className='grid grid-cols-2'>
+                                <div>
+                                    <Typography variant="body2" textAlign="center" mt={2}>
+                                        Não tem uma conta?{' '}
+                                        <Link href="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
+                                            Registre-se
+                                        </Link>
+                                    </Typography>
+
+                                    <Typography variant="body2" textAlign="center" mt={1}>
+                                        Esqueceu a senha?{' '}
+                                        <Link href="/recuperar" style={{ color: '#1976d2', textDecoration: 'none' }}>
+                                            Recuperar conta
+                                        </Link>
+                                    </Typography>
+                                </div>
+                                <div>
+                                    {error && (
+                                        <Alert severity="error" sx={{ mb: 2 }}>
+                                            {error}
+                                        </Alert>
+                                    )}
+                                </div>
                             </div>
-                            <div>
 
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{
-                                        mt: 3,
-                                        mb: 2,
-                                        height: 45,
-                                        transition: '0.3s ease',
-                                        ':hover': { transform: 'scale(1.02)' },
-                                    }}
-                                >
-                                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
-                                </Button>
-                            </div>
-                        </div>
-
-                    </Paper>}
+                        </Paper>}
 
                 </Box>
 

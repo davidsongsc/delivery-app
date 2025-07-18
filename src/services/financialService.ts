@@ -10,12 +10,12 @@ const rota: string = '/api';
 export const getTransactions = async () => {
     const res = await apiClient.get(`${rota}/transactions/`);
     console.log(`${rota}/transactions/`)
-    return res.data as Transaction[];
+    return res.data.results as Transaction[];
 };
 
 export const createTransaction = async (data: Partial<Transaction>) => {
     const res = await apiClient.post(`${rota}/transactions/`, data);
-    return res.data as Transaction;
+    return res.data.results as Transaction;
 };
 
 // Estatísticas Financeiras (exemplo simples)

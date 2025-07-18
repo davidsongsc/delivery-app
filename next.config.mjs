@@ -1,5 +1,7 @@
+import nextPwa from 'next-pwa';
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const baseConfig = {
   reactStrictMode: false,
   images: {
     domains: [
@@ -26,10 +28,15 @@ const nextConfig = {
       },
     ],
   },
+  
 };
 
-export default nextConfig;
+// Wrapper do PWA
+const withPWA = nextPwa({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+});
 
-export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*'], 
-};
+export default withPWA(baseConfig);

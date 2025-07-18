@@ -14,9 +14,9 @@ export interface Transaction {
   uid: string;
   user: string;
   category: Category | null;
-  amount: number | string;        // ✅ Apenas number (converta antes de usar .toFixed)
+  amount: number | string;       
   description: string | null;
-  date: string;          // ISO date
+  date: string;         
   type: TransactionType;
   payment_method: PaymentMethod;
   is_recurring: boolean;

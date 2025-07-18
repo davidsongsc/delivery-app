@@ -17,7 +17,7 @@ export const authService = {
                 email: decoded.email,
                 is_superuser: decoded.is_superuser ?? false,
                 is_staff: decoded.is_staff ?? false,
-                corporation_member,  
+                corporation_member: corporation_member ?? null,
             };
 
             localStorage.setItem('authToken', access);
@@ -28,7 +28,8 @@ export const authService = {
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao fazer login');
         }
-    },
+    }
+    ,
 
     register: async (userData: any): Promise<void> => {
         try {

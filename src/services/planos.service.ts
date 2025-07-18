@@ -19,5 +19,5 @@ export type PlanosCompletosResponse = {
 
 export const getPlanosCompletos = async (): Promise<PlanosCompletosResponse> => {
   const res = await apiClient.get('/usuarios/planos-completos/');
-  return res.data as PlanosCompletosResponse;
+  return res.data.results as PlanosCompletosResponse;
 };

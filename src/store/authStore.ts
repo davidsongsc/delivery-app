@@ -83,7 +83,6 @@ export const useAuthStore = create<AuthState>()(
                 set({ loading: true, error: null });
                 try {
                     const { user, access, refresh } = await authService.login(username, password);
-                    console.log(user)
                     set({
                         user,
                         token: access,
@@ -92,25 +91,22 @@ export const useAuthStore = create<AuthState>()(
                         refreshToken: refresh
                     });
 
-                    // ⚠️ Se você estiver usando cookies HttpOnly no backend, esse cookie não precisa ser salvo aqui
-                    document.cookie = `token=${access}; path=/; max-age=3600; SameSite=Lax`;
-
                     notification.success({
                         message: 'Login realizado com sucesso',
                     });
-
                 } catch (error: any) {
                     set({
                         isAuthenticated: false,
                         loading: false,
+                        error: error?.response?.data?.detail || 'Erro desconhecido',
                     });
+
                     notification.error({
                         message: 'Erro ao fazer login',
-                        description: error?.response?.data?.detail || error.message,
-                    });
-                    throw error;
-                }
+                        description: error?.response?.data?.detail || 'Tente novamente mais tarde',
+                    });}
             },
+
             clearAuth: () => {
                 set({
                     user: null,
@@ -118,7 +114,6 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: false,
                     loading: false,
                 });
-                document.cookie = 'token=; path=/; max-age=0';
             },
             register: async (userData) => {
                 set({ loading: true, error: null });
@@ -224,7 +219,7 @@ export const useAuthStore = create<AuthState>()(
         }),
         {
             name: 'auth-storage', // chave no localStorage
-            // pode adicionar onRehydrateStorage etc.
+            
         }
     )
 );
