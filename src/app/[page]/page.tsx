@@ -13,7 +13,7 @@ interface LojaPageProps {
 
 export default async function LojaPage({ params }: LojaPageProps) {
   const loja = await getLojaByPage(params.page);
-
+  
   if (!loja) return notFound();
 
   return <LojaClient loja={JSON.parse(JSON.stringify(loja))} />;

@@ -8,18 +8,20 @@ export type Loja = {
   telefone: string;
 };
 
-type ApiResponse = Loja[];
+type ApiResponse = {
+  results: Loja[];
+};
 
 export const getLojaByPage = async (page: string): Promise<Loja | null> => {
   try {
     const res = await axios.get<ApiResponse>(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/corporation-user/?page=${page}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/corporation-page/?filter_page=${page}`
     );
 
-    const lojas = res.data;
+    const lojas = res.data.results;
 
     if (Array.isArray(lojas) && lojas.length > 0) {
-      return lojas[0];
+      return lojas[0]; 
     }
 
     return null;

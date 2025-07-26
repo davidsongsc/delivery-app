@@ -7,6 +7,8 @@ import { User } from '@/types/User';
 import { CorporationForm } from './CorporationRegisterForm';
 import { corporationService } from '@/services/corporationService';
 import { isStrongPassword, isValidEmail } from '@/utils/login';
+import { AuthResponse, NivelAcesso, Perfil } from '@/types/auth';
+
 
 interface AuthState {
     token: string | null;

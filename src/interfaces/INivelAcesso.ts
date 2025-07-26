@@ -1,17 +1,3 @@
-export interface AuthResponse {
-    access: string;
-    refresh: string;
-}
-
-export interface JwtPayload {
-    uid: string;
-    username: string;
-    email: string;
-    exp: number;
-    iat: number;
-    // Outros campos personalizados no token, se houver
-}
-
 export interface NivelAcesso {
   id: string;
   nome: string;
@@ -45,10 +31,4 @@ export interface AuthResponse {
   email: string;
   is_active: boolean;
   perfis: Perfil[];
-}
-
-export interface access {
-  level?: string; // Pode ser o nome do nível, ex: "Apagar"
-  permissions?: string[]; // Pode ser uma lista como ['pode_editar', 'pode_visualizar']
-  pages?: string[]; // Futuro: páginas permitidas
 }

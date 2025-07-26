@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { Table, Typography, Spin, notification, Button, Row, Col } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import apiClient from '@/services/apiClient';
-import { CorporationForm } from '@/store/CorporationRegisterForm';
 import { columns } from './columns';
 import CorporationRegisterModal from '../modal';
-import { CorporationMembership } from '../create';
+import { CorporationMembership } from '../Create';
+import { User } from '@/types/User';
+import PageSection from '@/components/MiniComponents/PageSection';
 
 const { Title } = Typography;
 
-const MemberShipListPage = () => {
-    const [data, setData] = useState<CorporationMembership[]>([]);
+const UsersList = () => {
+    const [data, setData] = useState<User[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
     const [modalVisible, setModalVisible] = useState(false);
@@ -53,7 +53,7 @@ const MemberShipListPage = () => {
 
     console.log(data);
     return (
-        <div className="p-6">
+        <div className="px-40 py-10 min-h-[60vh]">
             <CorporationRegisterModal
                 open={modalVisible}
                 onClose={() => setModalVisible(false)}
@@ -62,17 +62,16 @@ const MemberShipListPage = () => {
                     console.log('Empresa cadastrada!');
                 }}
             />
-            <Row justify="space-between" align="middle" className="mb-4">
-                <Col>
-                    <Title level={2}>Empresas Cadastradas</Title>
-                </Col>
-                <Col>
-                    <Button type="primary" onClick={() => setModalVisible(true)}>
-                        Adicionar Empresa
+            <PageSection
+                title="Usuários"
+                buttonText="Adicionar Usuário"
+                onButtonClick={() => setModalVisible(true)}
+                extra={
+                    <Button type="link" onClick={() => router.push('/dashboard/configuracoes/usuarios/invite')}>
+                        Convidar Usuário
                     </Button>
-                </Col>
-            </Row>
-
+                }
+            />
             {loading ? (
                 <Spin />
             ) : (
@@ -95,4 +94,4 @@ const MemberShipListPage = () => {
     );
 };
 
-export default MemberShipListPage;
+export default UsersList;

@@ -2,12 +2,49 @@
 //import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import { Form, Input, Checkbox, Button, message } from 'antd'
+import type { CheckboxChangeEvent } from 'antd/es/checkbox'
+import apiClient from '@/services/apiClient'
+import axios from 'axios'
+import { useCorporationStore } from '@/store/useCorporationStore';
 import { CorporationForm } from '@/store/CorporationRegisterForm';
+import { CorporationMembership } from '../Create';
 interface CorporationFormProps {
-    onFinish: (values: CorporationForm) => Promise<void>;
+    onFinish: (values: CorporationMembership) => Promise<void>;
     loading: boolean;
 }
-const CorporationRegisterForm: React.FC<CorporationFormProps> = ({ onFinish, loading }) => {
+const MemberShipRegisterForm: React.FC<CorporationFormProps> = () => {
+    // const router = useRouter();
+
+    const { registerCorporation, loading } = useCorporationStore();
+
+    const onFinish = async (values: CorporationForm) => {
+        if (!values.aceite_termo_privacidade) {
+            message.error('Você deve aceitar os termos de privacidade para continuar.')
+            return
+        }
+
+
+
+        try {
+            const response = await apiClient.post('/api/memberships/', values);
+            message.success('Empresa cadastrada com sucesso!');
+            //router.push('/corporation');
+        } catch (error: unknown) {
+            // Type guard para verificar se o erro é um AxiosError
+            if (axios.isAxiosError(error)) {
+                message.error(error.response?.data?.detail || 'Erro ao cadastrar empresa');
+            } else if (error instanceof Error) {
+                // Outro tipo de erro JS padrão
+                message.error(error.message);
+            } else {
+                message.error('Erro desconhecido ao cadastrar empresa');
+            }
+            console.error(error);
+        } finally {
+
+        }
+
+    }
 
     return (
         <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow">
@@ -100,10 +137,7 @@ const CorporationRegisterForm: React.FC<CorporationFormProps> = ({ onFinish, loa
                         <Input />
                     </Form.Item>
 
-                    <Form.Item
-                        label="Site"
-                        name="page"
-                        className='col-span-6'>
+                    <Form.Item label="Site" name="site" className='col-span-6'>
                         <Input />
                     </Form.Item>
 
@@ -140,4 +174,4 @@ const CorporationRegisterForm: React.FC<CorporationFormProps> = ({ onFinish, loa
     )
 }
 
-export default React.memo(CorporationRegisterForm);
+export default React.memo(MemberShipRegisterForm);

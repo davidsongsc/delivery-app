@@ -1,30 +1,25 @@
 import apiClient from '@/services/apiClient';
 import { useAuthStore } from '@/store/authStore';
+import { AuthResponse } from '@/types/auth';
+
 import { parseJwt } from '@/utils/parseJwt';
 import type { User } from '@/types/User';
+import { formatUserFromAuthResponse } from '@/utils/formatUser';
 
 export const authService = {
     login: async (username: string, password: string): Promise<{ user: User; access: string; refresh: string }> => {
         try {
-            const response = await apiClient.post('/api/token/', { username, password });
-            const { access, refresh, corporation_member } = response.data;
+            const response = await apiClient.post<AuthResponse>('/api/token/', { email: username, password });
 
-            const decoded = parseJwt(access);
+            const { access, refresh } = response.data;
+            const user = formatUserFromAuthResponse(response.data);
 
-            const user: User = {
-                uid: decoded.user_id ?? decoded.uid,
-                username: decoded.username,
-                email: decoded.email,
-                is_superuser: decoded.is_superuser ?? false,
-                is_staff: decoded.is_staff ?? false,
-                corporation_member: corporation_member ?? null,
-            };
-
-            localStorage.setItem('authToken', access);
+            localStorage.setItem('authToken', access); // opcional se já usa Zustand persist
             useAuthStore.getState().setToken(access);
             useAuthStore.getState().setUser(user);
 
             return { user, access, refresh };
+
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao fazer login');
         }
