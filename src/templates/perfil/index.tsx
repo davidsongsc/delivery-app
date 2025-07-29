@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
 import WalletSummaryCard from '@/components/WalletSummaryCard';
+import { useAuth } from "@/contexts/AuthContext";
+
 import { Card, Spin, Typography, Avatar, Tag, Divider, Space, Button } from 'antd';
 import {
   UserOutlined,
@@ -20,9 +21,8 @@ import { useRouter } from 'next/navigation';
 const { Title, Text } = Typography;
 
 const PerfilPage = () => {
-  const { user, isAuthenticated, loading, checkAuth } = useAuthStore();
+  const { user, isAuthenticated, loading, checkAuth } = useAuth();
   const router = useRouter();
-  console.log(user);
   useEffect(() => {
     if (!isAuthenticated) {
       checkAuth();

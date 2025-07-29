@@ -1,177 +1,192 @@
 'use client';
-//import { useRouter } from 'next/router';
-import React, { useState } from 'react'
-import { Form, Input, Checkbox, Button, message } from 'antd'
-import type { CheckboxChangeEvent } from 'antd/es/checkbox'
-import apiClient from '@/services/apiClient'
-import axios from 'axios'
-import { useCorporationStore } from '@/store/useCorporationStore';
-import { CorporationForm } from '@/store/CorporationRegisterForm';
-import { CorporationMembership } from '../Create';
-interface CorporationFormProps {
-    onFinish: (values: CorporationMembership) => Promise<void>;
-    loading: boolean;
+
+import PageSection from '@/components/MiniComponents/PageSection';
+import { IUserCreate } from '@/interfaces/IUser';
+import { Form, FormInstance, Input, Select, Checkbox } from 'antd';
+import React from 'react';
+
+interface UserFormProps {
+  form: FormInstance<IUserCreate>;
+  isEditing?: boolean;
 }
-const MemberShipRegisterForm: React.FC<CorporationFormProps> = () => {
-    // const router = useRouter();
 
-    const { registerCorporation, loading } = useCorporationStore();
+const UserForm: React.FC<UserFormProps> = ({ form, isEditing = false }) => {
+  return (
+    <Form form={form} layout="vertical" requiredMark={false}>
+      <h1 className="text-3xl font-semibold mb-4">{isEditing ? 'Editar Usuário' : 'Dados do Usuário'}</h1>
 
-    const onFinish = async (values: CorporationForm) => {
-        if (!values.aceite_termo_privacidade) {
-            message.error('Você deve aceitar os termos de privacidade para continuar.')
-            return
-        }
+      <div className="grid grid-cols-12 gap-x-4">
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-4"
+          label={<span className="font-bold">Usuário (username):</span>}
+          name="username"
+          rules={[{ required: true, message: 'Campo obrigatório' }]}
+        >
+          <Input placeholder="Digite o nome de usuário..." />
+        </Form.Item>
 
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-4"
+          label={<span className="font-bold">Email:</span>}
+          name="email"
+          rules={[{ required: true, message: 'Campo obrigatório' }]}
+        >
+          <Input placeholder="Digite o email..." />
+        </Form.Item>
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-4"
+          label={<span className="font-bold">Telefone:</span>}
+          name="phone"
+        >
+          <Input placeholder="Digite o telefone..." />
+        </Form.Item>
 
+      </div>
+      <h2 className="text-2xl font-semibold mb-4">Informações pessoais</h2>
+      <div className="grid grid-cols-12 gap-x-4">
 
-        try {
-            const response = await apiClient.post('/api/memberships/', values);
-            message.success('Empresa cadastrada com sucesso!');
-            //router.push('/corporation');
-        } catch (error: unknown) {
-            // Type guard para verificar se o erro é um AxiosError
-            if (axios.isAxiosError(error)) {
-                message.error(error.response?.data?.detail || 'Erro ao cadastrar empresa');
-            } else if (error instanceof Error) {
-                // Outro tipo de erro JS padrão
-                message.error(error.message);
-            } else {
-                message.error('Erro desconhecido ao cadastrar empresa');
-            }
-            console.error(error);
-        } finally {
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-3"
+          label={<span className="font-bold">Nome:</span>}
+          name="first_name"
+        >
+          <Input placeholder="Digite o primeiro nome..." />
+        </Form.Item>
 
-        }
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-3"
+          label={<span className="font-bold">Sobrenome:</span>}
+          name="last_name"
+        >
+          <Input placeholder="Digite o sobrenome..." />
+        </Form.Item>
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-3"
+          label={<span className="font-bold">CPF:</span>}
+          name="cpf"
+        >
+          <Input placeholder="Digite o CPF..." />
+        </Form.Item>
 
-    }
+        {/* RG */}
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-3"
+          label={<span className="font-bold">RG:</span>}
+          name="rg"
+        >
+          <Input placeholder="Digite o RG..." />
+        </Form.Item>
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-6"
+          label={<span className="font-bold">Corporação:</span>}
+          name="corporation"
+        >
+          <Input placeholder="Digite a corporação..." />
+        </Form.Item>
 
-    return (
-        <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow">
-            <h1 className="text-3xl font-semibold mb-6">Cadastrar Empresa</h1>
-            <Form
-                layout="vertical"
-                onFinish={onFinish}
-                initialValues={{
-                    aceite_termo_privacidade: false,
-                    consentimento_marketing: false,
-                }}
+        <Form.Item<IUserCreate>
+          className="col-span-12 md:col-span-6"
+          label={<span className="font-bold">Tenant:</span>}
+          name="tenant"
+        >
+          <Input placeholder="Digite o ID do tenant..." /> {/* Ou um Select */}
+        </Form.Item>
+      </div>
+      <div className='grid grid-cols-12 gap-x-4'>
+        <div className='col-span-12 md:col-span-6'>
+          <h2 className="text-2xl font-semibold mb-4">Configurações de Acesso</h2>
+          <div className="grid grid-cols-12 gap-x-4">
+            <Form.Item<IUserCreate>
+              className="col-span-12 md:col-span-6"
+              label="Status"
+              name="is_active"
+              initialValue={true}
+              rules={[{ required: true, message: 'Campo obrigatório' }]}
             >
-                <div className='grid grid-cols-12 gap-4'>
+              <Select>
+                <Select.Option value={true}>Ativo</Select.Option>
+                <Select.Option value={false}>Inativo</Select.Option>
+              </Select>
+            </Form.Item>
 
+            <Form.Item<IUserCreate>
+              className="col-span-12 md:col-span-3"
+              name="is_staff"
+              initialValue={false}
+              label="Supersivor"
+            >
+              <Select>
+                <Select.Option value={true}>Sim</Select.Option>
+                <Select.Option value={false}>Não</Select.Option>
+              </Select>
+            </Form.Item>
 
-                    <Form.Item
-                        label="Razão Social"
-                        name="razao_social"
-                        rules={[{ required: true, message: 'Por favor, insira a razão social!' }]}
-                        className='col-span-6'
-                    >
-                        <Input />
-                    </Form.Item>
+            <Form.Item<IUserCreate>
+              className="col-span-12 md:col-span-3"
+              name="is_superuser"
+              initialValue={false}
+              label="Gerente"
+            >
+              <Select>
+                <Select.Option value={true}>Sim</Select.Option>
+                <Select.Option value={false}>Não</Select.Option>
+              </Select>
+            </Form.Item>
 
-                    <Form.Item
-                        label="Nome Fantasia"
-                        name="nome_fantasia"
-                        rules={[{ required: true, message: 'Por favor, insira o nome fantasia!' }]}
-                        className='col-span-6'
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="CNPJ"
-                        name="cnpj"
-                        rules={[{ required: true, message: 'Por favor, insira o CNPJ!' }]}
-                        className='col-span-12'
-                    >
-                        <Input placeholder="00.000.000/0000-00" />
-                    </Form.Item>
-                </div>
-                <div className='grid grid-cols-12 gap-4'>
-                    <Form.Item
-                        label="Nome do Representante"
-                        name="representante_nome"
-                        rules={[{ required: true, message: 'Por favor, insira o nome do representante!' }]}
-                        className='col-span-4'
-                    >
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="CPF do Representante"
-                        name="representante_cpf"
-                        rules={[{ required: true, message: 'Por favor, insira o CPF do representante!' }]}
-                        className='col-span-4'
-                    >
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Cargo do Representante"
-                        name="representante_cargo"
-                        rules={[{ required: true, message: 'Por favor, insira o cargo do representante!' }]}
-                        className='col-span-4'
-                    >
-                        <Input />
-                    </Form.Item>
-                </div>
-                <div className='grid grid-cols-12 gap-4'>
-                    <Form.Item label="Inscrição Estadual" name="inscricao_estadual" className='col-span-6'>
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Inscrição Municipal" name="inscricao_municipal" className='col-span-6'>
-                        <Input />
-                    </Form.Item>
-                </div>
-                <div className='grid grid-cols-12 gap-4'>
-                    <Form.Item label="Telefone" name="telefone" className='col-span-6'>
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Celular" name="celular" className='col-span-6'>
-                        <Input />
-                    </Form.Item>
-                </div>
-                <div className='grid grid-cols-12 gap-4'>
-                    <Form.Item label="Email" name="email" rules={[{ type: 'email', message: 'E-mail inválido' }]} className='col-span-6'>
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Site" name="site" className='col-span-6'>
-                        <Input />
-                    </Form.Item>
-
-                </div>
-
-                <Form.Item
-                    name="aceite_termo_privacidade"
-                    valuePropName="checked"
-                    rules={[
-                        {
-                            validator: (_, value) =>
-                                value ? Promise.resolve() : Promise.reject(new Error('Você deve aceitar os termos de privacidade')),
-                        },
-                    ]}
-                >
-                    <Checkbox>
-                        Aceito os termos de privacidade
-                    </Checkbox>
-                </Form.Item>
-
-                <Form.Item name="consentimento_marketing" valuePropName="checked">
-                    <Checkbox>
-                        Aceito receber comunicações de marketing
-                    </Checkbox>
-                </Form.Item>
-
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                        Cadastrar
-                    </Button>
-                </Form.Item>
-            </Form>
+          </div>
         </div>
-    )
-}
+        <div className='col-span-12 md:col-span-6'>
+          <h2 className="text-2xl font-semibold mb-4">Acesso ao Sistema</h2>
+          <div className="grid grid-cols-12 gap-4">
 
-export default React.memo(MemberShipRegisterForm);
+            <Form.Item<IUserCreate>
+              className="col-span-12 md:col-span-6"
+              label="Senha"
+              name="password"
+              rules={
+                isEditing
+                  ? []
+                  : [{ required: true, message: 'Campo obrigatório' }]
+              }
+            >
+              <Input.Password placeholder="Digite uma senha" />
+            </Form.Item>
+
+            {/* Confirmação de senha */}
+            <Form.Item<IUserCreate>
+              className="col-span-12 md:col-span-6"
+              label="Confirmação de senha"
+              name="password_confirmation"
+              dependencies={['password']}
+              rules={
+                isEditing
+                  ? []
+                  : [
+                    {
+                      required: true,
+                      message: 'Por favor, confirme sua senha!',
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error('As senhas não são iguais!')
+                        );
+                      },
+                    }),
+                  ]
+              }
+            >
+              <Input.Password placeholder="Confirme sua senha" />
+            </Form.Item>
+          </div>
+        </div>
+
+      </div>
+    </Form>
+  );
+};
+
+export default React.memo(UserForm);

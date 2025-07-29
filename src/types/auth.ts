@@ -1,15 +1,21 @@
+import { IPerfil } from "@/interfaces/IPerfil";
+
 export interface AuthResponse {
-    access: string;
-    refresh: string;
+  access: string;
+  refresh: string;
+  access_level: {
+    level: string;
+    permissions: string[];
+  };
 }
 
 export interface JwtPayload {
-    uid: string;
-    username: string;
-    email: string;
-    exp: number;
-    iat: number;
-    // Outros campos personalizados no token, se houver
+  uid: string;
+  username: string;
+  email: string;
+  exp: number;
+  iat: number;
+  // Outros campos personalizados no token, se houver
 }
 
 export interface NivelAcesso {
@@ -30,12 +36,6 @@ export interface TipoPerfil {
   ativo: boolean;
 }
 
-export interface Perfil {
-  id: string;
-  nome: string;
-  descricao: string;
-  tipo: TipoPerfil;
-}
 
 export interface AuthResponse {
   refresh: string;
@@ -44,7 +44,7 @@ export interface AuthResponse {
   username: string;
   email: string;
   is_active: boolean;
-  perfis: Perfil[];
+  perfis: IPerfil[];
 }
 
 export interface access {

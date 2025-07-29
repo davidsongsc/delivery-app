@@ -3,28 +3,28 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authService } from '@/services/authService';
 import { notification } from 'antd';
-import { User } from '@/types/User';
 import { CorporationForm } from './CorporationRegisterForm';
 import { corporationService } from '@/services/corporationService';
 import { isStrongPassword, isValidEmail } from '@/utils/login';
-import { AuthResponse, NivelAcesso, Perfil } from '@/types/auth';
+import { IUser } from '@/interfaces/IUser';
+import { IPerfil } from '@/interfaces/IPerfil';
 
-
-interface AuthState {
+export interface AuthState {
     token: string | null;
-    user: User | null;
+    user: IUser | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
-
+    access_level?: any;
     login: (username: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
     logout: () => void;
     verifyEmail: (token: string) => Promise<void>;
     checkAuth: () => Promise<void>;
-    setIsAuthenticated: (isAuthenticated: boolean) => void;
     setToken: (token: string | null) => void;
-    setUser: (user: User | null) => void;
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+    setUser: (user: IUser | null) => void;
+    perfis: IPerfil[];
     hydrated: boolean;
     setHydrated: () => void;
     refreshToken: string | null;
@@ -54,6 +54,7 @@ export const useAuthStore = create<AuthState>()(
             error: null,
             hydrated: false,
             setUser: (user) => set({ user }),
+            perfis: [],
             setHydrated: () => set({ hydrated: true }),
             setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
             setToken: (token) => set({ token }),
@@ -84,13 +85,14 @@ export const useAuthStore = create<AuthState>()(
             login: async (username, password) => {
                 set({ loading: true, error: null });
                 try {
-                    const { user, access, refresh } = await authService.login(username, password);
+                    const { user, access, refresh, access_level } = await authService.login(username, password);
                     set({
                         user,
                         token: access,
                         isAuthenticated: true,
                         loading: false,
-                        refreshToken: refresh
+                        refreshToken: refresh,
+                        access_level: access_level,
                     });
 
                     notification.success({
@@ -106,7 +108,8 @@ export const useAuthStore = create<AuthState>()(
                     notification.error({
                         message: 'Erro ao fazer login',
                         description: error?.response?.data?.detail || 'Tente novamente mais tarde',
-                    });}
+                    });
+                }
             },
 
             clearAuth: () => {
@@ -199,12 +202,12 @@ export const useAuthStore = create<AuthState>()(
                 set({ loading: true });
 
                 try {
-                    // authService.checkAuth não recebe token, pois o cookie já é enviado automaticamente via withCredentials
-                    const { user } = await authService.checkAuth();
+                    const response = await authService.checkAuth();
+                    console.log('checkAuth -> response.user:', response.user); // <== veja o que vem aqui
 
                     set({
-                        user,
-                        token: null, // você pode remover ou manter o token, mas idealmente você não gerencia token no front
+                        user: response.user,
+                        token: null,
                         isAuthenticated: true,
                         loading: false,
                     });
@@ -218,10 +221,11 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+
         }),
         {
             name: 'auth-storage', // chave no localStorage
-            
+
         }
     )
 );

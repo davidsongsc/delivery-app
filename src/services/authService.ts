@@ -3,28 +3,27 @@ import { useAuthStore } from '@/store/authStore';
 import { AuthResponse } from '@/types/auth';
 
 import { parseJwt } from '@/utils/parseJwt';
-import type { User } from '@/types/User';
+import type { IUser } from '@/interfaces/IUser';
 import { formatUserFromAuthResponse } from '@/utils/formatUser';
+import { IPerfil } from '@/interfaces/IPerfil';
 
 export const authService = {
-    login: async (username: string, password: string): Promise<{ user: User; access: string; refresh: string }> => {
+    login: async (username: string, password: string): Promise<{ user: IUser; access: string; refresh: string; access_level: any; perfis: IPerfil[] }> => {
         try {
             const response = await apiClient.post<AuthResponse>('/api/token/', { email: username, password });
 
-            const { access, refresh } = response.data;
+            const { access, refresh, access_level } = response.data;
             const user = formatUserFromAuthResponse(response.data);
-
             localStorage.setItem('authToken', access); // opcional se já usa Zustand persist
             useAuthStore.getState().setToken(access);
             useAuthStore.getState().setUser(user);
 
-            return { user, access, refresh };
+            return { user, access, refresh, perfis: user.perfis, access_level };
 
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao fazer login');
         }
-    }
-    ,
+    },
 
     register: async (userData: any): Promise<void> => {
         try {

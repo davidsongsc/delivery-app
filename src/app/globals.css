@@ -11,3 +11,191 @@ body {
   padding: 0;
 }
 
+.container {
+  width: 100%;
+  max-width: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: calc(100vh - 101px) !important;
+  overflow: auto;
+  background-color: theme("colors.primary");
+}
+
+.container-conteudo {
+  background-color: theme("colors.darkModal");
+  border-radius: theme("borderRadius.sm");
+  padding: 15px 50px;
+}
+
+.container-conteudo::-webkit-scrollbar {
+  width: 12px;
+}
+
+.container-conteudo::-webkit-scrollbar-thumb {
+  background-color: theme('colors.transparent');
+  border-radius: 6px;
+
+}
+
+.container-list {
+  background-color: theme("colors.darkModal");
+  border-radius: theme("borderRadius.3xl");
+  margin-bottom: 80px;
+}
+
+.container-list-small {
+  background-color: theme("colors.darkModal");
+  border-radius: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.darkBg') theme('colors.transparent');
+
+}
+
+.container-conteudo-small {
+  min-width: 1100px;
+  overflow-x: auto;
+  background-color: theme("colors.darkModal");
+  border-radius: theme("borderRadius.md");
+  box-shadow: 0 2px 8px theme("colors.darkModal");
+  padding: 25px;
+}
+
+.ant-btn-primary {
+  box-shadow: none !important;
+}
+
+.ant-table {
+  overflow-x: auto !important;
+
+}
+
+.ant-table-container {
+  min-width: 960px !important;
+}
+
+.ant-table-wrapper {
+  padding: 0 25px !important;
+}
+
+.ant-table-content {
+  min-width: 1236px;
+}
+
+
+
+.ant-table-content table {
+  overflow-x: auto;
+  border-spacing: 24px 15px !important;
+
+  & .ant-table-thead {
+    & .ant-table-cell {
+      height: 25px;
+      background-color: theme("colors.darkModal");
+    }
+  }
+
+  & .ant-table-tbody {
+    cursor: pointer;
+    width: 100%;
+
+    & .ant-table-cell {
+      background: theme("colors.darkBg") !important;
+      border-radius: 10px;
+      height: 50px;
+    }
+
+    &>tr:hover {
+      & .ant-table-cell {
+        background: theme("colors.darkSelecao") !important;
+      }
+    }
+  }
+}
+
+.ant-notification-notice-message,
+.ant-notification-notice-description {
+  color: theme("colors.primary") !important;
+  padding-left: 10px;
+}
+
+.ant-notification-notice-message {
+  font-weight: bold !important;
+}
+
+.ant-notification-notice-close-x {
+  color: white !important;
+  opacity: 0.7;
+}
+
+.ant-notification-notice {
+  background-color: theme("colors.darkModal") !important;
+  border-radius: 5px !important;
+  box-shadow: 0 2px 8px theme("colors.darkModal") !important;
+  padding: 0;
+  width: 500px !important;
+
+}
+
+.user {
+  border-right: 5px solid theme("colors.sistemaGreen") !important;
+}
+
+.admin {
+  border-right: 5px solid theme("colors.sistemaGreen") !important;
+}
+
+
+.itens-tag {
+  font-weight: bold !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ant-notification-notice-icon {
+  font-size: 26px !important;
+}
+
+.ant-tag-error {
+  background-color: theme("colors.transparent") !important;
+  border: 0px !important;
+}
+
+.ant-notification-notice-success {
+  border-top: 7px solid theme("colors.sistemaGreen") !important;
+}
+
+
+
+.ant-notification-notice-error {
+  border-top: 7px solid theme("colors.sistemaRed") !important;
+}
+
+.ant-notification-notice-warning {
+  border-top: 7px solid theme("colors.sistemaYellow") !important;
+}
+
+.ant-notification-notice-info {
+  border-top: 7px solid theme("colors.sistemaBlue") !important;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  position: relative;
+}
+
+::-webkit-scrollbar-track {
+  background: theme("colors.darkBg");
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
