@@ -21,6 +21,7 @@ const theme = {
     components: {
         Layout: {
             colorBgContainer: fullConfig.theme?.colors?.grafite || "#1C1C1E",
+            
         },
 
         Input: {

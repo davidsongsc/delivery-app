@@ -10,7 +10,8 @@ import { CiEdit } from 'react-icons/ci';
 import { IUser } from '@/interfaces/IUser';
 import { userService } from '@/services/user.service';
 
-type UserColumnProps = (fetchData: () => void, userPermissions: string[]) => (ColumnGroupType<any> | ColumnType<any>)[];
+type UserColumnProps = (fetchData: () => void,
+  userPermissions: string[]) => (ColumnGroupType<any> | ColumnType<any>)[];
 
 export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
 

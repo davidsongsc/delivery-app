@@ -176,7 +176,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
       <Input
         placeholder={placeholderText}
         prefix={<SearchOutlined className="text-darkTextoDescricao pr-2" />}
-        className="rounded-[10px]"
+        className="rounded-[10px] text-primary"
         onChange={(e) => handleInputChange(e.target.value)}
         value={filters[selectedField] || ''}
         allowClear
@@ -188,7 +188,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 border-b border-darkTextoOff py-4 px-[50px]">
       <div className="lg:col-span-3 flex justify-start items-center">
         <Select
-          className="w-[72px]"
+          className="w-[72px] text-primary"
           value={pageSize}
           onChange={(value) => {
             setPageSize(value);
@@ -200,7 +200,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
           <Option value={50}>50</Option>
           <Option value={100}>100</Option>
         </Select>
-        <span className="flex ml-4 text-sm text-primary items-center">
+        <span className="flex ml-4 text-sm text-option items-center">
           Resultados por página
         </span>
       </div>
@@ -209,7 +209,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
         {setFilters && !showSelect && (
           <Button
             type="default"
-            className="border-none"
+            className="border-none text-primary"
             onClick={handleOpenFilter}
             title="Selecionar novo filtro"
           >
@@ -225,7 +225,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
           <Select
             value={selectedField}
             onChange={handleFilterSelect}
-            className="w-[150px]"
+            className="w-[150px] text-primary"
             autoFocus
           >
             {resolvedFilterOptions.map((opt) => (

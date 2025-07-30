@@ -17,8 +17,8 @@ export default {
             },
             colors: {
                 // Branding e principais
-                primary: '#FFFFFF ',
-                secondary: '#3B82F6',
+                primary: '#111827', // Preto',
+                secondary: '#374151',
                 tertiary: '#3B82F6',
                 grafite: '#AC0F0A',
                 aço: '#2F2F31',
@@ -28,6 +28,7 @@ export default {
                 cinzaClaro: '#B0B0B0',
                 azulEscuro: '#1E3A8A',
 
+                option: '#F5F5F5', // Amarelo vibrante para opções destacadas
                 // Estados do sistema
                 sucesso: '#4CAF50',
                 erro: '#F44336',

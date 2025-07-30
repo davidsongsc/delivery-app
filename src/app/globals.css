@@ -16,7 +16,7 @@ body {
   max-width: none;
   padding-left: 10px;
   padding-right: 10px;
-  height: calc(100vh - 101px) !important;
+  height: calc(100vh - 110.5px) !important;
   overflow: auto;
   background-color: theme("colors.primary");
 }
