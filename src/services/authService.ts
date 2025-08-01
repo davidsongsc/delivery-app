@@ -2,78 +2,59 @@ import apiClient from '@/services/apiClient';
 import { useAuthStore } from '@/store/authStore';
 import { AuthResponse } from '@/types/auth';
 
-import { parseJwt } from '@/utils/parseJwt';
 import type { IUser } from '@/interfaces/IUser';
 import { formatUserFromAuthResponse } from '@/utils/formatUser';
 import { IPerfil } from '@/interfaces/IPerfil';
 
 export const authService = {
-    login: async (username: string, password: string): Promise<{ user: IUser; access: string; refresh: string; access_level: any; perfis: IPerfil[] }> => {
+    login: async (
+        email: string,
+        password: string
+    ): Promise<{ user: IUser; perfis: IPerfil[] }> => {
         try {
-            const response = await apiClient.post<AuthResponse>('/api/token/', { email: username, password });
+            const response = await apiClient.post<AuthResponse>('/api/token/', {
+                email,
+                password,
+            });
 
-            const { access, refresh, access_level } = response.data;
             const user = formatUserFromAuthResponse(response.data);
-            localStorage.setItem('authToken', access); // opcional se já usa Zustand persist
-            useAuthStore.getState().setToken(access);
             useAuthStore.getState().setUser(user);
 
-            return { user, access, refresh, perfis: user.perfis, access_level };
-
+            return { user, perfis: user.perfis };
         } catch (error: any) {
             throw error.response?.data || new Error('Erro ao fazer login');
         }
     },
 
-    register: async (userData: any): Promise<void> => {
+    logout: async (): Promise<void> => {
         try {
-            await apiClient.post('/api/auth/register/', userData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
+            await apiClient.post('/api/auth/logout/');
+            useAuthStore.getState().logout();
         } catch (error: any) {
-            throw error.response?.data || new Error('Erro ao cadastrar usuário');
+            throw error.response?.data || new Error('Erro ao sair');
         }
     },
 
-    logout: async (): Promise<void> => {
-        try {
-            await apiClient.post('/usuarios/logout/');
-        } catch (error: any) {
-            throw error.response?.data || new Error('Erro ao fazer logout');
-        }
+    register: async (userData: any): Promise<void> => {
+        await apiClient.post('/api/auth/register/', userData);
     },
 
     verifyEmail: async (token: string): Promise<void> => {
-        try {
-            await apiClient.get(`/verificar-email/?token=${token}`);
-        } catch (error: any) {
-            throw error.response?.data || new Error('Erro ao verificar e-mail');
-        }
+        await apiClient.get(`/verificar-email/?token=${token}`);
     },
-
-    checkAuth: async (): Promise<{ user: any }> => {
-        try {
-            const response = await apiClient.get('/home/', {
-                withCredentials: true, // envia cookies automaticamente
-            });
-            return response.data;
-        } catch (error: any) {
-            throw error.response?.data || new Error('Erro ao verificar autenticação');
-        }
-    },
-
 
     activateAccount: async (token: string): Promise<{ message: string }> => {
-        try {
-            const response = await apiClient.get('/api/auth/activate/', { params: { token } });
+        const response = await apiClient.get('/api/auth/activate/', {
+            params: { token },
+        });
+        return response.data;
+    },
 
-            return response.data; // espera { message: string }
-        } catch (error: any) {
-            throw error.response?.data || new Error('Erro ao ativar conta');
-        }
+    checkAuth: async (): Promise<{ user: IUser }> => {
+        const response = await apiClient.get('/home/');
+        const user = formatUserFromAuthResponse(response.data);
+        useAuthStore.getState().setUser(user);
+        return { user };
     },
 };
 

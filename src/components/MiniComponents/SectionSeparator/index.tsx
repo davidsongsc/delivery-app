@@ -30,8 +30,8 @@ const SectionSeparator: React.FC<SectionSeparatorProps> = ({ title, children }) 
   return (
     <>
       <div
-        className="bg-darkModal rounded-md px-4 py-4 my-1 grid grid-cols-12 shadow-md shadow-black/20
- items-center cursor-pointer select-none"
+        className="bg-darkModal rounded-sm px-4 py-4 my-1 grid grid-cols-12 shadow-md shadow-black/20
+                    items-center cursor-pointer select-none shadow-md shadow-black/20"
         role="button"
         tabIndex={0}
         aria-expanded={isExpanded}
@@ -44,11 +44,11 @@ const SectionSeparator: React.FC<SectionSeparatorProps> = ({ title, children }) 
           }
         }}
       >
-        <h3 className="pl-8 text-white text-md font-bold col-span-11">{title}</h3>
+        <h3 className="pl-8 text-primary text-lg font-bold col-span-11">{title}</h3>
         <div className="pr-8 col-span-1 flex items-center justify-end gap-2">
-          <FaServer color="white" size={20} />
+          <FaServer className="text-primary" size={20} />
           <DownOutlined
-            className={`text-sistemaBlue transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"}`}
+            className={`text-primary transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"}`}
             aria-hidden="true"
           />
         </div>

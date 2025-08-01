@@ -51,7 +51,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
       ];
   }, [filterOptions]);
 
-  
+
   const handleInputChange = useCallback(
     (value: string) => {
       if (!setFilters) return;
@@ -176,7 +176,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
       <Input
         placeholder={placeholderText}
         prefix={<SearchOutlined className="text-darkTextoDescricao pr-2" />}
-        className="rounded-[10px] text-primary"
+        className="rounded-[10px] text-primary border border-darkTextoOff focus:border-primary focus:ring-0"
         onChange={(e) => handleInputChange(e.target.value)}
         value={filters[selectedField] || ''}
         allowClear
@@ -185,31 +185,16 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
   }, [selectedField, filters, placeholderText, handleInputChange, setFilters]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 border-b border-darkTextoOff py-4 px-[50px]">
-      <div className="lg:col-span-3 flex justify-start items-center">
-        <Select
-          className="w-[72px] text-primary"
-          value={pageSize}
-          onChange={(value) => {
-            setPageSize(value);
-            setPage(1);
-          }}
-        >
-          <Option value={10}>10</Option>
-          <Option value={20}>20</Option>
-          <Option value={50}>50</Option>
-          <Option value={100}>100</Option>
-        </Select>
-        <span className="flex ml-4 text-sm text-option items-center">
-          Resultados por página
-        </span>
-      </div>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 border-b border-darkTextoOff py-4 px-6 ">
 
-      <div className="lg:col-span-6 flex justify-end items-center gap-3">
+      <div className="lg:col-span-3 flex items-center gap-2">
+        {filterInput}
+      </div>
+      <div className="lg:col-span-7 flex justify-start items-center gap-3">
         {setFilters && !showSelect && (
           <Button
             type="default"
-            className="border-none text-primary"
+            className="border-none "
             onClick={handleOpenFilter}
             title="Selecionar novo filtro"
           >
@@ -217,7 +202,7 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
               src="/images/icons/filter.svg"
               alt="filter"
               width={35}
-              height={20}
+              height={35}
             />
           </Button>
         )}
@@ -236,10 +221,25 @@ const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
           </Select>
         )}
       </div>
-
-      <div className="lg:col-span-3 flex items-center gap-2">
-        {filterInput}
+      <div className="lg:col-span-2 flex justify-start items-center">
+        <Select
+          className="w-[72px] text-primary"
+          value={pageSize}
+          onChange={(value) => {
+            setPageSize(value);
+            setPage(1);
+          }}
+        >
+          <Option value={10}>10</Option>
+          <Option value={20}>20</Option>
+          <Option value={50}>50</Option>
+          <Option value={100}>100</Option>
+        </Select>
+        <span className="flex ml-4 text-lg text-option items-center">
+          Resultados por página
+        </span>
       </div>
+
     </div>
   );
 };

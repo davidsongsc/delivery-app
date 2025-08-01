@@ -16,6 +16,7 @@ export interface AuthState {
     loading: boolean;
     error: string | null;
     access_level?: any;
+    rememberMe?: boolean;
     login: (username: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
     logout: () => void;
@@ -52,6 +53,7 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             loading: false,
             error: null,
+            rememberMe: false,
             hydrated: false,
             setUser: (user) => set({ user }),
             perfis: [],
@@ -82,35 +84,57 @@ export const useAuthStore = create<AuthState>()(
                     throw error;
                 }
             },
-            login: async (username, password) => {
+            login: async (username: string, password: string, rememberMe: boolean) => {
                 set({ loading: true, error: null });
                 try {
-                    const { user, access, refresh, access_level } = await authService.login(username, password);
+                    // Passar rememberMe para o backend
+                    const { user, access, refresh, access_level } = await authService.login(username, password, rememberMe);
+
+                    // Salvar token dependendo do rememberMe
+                    if (rememberMe) {
+                        localStorage.setItem('accessToken', access);
+                        localStorage.setItem('refreshToken', refresh);
+                    } else {
+                        sessionStorage.setItem('accessToken', access);
+                        sessionStorage.setItem('refreshToken', refresh);
+                    }
+
                     set({
                         user,
                         token: access,
+                        refreshToken: refresh,
                         isAuthenticated: true,
                         loading: false,
-                        refreshToken: refresh,
-                        access_level: access_level,
+                        access_level,
+                        rememberMe,
                     });
 
-                    notification.success({
-                        message: 'Login realizado com sucesso',
+                    notification.info({
+                        message: `Bem-vindo, ${user.first_name || user.username}!`,
+                        description: 'Você está logado com sucesso.',
+                        duration: 10,
+                        placement: 'bottomRight',
                     });
                 } catch (error: any) {
+                    // Pega título e detalhe da resposta de erro, se houver
+                    const title = error?.response?.data?.title || 'Erro ao fazer login';
+                    const detail = error?.response?.data?.detail || 'Tente novamente mais tarde';
+
                     set({
                         isAuthenticated: false,
                         loading: false,
-                        error: error?.response?.data?.detail || 'Erro desconhecido',
+                        error: detail,
                     });
 
                     notification.error({
-                        message: 'Erro ao fazer login',
-                        description: error?.response?.data?.detail || 'Tente novamente mais tarde',
+                        message: title,
+                        description: detail,
+                        placement: 'bottomRight',
                     });
                 }
             },
+
+
 
             clearAuth: () => {
                 set({
@@ -158,18 +182,19 @@ export const useAuthStore = create<AuthState>()(
             logout: async () => {
                 try {
                     await authService.logout();
-
-                    notification.success({
-                        message: 'Logout realizado com sucesso',
-                    });
                 } finally {
-                    document.cookie = 'token=; path=/; max-age=0';
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    sessionStorage.removeItem('accessToken');
+                    sessionStorage.removeItem('refreshToken');
 
                     set({
                         token: null,
+                        refreshToken: null,
                         user: null,
                         isAuthenticated: false,
                         loading: false,
+                        rememberMe: false,
                     });
                 }
             },

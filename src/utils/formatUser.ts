@@ -1,24 +1,14 @@
-import { IPerfil, IPermissions } from "@/interfaces/IPerfil";
+import { IPerfil, IPermissao } from "@/interfaces/IPerfil";
 import { IUser } from "@/interfaces/IUser";
 
 function mapUserData(data: any): IUser {
   const perfis: IPerfil[] = (data.perfis || []).map((perfil: any) => {
-    const permissoes: IPermissions[] = perfil.nivel?.permissoes || [];
+    const permissoes: IPermissao[] = perfil.tipo?.nivel?.permissoes || [];
 
     return {
       id: perfil.id,
       nome: perfil.nome,
       descricao: perfil.descricao,
-      nivel: {
-        id: perfil.nivel?.id,
-        nome: perfil.nivel?.nome,
-        descricao: perfil.nivel?.descricao,
-        permissoes: permissoes.map((p: any) => ({
-          id: p.id,
-          codigo: p.codigo,
-          nome: p.nome,
-        })),
-      },
       tipo: {
         id: perfil.tipo?.id,
         nome: perfil.tipo?.nome,
@@ -28,10 +18,11 @@ function mapUserData(data: any): IUser {
           id: perfil.tipo?.nivel?.id,
           nome: perfil.tipo?.nivel?.nome,
           descricao: perfil.tipo?.nivel?.descricao,
-          pode_editar: perfil.tipo?.nivel?.permissoes?.some(p => p.codigo === "pode_editar") || false,
-          pode_visualizar: perfil.tipo?.nivel?.permissoes?.some(p => p.codigo === "pode_visualizar") || false,
-          pode_excluir: perfil.tipo?.nivel?.permissoes?.some(p => p.codigo === "pode_excluir") || false,
-          pode_gerenciar_usuarios: perfil.tipo?.nivel?.permissoes?.some(p => p.codigo === "pode_gerenciar_usuarios") || false,
+          permissoes: permissoes.map((p: any) => ({
+            id: p.id,
+            codigo: p.codigo,
+            nome: p.nome,
+          })),
         },
       },
     };

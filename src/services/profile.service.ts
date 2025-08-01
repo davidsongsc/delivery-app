@@ -7,7 +7,7 @@ const create = async (data: IUserCreate) =>
 const update = async (id: string, data: Partial<IUserCreate>) =>
   apiClient.put(`/api/profiles/${id}/`, data);
 
-const remove = async (id: string) => apiClient.delete(`/api/profiles/${id}`);
+const remove = async (id: string) => apiClient.delete(`/api/profiles/${id}/`);
 
 const getAll = async (query: string = "") =>
   apiClient.get(`/api/profiles` + query);

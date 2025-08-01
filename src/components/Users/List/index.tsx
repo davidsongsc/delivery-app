@@ -24,7 +24,7 @@ const UserList: React.FC = () => {
 
   const { user } = useAuth();
   const permissions = getUserPermissions(user);
-
+  console.log('User Permissions:', user);
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
     { value: 'email', label: 'Email' }, // Added email as a filter option
@@ -49,8 +49,8 @@ const UserList: React.FC = () => {
     <div className="w-7xl container mx-auto">
       <PageTitle
         navTitle="Sistema >"
-        title="Usuários" // Corrected typo for consistency
-        hasBackButton={true} // Added a back button, assuming it's a common navigation pattern
+        title="Usuários"
+        hasBackButton={true} 
         action={
           <>
             {permissions.includes('usuarios_criar') && (
@@ -69,7 +69,7 @@ const UserList: React.FC = () => {
         }
       />
 
-      <div className="bg-secondary  rounded-lg shadow-xl"> {/* Container for table and filters */}
+      <div className="bg-secondary  rounded-lg shadow-xl"> 
         <PageSizeSelector
           pageSize={pageSize}
           setPageSize={setPageSize}
@@ -81,10 +81,9 @@ const UserList: React.FC = () => {
           filterOptions={filterOptions}
         />
 
-        {/* Added some top margin for the table for better spacing */}
         <Table
           rowKey="id"
-          columns={UserColumn(usersRefresh, permissions)} // Remember to ensure CourseColumn correctly handles user data
+          columns={UserColumn(usersRefresh, permissions)}
           dataSource={users}
           loading={usersLoading}
           pagination={{

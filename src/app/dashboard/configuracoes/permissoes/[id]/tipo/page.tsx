@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import ProfileEdit from "@/components/Profile/Edit";
+import TipoPerfilEdit from "@/components/Profile/TypeProfile/Edit";
 
 const Page: React.FC = () => {
-  return <ProfileEdit />;
+  return <TipoPerfilEdit />;
 };
 
 export default React.memo(Page);

@@ -14,11 +14,12 @@ body {
 .container {
   width: 100%;
   max-width: none;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 1px;
+  padding-right: 5px;
   height: calc(100vh - 110.5px) !important;
   overflow: auto;
   background-color: theme("colors.primary");
+  padding-bottom: 15px;
 }
 
 .container-conteudo {
@@ -74,18 +75,17 @@ body {
 }
 
 .ant-table-wrapper {
-  padding: 0 25px !important;
+  padding: 0 5px !important;
+
 }
 
 .ant-table-content {
   min-width: 1236px;
 }
 
-
-
 .ant-table-content table {
   overflow-x: auto;
-  border-spacing: 24px 15px !important;
+  border-spacing: 15px 7px !important;
 
   & .ant-table-thead {
     & .ant-table-cell {

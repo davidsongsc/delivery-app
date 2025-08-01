@@ -43,15 +43,7 @@ export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
       key: 'is_superuser',
       render: (value: boolean) => (value ? 'Sim' : 'Não'),
     },
-    {
-      title: 'Perfis',
-      dataIndex: 'perfis',
-      key: 'perfis',
-      render: (perfis) =>
-        perfis && perfis.length > 0
-          ? perfis.map((p: any) => p.nome).join(', ')
-          : '-',
-    },
+  
     {
       title: 'Ações',
       render: (_, record: IUser) => (

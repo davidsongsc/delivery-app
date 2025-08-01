@@ -73,7 +73,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                 },
                 Menu: {
                     itemBg: config.theme.colors.darkBg,
-                    darkItemSelectedBg: config.theme.colors.darkModal,
+                    darkItemSelectedBg: config.theme.colors.primary,
                     darkItemBg: config.theme.colors.darkModal,
                     darkSubMenuItemBg: config.theme.colors.darkModal,
                     darkItemHoverBg: config.theme.colors.darkSelecao,

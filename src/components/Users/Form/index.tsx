@@ -15,33 +15,149 @@ const UserForm: React.FC<UserFormProps> = ({ form, isEditing = false }) => {
     <Form form={form} layout="vertical" requiredMark={false}>
       <h1 className="text-3xl font-semibold mb-4">{isEditing ? 'Editar Usuário' : 'Dados do Usuário'}</h1>
 
-      <div className="grid grid-cols-12 gap-x-4">
-        <Form.Item<IUserCreate>
-          className="col-span-12 md:col-span-4"
-          label={<span className="font-bold">Usuário (username):</span>}
-          name="username"
-          rules={[{ required: true, message: 'Campo obrigatório' }]}
-        >
-          <Input placeholder="Digite o nome de usuário..." />
-        </Form.Item>
+      <div className='grid grid-cols-12 gap-x-4 border  p-4  rounded-lg bg-gray-100'>
+        <div className='col-span-3'>
+          <h2 className="text-2xl font-semibold mb-4">Login</h2>
 
-        <Form.Item<IUserCreate>
-          className="col-span-12 md:col-span-4"
-          label={<span className="font-bold">Email:</span>}
-          name="email"
-          rules={[{ required: true, message: 'Campo obrigatório' }]}
-        >
-          <Input placeholder="Digite o email..." />
-        </Form.Item>
-        <Form.Item<IUserCreate>
-          className="col-span-12 md:col-span-4"
-          label={<span className="font-bold">Telefone:</span>}
-          name="phone"
-        >
-          <Input placeholder="Digite o telefone..." />
-        </Form.Item>
+          <div className="grid grid-cols-3 gap-x-4">
+            <Form.Item<IUserCreate>
+              className="col-span-3 "
+              label={<span className="font-bold">Usuário (username):</span>}
+              name="username"
+              rules={[{ required: true, message: 'Campo obrigatório' }]}
+            >
+              <Input placeholder="Digite o nome de usuário..." />
+            </Form.Item>
 
+            <Form.Item<IUserCreate>
+              className="col-span-3 "
+              label={<span className="font-bold">Email:</span>}
+              name="email"
+              rules={[{ required: true, message: 'Campo obrigatório' }]}
+            >
+              <Input placeholder="Digite o email..." />
+            </Form.Item>
+            <Form.Item<IUserCreate>
+              className="col-span-3 "
+              label={<span className="font-bold">Telefone:</span>}
+              name="phone"
+            >
+              <Input placeholder="Digite o telefone..." />
+            </Form.Item>
+
+          </div>
+        </div>
+        <div className='col-span-3'>
+          <h2 className="text-2xl font-semibold mb-4">Acesso ao Sistema</h2>
+          <div className="grid grid-cols-3 gap-4">
+
+            <Form.Item<IUserCreate>
+              className="col-span-3 "
+              label="Senha"
+              name="password"
+              rules={
+                isEditing
+                  ? []
+                  : [{ required: true, message: 'Campo obrigatório' }]
+              }
+            >
+              <Input.Password placeholder="Digite uma senha" />
+            </Form.Item>
+
+            {/* Confirmação de senha */}
+            <Form.Item<IUserCreate>
+              className="col-span-3 "
+              label="Confirmação de senha"
+              name="password_confirmation"
+              dependencies={['password']}
+              rules={
+                isEditing
+                  ? []
+                  : [
+                    {
+                      required: true,
+                      message: 'Por favor, confirme sua senha!',
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error('As senhas não são iguais!')
+                        );
+                      },
+                    }),
+                  ]
+              }
+            >
+              <Input.Password placeholder="Confirme sua senha" />
+            </Form.Item>
+          </div>
+        </div>
+        <div className='col-span-12 md:col-span-3'>
+          <h2 className="text-2xl font-semibold mb-4">Configurações de Acesso</h2>
+          <div className="grid grid-cols-3 gap-x-4">
+            <Form.Item<IUserCreate>
+              className="col-span-6 md:col-span-3"
+              label="Status"
+              name="is_active"
+              initialValue={true}
+              rules={[{ required: true, message: 'Campo obrigatório' }]}
+            >
+              <Select>
+                <Select.Option value={true}>Ativo</Select.Option>
+                <Select.Option value={false}>Inativo</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item<IUserCreate>
+              className="col-span-6 md:col-span-3"
+              name="is_staff"
+              initialValue={false}
+              label="Supersivor"
+            >
+              <Select>
+                <Select.Option value={true}>Sim</Select.Option>
+                <Select.Option value={false}>Não</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item<IUserCreate>
+              className="col-span-6 md:col-span-3"
+              name="is_superuser"
+              initialValue={false}
+              label="Gerente"
+            >
+              <Select>
+                <Select.Option value={true}>Sim</Select.Option>
+                <Select.Option value={false}>Não</Select.Option>
+              </Select>
+            </Form.Item>
+
+          </div>
+        </div>
+
+        <div className='col-span-12 md:col-span-3'>
+          <h2 className="text-2xl font-semibold mb-4">Empresa</h2>
+          <Form.Item<IUserCreate>
+            className="col-span-12 md:col-span-6"
+            label={<span className="font-bold">Corporação:</span>}
+            name="corporation"
+          >
+            <Input placeholder="Digite a corporação..." />
+          </Form.Item>
+
+          <Form.Item<IUserCreate>
+            className="col-span-12 md:col-span-6"
+            label={<span className="font-bold">Tenant:</span>}
+            name="tenant"
+          >
+            <Input placeholder="Digite o ID do tenant..." /> {/* Ou um Select */}
+          </Form.Item>
+        </div>
       </div>
+      <hr className="border-t border-primary my-4" />
       <h2 className="text-2xl font-semibold mb-4">Informações pessoais</h2>
       <div className="grid grid-cols-12 gap-x-4">
 
@@ -76,113 +192,6 @@ const UserForm: React.FC<UserFormProps> = ({ form, isEditing = false }) => {
         >
           <Input placeholder="Digite o RG..." />
         </Form.Item>
-        <Form.Item<IUserCreate>
-          className="col-span-12 md:col-span-6"
-          label={<span className="font-bold">Corporação:</span>}
-          name="corporation"
-        >
-          <Input placeholder="Digite a corporação..." />
-        </Form.Item>
-
-        <Form.Item<IUserCreate>
-          className="col-span-12 md:col-span-6"
-          label={<span className="font-bold">Tenant:</span>}
-          name="tenant"
-        >
-          <Input placeholder="Digite o ID do tenant..." /> {/* Ou um Select */}
-        </Form.Item>
-      </div>
-      <div className='grid grid-cols-12 gap-x-4'>
-        <div className='col-span-12 md:col-span-6'>
-          <h2 className="text-2xl font-semibold mb-4">Configurações de Acesso</h2>
-          <div className="grid grid-cols-12 gap-x-4">
-            <Form.Item<IUserCreate>
-              className="col-span-12 md:col-span-6"
-              label="Status"
-              name="is_active"
-              initialValue={true}
-              rules={[{ required: true, message: 'Campo obrigatório' }]}
-            >
-              <Select>
-                <Select.Option value={true}>Ativo</Select.Option>
-                <Select.Option value={false}>Inativo</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item<IUserCreate>
-              className="col-span-12 md:col-span-3"
-              name="is_staff"
-              initialValue={false}
-              label="Supersivor"
-            >
-              <Select>
-                <Select.Option value={true}>Sim</Select.Option>
-                <Select.Option value={false}>Não</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item<IUserCreate>
-              className="col-span-12 md:col-span-3"
-              name="is_superuser"
-              initialValue={false}
-              label="Gerente"
-            >
-              <Select>
-                <Select.Option value={true}>Sim</Select.Option>
-                <Select.Option value={false}>Não</Select.Option>
-              </Select>
-            </Form.Item>
-
-          </div>
-        </div>
-        <div className='col-span-12 md:col-span-6'>
-          <h2 className="text-2xl font-semibold mb-4">Acesso ao Sistema</h2>
-          <div className="grid grid-cols-12 gap-4">
-
-            <Form.Item<IUserCreate>
-              className="col-span-12 md:col-span-6"
-              label="Senha"
-              name="password"
-              rules={
-                isEditing
-                  ? []
-                  : [{ required: true, message: 'Campo obrigatório' }]
-              }
-            >
-              <Input.Password placeholder="Digite uma senha" />
-            </Form.Item>
-
-            {/* Confirmação de senha */}
-            <Form.Item<IUserCreate>
-              className="col-span-12 md:col-span-6"
-              label="Confirmação de senha"
-              name="password_confirmation"
-              dependencies={['password']}
-              rules={
-                isEditing
-                  ? []
-                  : [
-                    {
-                      required: true,
-                      message: 'Por favor, confirme sua senha!',
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue('password') === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error('As senhas não são iguais!')
-                        );
-                      },
-                    }),
-                  ]
-              }
-            >
-              <Input.Password placeholder="Confirme sua senha" />
-            </Form.Item>
-          </div>
-        </div>
 
       </div>
     </Form>

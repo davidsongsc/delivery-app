@@ -10,7 +10,7 @@ const create = async (data: IUserCreate) =>
 const update = async (id: string, data: Partial<IUserCreate>) =>
   apiClient.put(`/api/users/${id}/`, data);
 
-const remove = async (id: string) => apiClient.delete(`/api/users/${id}`);
+const remove = async (id: string) => apiClient.delete(`/api/users/${id}/`);
 
 const getAll = async (query: string = "") =>
   apiClient.get(`/api/users` + query);

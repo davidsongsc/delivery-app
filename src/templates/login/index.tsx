@@ -1,4 +1,4 @@
-
+import React, { useState, useCallback } from 'react';
 import {
     TextField,
     Button,
@@ -6,111 +6,70 @@ import {
     Typography,
     Alert,
     CircularProgress,
-    Paper
+    Paper,
+    Checkbox,
+    FormControlLabel,
+    IconButton,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Image from 'next/image';
-import ClientOnly from '@/components/ClientOnly';
-
-import useParallaxEffect from '@/hooks/useParallaxEffect';
 import { notification } from 'antd';
+import Image from 'next/image';
 import TestimonialsSection from '@/components/MiniComponents/Section/Testimonials';
+
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login, loading, error } = useAuthStore();
+    const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState<{ username?: boolean; password?: boolean }>({});
+    const [errorMessage, setErrorMessage] = useState<{ title?: string; detail?: string }>({});
+
+    const { login, loading } = useAuthStore();
     const router = useRouter();
     const isUser = useAuthStore(state => state.user);
-    const starsLayer1Ref = useParallaxEffect(30);
-    const starsLayer2Ref = useParallaxEffect(50);
-    const starsLayer3Ref = useParallaxEffect(80);
+
+    const toggleShowPassword = () => setShowPassword(show => !show);
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Reset erros anteriores
+        setFieldErrors({});
+        setErrorMessage({});
+
         try {
-            await login(username, password);
+            await login(username, password, rememberMe);
 
             const isAuthenticated = useAuthStore.getState().isAuthenticated;
 
             if (isAuthenticated) {
                 router.push('/dashboard');
             }
-        } catch (error) {
+        } catch (error: any) {
+            // Supondo que error tenha a estrutura { title, detail }
+            const title = error.title || 'Erro ao fazer login';
+            const detail = error.detail || 'Tente novamente mais tarde';
+
+            setErrorMessage({ title, detail });
+
             notification.warning({
-                message: 'Erro ao fazer login',
-                description: 'Tente novamente mais tarde',
-            })
-        }
-    }, [login, username, password, router]);
+                message: title,
+                description: detail,
+            });
 
-    const generateStars = useCallback((numStars: number, minSize: number, maxSize: number, opacity: number) => {
-        const stars = [];
-        for (let i = 0; i < numStars; i++) {
-            const size = Math.random() * (maxSize - minSize) + minSize;
-            const top = Math.random() * 100;
-            const left = Math.random() * 100;
-            const duration = Math.random() * 5 + 5;
-
-            stars.push(
-                <span
-                    key={i}
-                    style={{
-                        position: 'absolute',
-                        top: `${top}%`,
-                        left: `${left}%`,
-                        width: `${size}px`,
-                        height: `${size}px`,
-                        backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-                        borderRadius: '50%',
-                        boxShadow: `0 0 ${size * 0.5}px ${size * 0.2}px rgba(255, 255, 255, 0.7)`,
-                        animation: `twinkle ${duration}s infinite alternate ease-in-out`,
-                    }}
-                ></span>
-            );
+            // Marcar campos inválidos se aplicável
+            // Se seu backend retorna info de quais campos erraram, adapte aqui
+            // Exemplo simples que marca ambos como erro:
+            setFieldErrors({ username: true, password: true });
         }
-        return stars;
-    }, []);
+    }, [login, username, password, rememberMe, router]);
+
     return (
         <>
-            {/* CONTAINER FIXO DO FUNDO ESTELAR */}
-            <ClientOnly>
-                <Box
-                    sx={{
-                        minHeight: '100vh',
-                        width: '100vw',
-                        background: 'linear-gradient(180deg, #020024 0%, #090979 35%, #00d4ff 100%)', // <--- AQUI!
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        overflow: 'hidden',
-                        zIndex: -1,
-                    }}
-                >
-                    {/* Camadas de Parallax */}
-                    <div ref={starsLayer1Ref} style={{ position: 'absolute', width: '110%', height: '110%' }}>
-                        {generateStars(100, 1.5, 3, 0.9)}
-                    </div>
-                    <div ref={starsLayer2Ref} style={{ position: 'absolute', width: '120%', height: '120%' }}>
-                        {generateStars(150, 1, 2, 0.7)}
-                    </div>
-                    <div ref={starsLayer3Ref} style={{ position: 'absolute', width: '130%', height: '130%' }}>
-                        {generateStars(200, 0.5, 1.5, 0.5)}
-                    </div>
-                </Box>
-            </ClientOnly>
-
-            <div
-                className='grid grid-cols-1 md:grid-cols-2'
-                style={{
-                    minHeight: '100vh',
-                    position: 'relative',
-                    zIndex: 1,
-                }}
-            >
-                {/* Coluna do Formulário de Login */}
+            <div className='grid grid-cols-1 md:grid-cols-2' style={{ minHeight: '100vh', position: 'relative', zIndex: 1 }}>
                 <Box
                     sx={{
                         minHeight: '93vh',
@@ -119,9 +78,10 @@ const LoginPage = () => {
                         alignItems: 'center',
                         p: 2,
                     }}
-
                 >
-                    {isUser ? <TestimonialsSection /> :
+                    {isUser ? (
+                        <TestimonialsSection />
+                    ) : (
                         <Paper
                             elevation={6}
                             component="form"
@@ -136,13 +96,10 @@ const LoginPage = () => {
                                 zIndex: 10,
                                 position: 'relative',
                             }}
-                            style={{ border: error ? '1px solid red' : '' }}
                         >
                             <Typography variant="h4" textAlign="center" mb={3} fontWeight="bold" color="primary">
                                 Login de Usuário
                             </Typography>
-
-
 
                             <TextField
                                 label="Usuário"
@@ -152,19 +109,46 @@ const LoginPage = () => {
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
                                 autoComplete="username"
+                                error={!!fieldErrors.username}
+                                helperText={fieldErrors.username ? 'Usuário inválido' : ''}
                             />
 
                             <TextField
                                 label="Senha"
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 fullWidth
                                 margin="normal"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 autoComplete="current-password"
-
+                                InputProps={{
+                                    endAdornment: (
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={toggleShowPassword}
+                                            edge="end"
+                                            size="small"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    ),
+                                }}
+                                error={!!fieldErrors.password}
+                                helperText={fieldErrors.password ? 'Senha inválida' : ''}
                             />
+
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                        color="primary"
+                                    />
+                                }
+                                label="Lembrar-me"
+                            />
+
                             <Button
                                 type="submit"
                                 fullWidth
@@ -180,7 +164,13 @@ const LoginPage = () => {
                                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Entrar'}
                             </Button>
 
-                            <div className='grid grid-cols-2'>
+                            {errorMessage.detail && (
+                                <Alert severity="error" sx={{ mb: 2 }}>
+                                    {errorMessage.title}: {errorMessage.detail}
+                                </Alert>
+                            )}
+
+                            <div className="grid grid-cols-2">
                                 <div>
                                     <Typography variant="body2" textAlign="center" mt={2}>
                                         Não tem uma conta?{' '}
@@ -196,27 +186,15 @@ const LoginPage = () => {
                                         </Link>
                                     </Typography>
                                 </div>
-                                <div>
-                                    {error && (
-                                        <Alert severity="error" sx={{ mb: 2 }}>
-                                            {error}
-                                        </Alert>
-                                    )}
-                                </div>
                             </div>
-
-                        </Paper>}
-
+                        </Paper>
+                    )}
                 </Box>
 
-                <div className='hidden md:flex justify-center align-center w-full h-full flex-col'>
-
-
+                <div className="hidden md:flex justify-center align-center w-full h-full flex-col">
                     <Image src="/files/login/login-animate.svg" alt="Login" width={950} height={600} />
                 </div>
-
             </div>
-
         </>
     );
 };

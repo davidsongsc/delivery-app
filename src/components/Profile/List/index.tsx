@@ -53,7 +53,7 @@ const ProfileList: React.FC = () => {
         action={
           <>
             {permissions.includes('permissoes_criar') && (
-              <Link href="/dashboard/configuracoes/usuarios/cadastrar">
+              <Link href="/dashboard/configuracoes/permissoes/cadastrar">
                 {/* Styled button to match the new PageTitle aesthetic */}
                 <Button
                   type="default"
@@ -68,7 +68,7 @@ const ProfileList: React.FC = () => {
         }
       />
 
-      <div className="bg-secondary  rounded-lg shadow-xl"> {/* Container for table and filters */}
+      <div className="bg-secondary  rounded-lg shadow-xl "> {/* Container for table and filters */}
         <PageSizeSelector
           pageSize={pageSize}
           setPageSize={setPageSize}
@@ -80,10 +80,9 @@ const ProfileList: React.FC = () => {
           filterOptions={filterOptions}
         />
 
-        {/* Added some top margin for the table for better spacing */}
         <Table
           rowKey="id"
-          columns={ProfileColumn(profilesRefresh, permissions)} // Remember to ensure CourseColumn correctly handles user data
+          columns={ProfileColumn(profilesRefresh, permissions)} 
           dataSource={profiles}
           loading={profilesLoading}
           pagination={{
@@ -92,7 +91,6 @@ const ProfileList: React.FC = () => {
             total: profilesTotal,
             onChange: (page) => setPage(page),
             showSizeChanger: false,
-            // Styling for Ant Design pagination (optional, but can enhance consistency)
             className: 'mt-4 ant-pagination-dark',
           }}
           className="ant-table-dark my-4 "

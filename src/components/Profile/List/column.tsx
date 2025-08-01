@@ -7,6 +7,7 @@ import { ColumnType } from 'antd/lib/table';
 import Link from 'next/link';
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
+import { MdDeleteOutline } from 'react-icons/md';
 
 type ProfileColumnProps = (
   fetchData: () => void,
@@ -16,39 +17,38 @@ type ProfileColumnProps = (
 export const ProfileColumn: ProfileColumnProps = (fetchData, userPermissions) => {
   return [
     {
-      title: 'Nome',
+      title: 'Cargo',
       dataIndex: 'nome',
       key: 'nome',
     },
     {
-      title: 'Descrição',
-      dataIndex: 'descricao',
-      key: 'descricao',
-    },
-    {
-      title: 'Tipo',
+      title: 'Função',
       dataIndex: ['tipo', 'nome'],
-      key: 'tipo',
+      key: 'tipo_nome',
     },
     {
       title: 'Nível',
-      dataIndex: ['nivel', 'nome'],
-      key: 'nivel',
+      dataIndex: ['tipo', 'nivel', 'nome'],
+      key: 'nivel_nome',
     },
     {
       title: 'Permissões',
-      dataIndex: ['nivel', 'permissoes'],
+      dataIndex: ['tipo', 'nivel', 'permissoes'],
       key: 'permissoes',
       render: (permissoes: { codigo: string; nome: string }[]) => {
         if (!permissoes || permissoes.length === 0) return '-';
 
+        const permissoesTooltip = permissoes.map(p => p.nome).join(', ');
         const exibidas = permissoes.slice(0, 5).map(p => p.nome).join(', ');
         const temMais = permissoes.length > 5;
 
-        return temMais ? `${exibidas}...` : exibidas;
+        return (
+          <Tooltip title={permissoesTooltip}>
+            <span>{exibidas}{temMais ? '...' : ''}</span>
+          </Tooltip>
+        );
       },
     },
-
     {
       title: 'Ações',
       key: 'acoes',
@@ -56,7 +56,7 @@ export const ProfileColumn: ProfileColumnProps = (fetchData, userPermissions) =>
         <div className="flex justify-around">
           {userPermissions.includes('permissoes_editar') && (
             <Tooltip title="Editar">
-              <Link href={`/dashboard/configuracoes/perfis/${record.id}/editar`}>
+              <Link href={`/dashboard/configuracoes/permissoes/${record.id}/editar`}>
                 <CiEdit size={20} />
               </Link>
             </Tooltip>

@@ -1,6 +1,6 @@
 'use client';
 
-import PageTitle from '@/components/MiniComponents/PageTitle';
+import ProfileView from '@/components/Profile/View';
 import { IUserCreate } from '@/interfaces/IUser';
 import { Button, Form, App, Spin } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -115,6 +115,15 @@ const UserEdit: React.FC = () => {
 
           </div>
         </SectionSeparator>
+        {permissions.includes('permissoes_visualizar') && user?.perfis?.length! > 0 && (
+          <SectionSeparator title="Perfil" >
+            <div className="container-conteudo-small mb-1">
+              {user?.perfis.map((perfil) => (
+                <ProfileView key={perfil.id} perfil={perfil} />
+              ))}
+            </div>
+          </SectionSeparator>
+        )}
         {permissions.includes('endereco_visualizar') &&
           <>
             <SectionSeparator title="Endereços" >
@@ -123,6 +132,7 @@ const UserEdit: React.FC = () => {
               </div>
             </SectionSeparator>
           </>}
+
 
       </ProfileStructure>
     </div>

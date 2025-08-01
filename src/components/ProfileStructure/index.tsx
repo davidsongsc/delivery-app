@@ -49,7 +49,7 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
   const router = useRouter();
 
   return (
-    <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12">
+    <div className="mt-8 grid grid-cols-1 gap-2 lg:grid-cols-12">
       <div className="lg:col-span-2">
         <PageTitle hasBackButton navTitle={navTitle} title={title} />
         {profile && (
@@ -96,13 +96,15 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
 
           </div>
         )}
+        <hr className="border-t border-primary mb-1" />
+
         {menuButtons.map(button => (
           <Button
             key={button.title}
             type={button.isActive ? "primary" : "default"}
             block
             size="large"
-            className={` mb-[10px] h-[35px] text-[12px] ${button.isActive ? "bg-darkModal border-btnPrimary text-btnPrimary" : ""}`}
+            className={` mb-1 h-15 text-[12px] ${button.isActive ? "bg-darkModal border-btnPrimary text-btnPrimary" : ""}`}
             onClick={() => {
               if (button.onClick) {
                 button.onClick();
@@ -118,7 +120,7 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
 
       </div>
 
-      <div className="mt-4 lg:col-span-10 max-h-[calc(100vh-150px)] overflow-y-auto pb-5">
+      <div className=" lg:col-span-10 max-h-[calc(100vh-205px)] overflow-y-auto pb-5">
         {isLoading ? <AppLoading /> : <>{children}</>}
       </div>
     </div>

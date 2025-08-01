@@ -22,7 +22,6 @@ const AddressList: React.FC<AddressListProps> = ({ field, value, children }) => 
 
   const { user } = useAuth();
   const permissions = getUserPermissions(user);
-
   const { addresses, addressesLoading, addressesTotal, addressesRefresh } =
     useAddresses(
       useMemo(

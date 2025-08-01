@@ -17,17 +17,21 @@ import {
   SafetyOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import getUserPermissions from '@/utils/permissions';
 
 const { Title, Text } = Typography;
 
 const PerfilPage = () => {
   const { user, isAuthenticated, loading, checkAuth } = useAuth();
   const router = useRouter();
+
+  const permissions = getUserPermissions(user);
   useEffect(() => {
     if (!isAuthenticated) {
       checkAuth();
     }
   }, []);
+  console.log(user, permissions);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -61,11 +65,11 @@ const PerfilPage = () => {
               <Text strong>{user.email}</Text>
             </Space>
 
-            {user.phone_number && (
+            {user.phone && (
               <Space>
                 <PhoneOutlined />
                 <Text>Telefone:</Text>
-                <Text strong>{user.phone_number}</Text>
+                <Text strong>{user.phone}</Text>
               </Space>
             )}
 
@@ -85,21 +89,6 @@ const PerfilPage = () => {
               </Space>
             )}
 
-            {user.other_doc && (
-              <Space>
-                <IdcardOutlined />
-                <Text>Outro Documento:</Text>
-                <Text strong>{user.other_doc}</Text>
-              </Space>
-            )}
-
-            {user.invited_by && (
-              <Space>
-                <SafetyOutlined />
-                <Text>Convidado por:</Text>
-                <Tag color="blue">{user.invited_by}</Tag>
-              </Space>
-            )}
 
             {user.access_level && (
               <Space>

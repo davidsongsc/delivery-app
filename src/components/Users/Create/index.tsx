@@ -28,17 +28,38 @@ const UserCreate: React.FC = () => {
 
         })
         .then(res => {
+          console.log("Usuario criado com sucesso", res.data);
           notification.success({
-            message: "Colaborador cadastrado com sucesso!",
+            message: "Usuario cadastrado com sucesso!",
           });
           router.push(
-            `/dashboard/configuracoes/colaboradores/${res.data.user.id}/editar`
+            `/dashboard/configuracoes/usuarios/${res.data.id}/editar`
           );
+
         })
-        .catch(() => {
-          notification.error({
-            message: "Erro ao cadastrar colaborador",
-          });
+        .catch((e) => {
+          const errorData = e.response?.data;
+
+          if (errorData && typeof errorData === 'object') {
+            Object.entries(errorData).forEach(([field, messages]) => {
+              if (Array.isArray(messages)) {
+                messages.forEach((msg) => {
+                  notification.error({
+                    message: field,
+                    description: msg,
+                    duration: 5,
+                  });
+                });
+              }
+            });
+          } else {
+            notification.info({
+              message: "Confira os dados",
+              description: "Verifique os campos.",
+            });
+          }
+
+
         })
         .finally(() => setIsLoading(false));
     });
