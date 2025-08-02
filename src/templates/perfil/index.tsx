@@ -48,7 +48,7 @@ const PerfilPage = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4 bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen p-1 bg-gray-100">
       <Card className="w-full shadow-2xl rounded-2xl p-6">
         <div className="flex flex-col items-center gap-4">
           <Avatar size={80} icon={<UserOutlined />} />

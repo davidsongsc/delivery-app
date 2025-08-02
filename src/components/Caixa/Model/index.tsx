@@ -108,7 +108,9 @@ const CaixaModal: React.FC = () => {
                 onCancel={handleClose}
                 footer={null}
                 title="Gerenciar Caixas"
-                width={800}
+                width="100vw"
+                style={{ top: 20, padding: 0 }}
+                bodyStyle={{ height: 'calc(100vh - 100px)', overflowY: 'auto' }}
                 destroyOnClose={false}
                 maskClosable={false}
             >

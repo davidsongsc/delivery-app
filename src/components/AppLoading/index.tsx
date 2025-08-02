@@ -41,7 +41,7 @@ const AppLoading: React.FC<AnimatedLogoProps> = ({ className }) => {
           Este é apenas um SVG de exemplo.
         */}
                 <LogoIcon tamanho={80} texto='Carragando...' animacao={true} />
-                <p className="mt-4 text-xl font-semibold text-gray-800">Seu Shopping Virtual!</p>
+                <p className="mt-4 text-xl font-semibold text-gray-800">Carragando...</p>
             </Card>
         </div>
     );

@@ -1,3 +1,4 @@
+
 type Permissao = string;
 
 function getUserPermissions(user: any): Permissao[] {
@@ -19,5 +20,4 @@ function getUserPermissions(user: any): Permissao[] {
     const allPermissions = new Set<Permissao>([...fromPerfis]);
     return Array.from(allPermissions);
 }
-
 export default getUserPermissions;

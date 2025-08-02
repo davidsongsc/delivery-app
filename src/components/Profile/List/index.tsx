@@ -20,18 +20,16 @@ const ProfileList: React.FC = () => {
   const [selectedField, setSelectedField] = useState<string>('name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-
-
   const { user } = useAuth();
   const permissions = getUserPermissions(user);
+
+  if (!permissions.includes('permissoes_visualizar')) return NotFound();
 
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
     { value: 'email', label: 'Email' }, // Added email as a filter option
     { value: 'cpf', label: 'CPF' }, // Added CPF as a filter option
   ], []);
-
-  if (!permissions.includes('permissoes_visualizar')) return NotFound();
 
   const { profiles, profilesLoading, profilesTotal, profilesRefresh } = useProfiles(
     useMemo(

@@ -16,6 +16,7 @@ const HeaderPage: NextPage = () => {
   const { logout } = useAuthStore((state) => state);
   const hydrated = useAuthStore((state) => state.hydrated);
   const { user } = useAuth();
+  
   const router = useRouter();
 
   // State to control rendering client-specific parts after hydration
@@ -28,7 +29,7 @@ const HeaderPage: NextPage = () => {
 
   // Calculate permissions only if user is available and on client side
   const permissions = isClient && user ? getUserPermissions(user) : [];
-
+  console.log('header -> permissions:', permissions);
   const menuItems = [
     {
       key: 'sistema',
@@ -87,30 +88,67 @@ const HeaderPage: NextPage = () => {
       label: 'Produtos',
       children: [
         permissions.includes('estoque_visualizar') && {
-          key: '/dashboard/configuracoes/usuarios', // This key looks incorrect. Should likely be /dashboard/produtos/estoque or similar.
+          key: '/dashboard/configuracoes/usuarios',
           label: 'Estoque',
         },
         permissions.includes('produto_visualizar') && {
-          key: '/dashboard/configuracoes/permissoes', // This key looks incorrect. Should likely be /dashboard/produtos/produto or similar.
+          key: '/dashboard/configuracoes/permissoes',
           label: 'Produto',
         },
         permissions.includes('composicao_visualizar') && {
-          key: '/dashboard/configuracoes/permissoes', // This key looks incorrect. Should likely be /dashboard/produtos/composicao or similar.
+          key: '/dashboard/configuracoes/permissoes',
           label: 'Composição',
         },
         permissions.includes('adicional_visualizar') && {
-          key: '/dashboard/configuracoes/permissoes', // This key looks incorrect. Should likely be /dashboard/produtos/adicional or similar.
+          key: '/dashboard/configuracoes/permissoes',
           label: 'Item Adicional',
         },
+      ].filter(Boolean),
+    },
+    {
+      key: 'comandas',
+      label: 'Comandas',
+      children: [
+        permissions.includes('comandas_visualizar') && {
+          key: '/mesas',
+          label: 'Mesas',
+        },
+        permissions.includes('comandas_delivery') && {
+          key: '/dashboard/configuracoes/permissoes',
+          label: 'Delivery',
+        },
+        permissions.includes('comandas_bar') && {
+          key: '/dashboard/configuracoes/permissoes',
+          label: 'Bar',
+        },
+        permissions.includes('comandas_recepcao') && {
+          key: '/dashboard/configuracoes/permissoes',
+          label: 'Recepção',
+        },
+      ].filter(Boolean),
+    }, {
+      key: 'mensagens',
+      label: 'Mensagens',
+      children: [
+        permissions.includes('estoque_visualizar') && {
+          key: `/dashboard/mensagens/${user?.tenant}/`,
+          label: 'Mensagens',
+        },
+
       ].filter(Boolean),
     },
     {
       key: 'caixa',
       label: 'Caixa',
       children: [
+        permissions.includes('caixa_entradas') && {
+          key: '/dashboard/caixa',
+          label: 'Caixa Operacional',
+        },
         permissions.includes('caixa_movimentacoes') && {
           key: 'movimentacoes',
           label: 'Movimentações',
+
           children: [
             permissions.includes('caixa_entradas') && {
               key: '/dashboard/caixa/movimentacoes/entradas',
@@ -124,7 +162,12 @@ const HeaderPage: NextPage = () => {
               key: '/dashboard/caixa/movimentacoes/transferencias',
               label: 'Transferências',
             },
+            permissions.includes('caixa_entradas') && {
+              key: '/dashboard/pagamentos',
+              label: 'Pagamentos',
+            },
           ].filter(Boolean),
+
         },
         permissions.includes('caixa_acesso') && {
           key: 'relatorios',
@@ -205,10 +248,11 @@ const HeaderPage: NextPage = () => {
               </Link>
             </>
           ) : (
-            // You might want a loading spinner or a simple "Loading..." here if user state is still resolving
-            // For now, if user exists but not fully client-hydrated, we assume it's loading.
-            // A better approach is to handle the `user` state inside `useAuth` to represent loading.
-            null
+            <>
+              <Link href="/assinatura" passHref>
+                <Button type="primary">Assinatura</Button>
+              </Link>
+            </>
           )}
         </Space>
       </Header>
@@ -229,12 +273,16 @@ const HeaderPage: NextPage = () => {
 
           {user ? (
             <>
+              <Link href="/assinaturas" passHref>
+                <Button type="text">Assinatura</Button>
+              </Link>
               <Link href="/consulta-financeira" passHref>
                 <Button type="text">Nova simulação</Button>
               </Link>
               <Link href="/dashboard" passHref>
                 <Button type="primary">Perfil</Button>
               </Link>
+
             </>
           ) : (
             <>
