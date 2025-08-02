@@ -13,6 +13,7 @@ import "./styles.css"; // Arquivo CSS para transições
 
 interface PageTitleProps {
   title: string;
+  subtitle?: string;
   navTitle?: string;
   action?: React.ReactNode;
   hasBackButton?: boolean;
@@ -21,6 +22,7 @@ interface PageTitleProps {
 
 const PageTitle: React.FC<PageTitleProps> = ({
   title,
+  subtitle,
   navTitle,
   action,
   hasBackButton = false,
@@ -62,6 +64,9 @@ const PageTitle: React.FC<PageTitleProps> = ({
               <h1 className="text-3xl sm:text-2xl font-extrabold tracking-tight">
                 {title}
               </h1>
+              <h2 className="text-md sm:text-sm opacity-75">
+                {subtitle}
+              </h2>
             </div>
           </div>
 

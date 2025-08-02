@@ -17,30 +17,29 @@ import NotFound from '@/app/not-found';
 const UserList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(Constants.per_page);
-  const [selectedField, setSelectedField] = useState<string>('name');
+  const [selectedField, setSelectedField] = useState<string>('first_name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-
-
   const { user } = useAuth();
   const permissions = getUserPermissions(user);
-  console.log('User Permissions:', user);
+  
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
     { value: 'email', label: 'Email' }, // Added email as a filter option
     { value: 'cpf', label: 'CPF' }, // Added CPF as a filter option
   ], []);
 
-  if (!permissions.includes('pode_visualizar')) return NotFound();
+  if (!permissions.includes('usuarios_colaborador')) return NotFound();
 
   const { users, usersLoading, usersTotal, usersRefresh } = useUsers(
     useMemo(
       () => ({
         page,
         limit: pageSize,
-        filters: debouncedFilter as Record<string, string>,
+        // Adiciona o tenant do usuário logado como um filtro
+        filters: { ...debouncedFilter, tenant: user?.tenant },
       }),
-      [page, debouncedFilter, pageSize]
+      [page, debouncedFilter, pageSize, user]
     )
   );
 

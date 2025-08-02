@@ -107,7 +107,7 @@ const UserEdit: React.FC = () => {
           <div className="container-conteudo-small mb-4">
             <UserForm form={form} isEditing />
             <>
-              {permissions.includes('usuarios_criar') && (
+              {permissions.includes('usuarios_editar') && (
                 <Button type="primary" className="mt-4" onClick={submitData} loading={isLoading}>
                   Salvar
                 </Button>

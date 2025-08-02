@@ -16,7 +16,7 @@ const HeaderPage: NextPage = () => {
   const { logout } = useAuthStore((state) => state);
   const hydrated = useAuthStore((state) => state.hydrated);
   const { user } = useAuth();
-  
+
   const router = useRouter();
 
   // State to control rendering client-specific parts after hydration
@@ -53,11 +53,19 @@ const HeaderPage: NextPage = () => {
           key: 'equipe',
           label: 'Equipe',
           children: [
-            permissions.includes('caixa_entradas') && { // Note: This permission might be incorrect for "Colaboradores"
+            permissions.includes('usuarios_colaborador') && {
               key: '/dashboard/configuracoes/usuarios',
               label: 'Colaboradores',
             },
-            permissions.includes('caixa_entradas') && { // Note: This permission might be incorrect for "Gerentes"
+            permissions.includes('usuarios_afiliados') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Afiliados',
+            },
+            permissions.includes('usuarios_fornecedores') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Fornecedores',
+            },
+            permissions.includes('usuarios_gerentes') && {
               key: '/dashboard/configuracoes/gerentes',
               label: 'Gerentes',
             },
@@ -67,7 +75,7 @@ const HeaderPage: NextPage = () => {
             },
           ].filter(Boolean),
         },
-        permissions.includes('caixa_saidas') && { // Note: This permission might be incorrect for "Escala"
+        permissions.includes('caixa_saidas') && {
           key: 'escalas',
           label: 'Escala',
           children: [
@@ -81,6 +89,115 @@ const HeaderPage: NextPage = () => {
             },
           ].filter(Boolean),
         },
+      ].filter(Boolean),
+    },
+    {
+      key: 'clientes',
+      label: 'Clientes',
+      children: [
+        permissions.includes('usuarios_listar') && {
+          key: 'site',
+          label: 'Site',
+          children: [
+            permissions.includes('caixa_entradas') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Pedidos',
+            },
+            permissions.includes('caixa_entradas') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Feedbacks',
+            },
+            permissions.includes('caixa_entradas') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Entregas',
+            },
+            permissions.includes('caixa_entradas') && {
+              key: '/dashboard/configuracoes/gerentes',
+              label: 'Contato',
+            },
+            permissions.includes('permissoes_visualizar') && {
+              key: '/dashboard/configuracoes/permissoes',
+              label: 'Carrinho',
+            },
+          ].filter(Boolean),
+        },
+        permissions.includes('caixa_saidas') && {
+          key: 'fila_reserva',
+          label: 'Fila e Reservas',
+          children: [
+            permissions.includes('escala_servicos') && {
+              key: '/dashboard/escalas/servicos',
+              label: 'Reservas',
+            },
+            permissions.includes('escala_apoio') && {
+              key: '/dashboard/escalas/apoio',
+              label: 'Fila de espera',
+            },
+          ].filter(Boolean),
+        },
+      ].filter(Boolean),
+    },
+    {
+      key: 'afiliados',
+      label: 'Afiliados',
+      children: [
+        permissions.includes('afiliados_painel') && {
+          key: 'painel_afiliados',
+          label: 'Painel Afiliados',
+          children: [
+            permissions.includes('afiliados_cadastrar_cliente') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Cadastrar Cliente',
+            },
+            permissions.includes('afiliados_alterar_plano') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Alterar Plano',
+            },
+            permissions.includes('afiliados_clientes_listar') && {
+              key: '/dashboard/configuracoes/usuarios',
+              label: 'Lista de Clientes',
+            },
+
+          ].filter(Boolean),
+        },
+        permissions.includes('afiliados') && {
+          key: 'leads',
+          label: 'Leads',
+          children: [
+            permissions.includes('afiliados_leads') && {
+              key: '/dashboard/escalas/servicos',
+              label: 'Listar leads',
+            },
+            permissions.includes('afiliados_buscar_leads') && {
+              key: '/dashboard/escalas/apoio',
+              label: 'Buscar leads',
+            },
+            permissions.includes('afiliados_campanhas') && {
+              key: '/dashboard/escalas/apoio',
+              label: 'Campanhas',
+            },
+            permissions.includes('afiliados_historico_leads') && {
+              key: 'historico_leads',
+              label: 'Historico leads',
+              children: [
+                permissions.includes('afiliados_convertidos_leads') && {
+                  key: '/dashboard/escalas/servicos',
+                  label: 'Convertidos',
+                },
+                permissions.includes('afiliados_nao_convertidos_leads') && {
+                  key: '/dashboard/escalas/apoio',
+                  label: 'Nao convertidos',
+                },
+                permissions.includes('afiliados_geral_leads') && {
+                  key: '/dashboard/escalas/apoio',
+                  label: 'Geral',
+                },
+              ].filter(Boolean),
+            },
+          ].filter(Boolean),
+        },
+
+
       ].filter(Boolean),
     },
     {
@@ -130,10 +247,15 @@ const HeaderPage: NextPage = () => {
       key: 'mensagens',
       label: 'Mensagens',
       children: [
-        permissions.includes('estoque_visualizar') && {
+        permissions.includes('mensagens') && {
           key: `/dashboard/mensagens/${user?.tenant}/`,
-          label: 'Mensagens',
+          label: 'Canal Interno',
         },
+        permissions.includes('mensagens') && {
+          key: `/dashboard/mensagens/${user?.tenant}/leads`,
+          label: 'Leads',
+        },
+
 
       ].filter(Boolean),
     },
@@ -264,7 +386,7 @@ const HeaderPage: NextPage = () => {
     <>
       <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
-          <LogoIcon texto="Loja-vel Tech Solutions" />
+          <LogoIcon texto={user?.corporation ? user.corporation.nome : '"Loja-vel Tech Solutions"'} />
         </div>
         <Space size="middle">
           <Link href="/" passHref>

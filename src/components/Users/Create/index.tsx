@@ -3,17 +3,18 @@
 import PageTitle from "@/components/MiniComponents/PageTitle";
 import { IUserCreate } from "@/interfaces/IUser";
 import { Button, Form, App } from "antd";
-import React, { useCallback, useState } from "react";
+import React, { use, useCallback, useState } from "react";
 import UserForm from "../Form";
 import { userService } from "@/services/user.service";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 const UserCreate: React.FC = () => {
   const { notification } = App.useApp();
   const [form] = Form.useForm<IUserCreate>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-
+  const {user} = useAuth();
   const submitData = useCallback(() => {
     if (isLoading) return;
     form.validateFields().then(values => {
@@ -25,7 +26,12 @@ const UserCreate: React.FC = () => {
           email: values.email,
           password: values.password,
           is_active: values.is_active,
-
+          first_name: values.first_name,
+          last_name: values.last_name,
+          phone: values.phone,
+          cpf: values.cpf,
+          rg: values.rg,
+          tenant: user?.tenant
         })
         .then(res => {
           console.log("Usuario criado com sucesso", res.data);

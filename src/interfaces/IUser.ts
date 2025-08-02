@@ -56,6 +56,8 @@ export interface IUser {
 }
 
 export type IUserCreate = Omit<IUser, 'id' | 'is_active' | 'is_staff' | 'is_superuser' | "tenant" | "created_at" | "updated_at" | "password" | "created_by" | "updated_by"> & {
+    tenant: string;
+    is_active: boolean;
     password: string;
     password_confirmation: string;
 };

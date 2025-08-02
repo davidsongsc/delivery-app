@@ -14,7 +14,6 @@ type UserColumnProps = (fetchData: () => void,
   userPermissions: string[]) => (ColumnGroupType<any> | ColumnType<any>)[];
 
 export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
-
   return [
     {
       title: 'Email',
@@ -27,25 +26,63 @@ export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
       key: 'username',
     },
     {
+      title: 'Nome',
+      dataIndex: 'first_name',
+      key: 'first_name',
+    },
+    {
+      title: 'Sobrenome',
+      dataIndex: 'last_name',
+      key: 'last_name',
+    },
+    /*
+    {
+      title: 'CPF',
+      dataIndex: 'cpf',
+      key: 'cpf',
+    },
+    {
+      title: 'RG',
+      dataIndex: 'rg',
+      key: 'rg',
+    },
+    */
+    {
+      title: 'Telefone',
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (value: string | null) => value ?? '-',
+    },
+    /*
+    {
       title: 'Empresa',
       dataIndex: 'corporation',
       key: 'corporation',
     },
+    */
     {
       title: 'Ativo',
       dataIndex: 'is_active',
       key: 'is_active',
       render: (value: boolean) => (value ? 'Sim' : 'Não'),
     },
+    /*
     {
       title: 'Administrador',
       dataIndex: 'is_superuser',
       key: 'is_superuser',
       render: (value: boolean) => (value ? 'Sim' : 'Não'),
     },
-  
+    */
+    {
+      title: 'Criado em',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm'),
+    },
     {
       title: 'Ações',
+      key: 'actions',
       render: (_, record: IUser) => (
         <div className="flex justify-around">
           {userPermissions.includes('usuarios_visualizar') && (
@@ -60,14 +97,13 @@ export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
               id={record.id}
               service={userService}
               refresh={fetchData}
-              title="Deseja deletar esse curso?"
-              successMessage="Curso deletado com sucesso!"
-              errorMessage="Erro ao deletar curso"
+              title="Deseja deletar esse usuário?"
+              successMessage="Usuário deletado com sucesso!"
+              errorMessage="Erro ao deletar usuário"
             />
           )}
         </div>
       ),
-
     },
   ];
 };
