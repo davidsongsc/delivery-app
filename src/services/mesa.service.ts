@@ -1,7 +1,7 @@
 // services/mesas.service.ts
 
 import apiClient from './apiClient';
-import { IMesa } from '@/interfaces/IMesa'; // Importe a interface da Mesa
+import { IMesa } from '@/interfaces/IMesa';
 
 const baseURL = '/api/mesas/';
 
