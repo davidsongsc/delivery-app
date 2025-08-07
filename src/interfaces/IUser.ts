@@ -1,4 +1,4 @@
-import { IPerfil } from "./IPerfil";
+import { IPerfil, IPermissao } from "./IPerfil";
 
 export interface Permissao {
     id: number;
@@ -43,6 +43,7 @@ export interface IUser {
     is_superuser: boolean;
     access_level?: AccessLevel;
     perfis: IPerfil[];
+    permissoes: IPermissao[];
     corporation?: string;
     tenant?: string;
     created_at?: string;
@@ -60,9 +61,13 @@ export type IUserCreate = Omit<IUser, 'id' | 'is_active' | 'is_staff' | 'is_supe
     is_active: boolean;
     password: string;
     password_confirmation: string;
+    userpass: string;
+    userpass_confirmation: string;
 };
 
 export type IUserUpdate = Omit<IUser, 'id' | 'is_active' | 'is_staff' | 'is_superuser' | "created_at" | "updated_at" | "password"> & {
     password: string;
     password_confirmation: string;
+    userpass: string;
+    userpass_confirmation: string;
 };

@@ -2,6 +2,7 @@
 import React from 'react';
 import { NextPage } from 'next';
 import Image from 'next/image';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LogoIconProps {
     texto?: string;
@@ -16,10 +17,22 @@ const LogoIcon: NextPage<LogoIconProps> = ({
     animacao = false,
     tcor = 'text-d_primary',
 }) => {
+    const { user, isAuthenticated } = useAuth();
+
+    const logoCorporation = user?.corporation?.logo;
+    const fallbackLogo = '/files/imagens/logo/lojavel_logo2.png';
+
+    // Monta a URL final com verificação
+    const logoSrc =
+        isAuthenticated && logoCorporation
+            ? process.env.NEXT_PUBLIC_API_URL + logoCorporation
+            : fallbackLogo;
+
+
     return (
         <div className="flex items-center gap-2 shrink-0">
             <Image
-                src="/files/imagens/logo/lojavel_logo2.png"
+                src={logoSrc}
                 width={tamanho}
                 height={tamanho}
                 alt="Logo"

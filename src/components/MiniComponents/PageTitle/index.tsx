@@ -53,15 +53,15 @@ const PageTitle: React.FC<PageTitleProps> = ({
             {hasBackButton && (
               <IoChevronBackSharp
                 size={40}
-                className="mr-3 cursor-pointer hover:scale-110 text-option transition-transform duration-200 bg-primary rounded-full p-1"
+                className="mr-3 cursor-pointer hover:scale-110 text-option transition-transform duration-200 bg-textoSeparador rounded-full p-1"
                 onClick={() => router.back()}
               />
             )}
-            <div>
+            <div >
               {navTitle && (
-                <p className="text-sm opacity-75 mb-1">{navTitle}</p>
+                <p className="text-md opacity-75 text-textoSeparador">{navTitle}</p>
               )}
-              <h1 className="text-3xl sm:text-2xl font-extrabold tracking-tight">
+              <h1 className="text-2xl sm:text-3xl  xl:text-4xl font-extrabold tracking-tight text-textoSeparador">
                 {title}
               </h1>
               <h2 className="text-md sm:text-sm opacity-75">
@@ -72,7 +72,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
 
           <div className="flex items-center gap-3">
             <button
-              className="text-option hover:text-primary transition-transform flex items-center gap-1"
+              className="text-option hover:text-primary transition-transform flex items-center gap-1 xl:hidden"
               onClick={toggleVisibility}
               title="Ocultar título"
             >
@@ -86,7 +86,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
 
       {!isVisible && (
         <div
-          className="fixed bottom-6 right-6 z-50 bg-primary text-white p-3 rounded-full shadow-lg cursor-pointer hover:scale-105 transition-transform"
+          className="fixed bottom-6 right-6 z-50 bg-textoSeparador text-white p-3 rounded-full shadow-lg cursor-pointer hover:scale-105 transition-transform"
           onClick={toggleVisibility}
           title="Exibir título"
         >

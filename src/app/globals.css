@@ -16,10 +16,9 @@ body {
   max-width: none;
   padding-left: 1px;
   padding-right: 5px;
-  height: calc(100vh - 110.5px) !important;
   overflow: auto;
   background-color: theme("colors.primary");
-  padding-bottom: 15px;
+
 }
 
 .container-conteudo {
@@ -53,7 +52,7 @@ body {
 }
 
 .container-conteudo-small {
-  min-width: 1100px;
+
   overflow-x: auto;
   background-color: theme("colors.darkModal");
   border-radius: theme("borderRadius.md");
@@ -62,7 +61,9 @@ body {
 }
 
 .ant-btn-primary {
-  box-shadow: none !important;
+  box-shadow: 1px 1px 2px theme("colors.darkModal") !important;
+  color: theme("colors.gelo");
+
 }
 
 .ant-table {
@@ -71,21 +72,21 @@ body {
 }
 
 .ant-table-container {
-  min-width: 960px !important;
+  min-width: 370px !important;
 }
 
 .ant-table-wrapper {
-  padding: 0 5px !important;
+  padding: 0 2px !important;
 
 }
 
 .ant-table-content {
-  min-width: 1236px;
+  min-width: 370px !important;
 }
 
 .ant-table-content table {
   overflow-x: auto;
-  border-spacing: 15px 7px !important;
+  border-spacing: 5px 4px !important;
 
   & .ant-table-thead {
     & .ant-table-cell {
@@ -100,8 +101,8 @@ body {
 
     & .ant-table-cell {
       background: theme("colors.darkBg") !important;
-      border-radius: 10px;
-      height: 50px;
+      border-radius: 5px;
+      height: 35px;
     }
 
     &>tr:hover {
@@ -114,7 +115,7 @@ body {
 
 .ant-notification-notice-message,
 .ant-notification-notice-description {
-  color: theme("colors.primary") !important;
+
   padding-left: 10px;
 }
 
@@ -161,25 +162,31 @@ body {
 }
 
 .ant-notification-notice-success {
-  border-top: 7px solid theme("colors.sistemaGreen") !important;
+  border-left: 2px solid theme("colors.sistemaGreen") !important;
+  border-right: 16px solid theme("colors.sistemaGreen") !important;
+
 }
 
-
-
 .ant-notification-notice-error {
-  border-top: 7px solid theme("colors.sistemaRed") !important;
+  border-left: 2px solid theme("colors.sistemaRed") !important;
+  border-right: 16px solid theme("colors.sistemaRed") !important;
+
 }
 
 .ant-notification-notice-warning {
-  border-top: 7px solid theme("colors.sistemaYellow") !important;
+  border-left: 2px solid theme("colors.sistemaYellow") !important;
+  border-right: 16px solid theme("colors.sistemaYellow") !important;
+
 }
 
 .ant-notification-notice-info {
-  border-top: 7px solid theme("colors.sistemaBlue") !important;
+  border-left: 2px solid theme("colors.sistemaBlue") !important;
+  border-right: 16px solid theme("colors.sistemaBlue") !important;
+
 }
 
 .ant-layout {
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 ::-webkit-scrollbar {

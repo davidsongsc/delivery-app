@@ -1,5 +1,6 @@
 import { IProduto } from "@/interfaces/IProduto";
 import { produtosService } from "@/services/product.service";
+import { notification } from "antd";
 import { useEffect, useState } from "react";
 
 interface UseProdutoProps {
@@ -17,19 +18,22 @@ export const useProduto = ({ id }: UseProdutoProps): UseProdutoResponse => {
     const [produtoLoading, setProdutoLoading] = useState<boolean>(false);
 
     const produtoRefresh = () => {
-        if (produtoLoading) return;
+        if (!id || produtoLoading) return;
         setProdutoLoading(true);
 
         produtosService
             .getById(id)
-            .then(res => {
-                setProduto(res.data);
-            })
-            .catch(() => {
-                console.log("Erro ao buscar produto");
+            .then(res => setProduto(res.data))
+            .catch((error) => {
+                
+                notification.error({
+                    message: error.message || 'Erro ao listar produtos',
+                });
+                setProduto(null);
             })
             .finally(() => setProdutoLoading(false));
     };
+
 
     useEffect(() => {
         if (id) {

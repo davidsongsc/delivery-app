@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import ProductEdit from "@/components/Products/Edit";
+import ProductEditInfo from "@/components/Products/Edit/Info";
 
 const Page: React.FC = () => {
-  return <ProductEdit />;
+  return <ProductEditInfo  />;
 };
 
 export default React.memo(Page);

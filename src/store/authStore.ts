@@ -17,6 +17,8 @@ export interface AuthState {
     error: string | null;
     access_level?: any;
     rememberMe?: boolean;
+    permissions: string[]; // array com os códigos das permissões
+    setpermissions: (permissions: string[]) => void;
     login: (username: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
     logout: () => void;
@@ -35,7 +37,6 @@ export interface AuthState {
     corporationError: string | null;
 }
 
-
 const errorMessages = {
     loginFailed: 'Falha no login',
     registrationFailed: 'Falha no cadastro',
@@ -44,6 +45,12 @@ const errorMessages = {
     unknownError: 'Ocorreu um erro inesperado',
 };
 
+// Função para obter o token do cookie
+const getTokenFromCookie = () => {
+    if (typeof document === 'undefined') return null; // Garante que só roda no lado do cliente
+    const match = document.cookie.match(new RegExp('(^| )token=([^;]+)'));
+    return match ? match[2] : null;
+};
 
 export const useAuthStore = create<AuthState>()(
     persist(
@@ -53,10 +60,12 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             loading: false,
             error: null,
-            rememberMe: false,
+            rememberMe: false, // Adicionado de volta
             hydrated: false,
             setUser: (user) => set({ user }),
             perfis: [],
+            permissions: [],
+            setpermissions: (permissions) => set({ permissions }),
             setHydrated: () => set({ hydrated: true }),
             setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
             setToken: (token) => set({ token }),
@@ -84,20 +93,10 @@ export const useAuthStore = create<AuthState>()(
                     throw error;
                 }
             },
-            login: async (username: string, password: string, rememberMe: boolean) => {
+            login: async (username: string, password: string) => {
                 set({ loading: true, error: null });
                 try {
-                    // Passar rememberMe para o backend
-                    const { user, access, refresh, access_level } = await authService.login(username, password, rememberMe);
-
-                    // Salvar token dependendo do rememberMe
-                    if (rememberMe) {
-                        localStorage.setItem('accessToken', access);
-                        localStorage.setItem('refreshToken', refresh);
-                    } else {
-                        sessionStorage.setItem('accessToken', access);
-                        sessionStorage.setItem('refreshToken', refresh);
-                    }
+                    const { user, perfis, access, refresh } = await authService.login(username, password);
 
                     set({
                         user,
@@ -105,20 +104,27 @@ export const useAuthStore = create<AuthState>()(
                         refreshToken: refresh,
                         isAuthenticated: true,
                         loading: false,
-                        access_level,
-                        rememberMe,
+                        perfis,
+                        permissions: user.permissoes || [],
                     });
 
-                    notification.info({
+                    // Salva o token no cookie para o middleware do Axios
+                    // Adicionei o `SameSite=Lax` para melhor compatibilidade e segurança
+                    document.cookie = `token=${access}; path=/; max-age=3600; SameSite=Lax`;
+
+                    // Se você ainda usa localStorage para algo (como o refresh token para re-login silencioso), mantenha:
+                    localStorage.setItem('authToken', access);
+                    localStorage.setItem('refreshToken', refresh);
+
+
+                    notification.open({
                         message: `Bem-vindo, ${user.first_name || user.username}!`,
                         description: 'Você está logado com sucesso.',
-                        duration: 10,
-                        placement: 'bottomRight',
+                        duration: 2,
                     });
                 } catch (error: any) {
-                    // Pega título e detalhe da resposta de erro, se houver
-                    const title = error?.response?.data?.title || 'Erro ao fazer login';
-                    const detail = error?.response?.data?.detail || 'Tente novamente mais tarde';
+                    const title = error?.title || 'Erro ao fazer login';
+                    const detail = error?.detail || 'Tente novamente mais tarde';
 
                     set({
                         isAuthenticated: false,
@@ -129,12 +135,10 @@ export const useAuthStore = create<AuthState>()(
                     notification.error({
                         message: title,
                         description: detail,
-                        placement: 'bottomRight',
                     });
+                    throw error; // Propaga o erro para que o componente chamador possa tratá-lo
                 }
             },
-
-
 
             clearAuth: () => {
                 set({
@@ -143,20 +147,32 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: false,
                     loading: false,
                 });
+                // Remove o token do cookie
+                document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
+                // Remove do localStorage também
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
             },
             register: async (userData) => {
                 set({ loading: true, error: null });
 
                 const { email, password } = userData;
 
-                // Validações manuais antes de enviar
                 if (!isValidEmail(email)) {
                     set({ loading: false, error: 'Email inválido ou de domínio não permitido.' });
+                    notification.error({
+                        message: 'Erro no cadastro',
+                        description: 'Email inválido ou de domínio não permitido.',
+                    });
                     return;
                 }
 
                 if (!isStrongPassword(password)) {
                     set({ loading: false, error: 'Senha fraca. Use letras, números e símbolos com no mínimo 6 caracteres.' });
+                    notification.error({
+                        message: 'Erro no cadastro',
+                        description: 'Senha fraca. Use letras, números e símbolos com no mínimo 6 caracteres.',
+                    });
                     return;
                 }
 
@@ -174,7 +190,10 @@ export const useAuthStore = create<AuthState>()(
                         error: error.message || errorMessages.registrationFailed,
                         loading: false,
                     });
-
+                    notification.error({
+                        message: 'Erro no cadastro',
+                        description: error.message || errorMessages.registrationFailed,
+                    });
                     throw error;
                 }
             },
@@ -182,20 +201,12 @@ export const useAuthStore = create<AuthState>()(
             logout: async () => {
                 try {
                     await authService.logout();
-                } finally {
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
-                    sessionStorage.removeItem('accessToken');
-                    sessionStorage.removeItem('refreshToken');
-
-                    set({
-                        token: null,
-                        refreshToken: null,
-                        user: null,
-                        isAuthenticated: false,
-                        loading: false,
-                        rememberMe: false,
+                    notification.success({
+                        message: 'Logout realizado com sucesso',
                     });
+                } finally {
+                    // Garante que o estado é limpo, mesmo se o logout da API falhar
+                    get().clearAuth(); // Chama a função clearAuth para limpar tudo
                 }
             },
 
@@ -224,33 +235,58 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             checkAuth: async () => {
-                set({ loading: true });
+                // Tenta obter o token do cookie
+                const token = getTokenFromCookie();
 
-                try {
-                    const response = await authService.checkAuth();
-                    console.log('checkAuth -> response.user:', response.user); // <== veja o que vem aqui
-
-                    set({
-                        user: response.user,
-                        token: null,
-                        isAuthenticated: true,
-                        loading: false,
-                    });
-                } catch {
+                // Se não houver token no cookie, limpa o estado e sai
+                if (!token) {
                     set({
                         token: null,
                         user: null,
                         isAuthenticated: false,
                         loading: false,
+                        permissions: [],
                     });
+                    return;
                 }
-            },
 
-
+                set({ loading: true });
+                try {
+                    // Tenta verificar o token com o serviço de autenticação
+                    const response = await authService.checkAuth(token); // Passa o token para checkAuth
+                    set((state) => ({
+                        user: response.user,
+                        isAuthenticated: true,
+                        token: token, // Mantém o token que foi encontrado no cookie
+                        loading: false,
+                        rememberMe: state.rememberMe, // Mantém o estado de rememberMe
+                        // CORREÇÃO: Mapeia IPermissao[] para string[]
+                        permissions: (response.user.permissoes || []).map(p => p.code), // Assumindo que IPermissao tem uma propriedade 'code'
+                    }));
+                } catch (err) {
+                    // Se a verificação falhar (token inválido/expirado), limpa o estado
+                    set({
+                        token: null,
+                        user: null,
+                        isAuthenticated: false,
+                        loading: false,
+                        permissions: [],
+                    });
+                    // Opcional: remover o cookie inválido aqui também
+                    document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
+                } finally {
+                    set({ hydrated: true }); // Marca como hidratado após a tentativa de autenticação
+                }
+            }
         }),
         {
-            name: 'auth-storage', // chave no localStorage
-
+            name: 'auth-storage',
+            onRehydrateStorage: (state) => {
+                return () => {
+                    const store = state as unknown as { getState: () => AuthState };
+                    store.getState().checkAuth();
+                };
+            },
         }
     )
 );

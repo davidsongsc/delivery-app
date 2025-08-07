@@ -41,9 +41,11 @@ export const useProdutos = ({
         setProdutos(res.data.results);
         setProdutosTotal(res.data.count);
       })
-      .catch(() => {
+      .catch((error) => {
+
+
         notification.error({
-          message: "Erro ao buscar Produtos",
+          message: error.message || 'Erro ao listar produtos',
         });
       })
       .finally(() => setProdutosLoading(false));

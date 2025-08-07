@@ -1,4 +1,6 @@
 'use client';
+import dynamic from 'next/dynamic';
+const ComandaMesa = dynamic(() => import('@/components/Mesas/ComandaMesa'), { ssr: false });
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Card, Col, Row, Spin, Tag, Typography, Button, Space, Modal, notification, Divider } from 'antd';
@@ -15,16 +17,8 @@ import PageTitle from '@/components/MiniComponents/PageTitle';
 
 const { Title, Text } = Typography;
 
-// MOCK: Componente para fazer um pedido
-const FazerPedido = ({ mesa, onClose }: { mesa: IMesa, onClose: () => void }) => (
-    <Card title={`Pedido - Mesa ${mesa.numero}`} extra={<Button onClick={onClose}>Fechar</Button>}>
-        <p>Ação: Abrir/Editar pedido</p>
-        <p>Status da mesa: {mesa.status.toUpperCase()}</p>
-        <Button type="primary" style={{ marginTop: 16 }}>Salvar Pedido</Button>
-    </Card>
-);
-
 const MesasComponent: React.FC = () => {
+
     const router = useRouter();
     const [page, setPage] = useState(1);
     const [selectedMesa, setSelectedMesa] = useState<IMesa | null>(null);
@@ -99,7 +93,7 @@ const MesasComponent: React.FC = () => {
 
     if (selectedMesa) {
         return (
-            <FazerPedido mesa={selectedMesa} onClose={() => setSelectedMesa(null)} />
+            <ComandaMesa mesa={selectedMesa} onClose={() => setSelectedMesa(null)} />
         );
     }
 

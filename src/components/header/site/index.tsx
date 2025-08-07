@@ -9,11 +9,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import LogoIcon from '@/components/MiniComponents/LogoIcon';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { generateMenuItems } from '@/utils/menuItems';
+import { useLoginModal } from '@/contexts/LoginModalContext';
 
 const { Header } = Layout;
 
 const HeaderPage: NextPage = () => {
   const { logout } = useAuthStore((state) => state);
+  const { openModal } = useLoginModal();
+
   const hydrated = useAuthStore((state) => state.hydrated);
   const { user } = useAuth();
 
@@ -37,9 +40,7 @@ const HeaderPage: NextPage = () => {
           </Link>
           {!user ? (
             <>
-              <Link href="/login" passHref>
-                <Button type="text">Login</Button>
-              </Link>
+              <Button onClick={() => openModal()} type="text">Login</Button>
               <Link href="/register" passHref>
                 <Button type="primary">Cadastre-se</Button>
               </Link>
@@ -81,9 +82,8 @@ const HeaderPage: NextPage = () => {
               </>
             ) : (
               <>
-                <Link href="/login" passHref>
-                  <Button type="text">Login</Button>
-                </Link>
+                <Button onClick={() => openModal()} type="text">Login</Button>
+
                 <Link href="/register" passHref>
                   <Button type="primary">Cadastre-se</Button>
                 </Link>

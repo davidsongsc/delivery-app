@@ -49,7 +49,7 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
   const router = useRouter();
 
   return (
-    <div className="mt-8 grid grid-cols-1 gap-2 lg:grid-cols-12">
+    <div className=" grid grid-cols-1 gap-2 lg:grid-cols-12 ">
       <div className="lg:col-span-2">
         <PageTitle hasBackButton navTitle={navTitle} title={title} />
         {profile && (
@@ -120,7 +120,7 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
 
       </div>
 
-      <div className=" lg:col-span-10 max-h-[calc(100vh-205px)] overflow-y-auto pb-5">
+      <div className=" lg:col-span-10 max-h-[calc(100vh-122px)] overflow-y-auto ">
         {isLoading ? <AppLoading /> : <>{children}</>}
       </div>
     </div>

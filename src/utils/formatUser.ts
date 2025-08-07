@@ -2,29 +2,47 @@ import { IPerfil, IPermissao } from "@/interfaces/IPerfil";
 import { IUser } from "@/interfaces/IUser";
 
 function mapUserData(data: any): IUser {
+  const permissoesSet = new Map<string, IPermissao>();
+
   const perfis: IPerfil[] = (data.perfis || []).map((perfil: any) => {
-    const permissoes: IPermissao[] = perfil.tipo?.nivel?.permissoes || [];
+    const tipos = perfil.tipos || [];
+
+    const tiposFormatados = tipos.map((tipo: any) => {
+      const nivel = tipo.nivel || { permissoes: [] };
+      const permissoes: IPermissao[] = nivel.permissoes.map((p: any) => {
+        const permissao: IPermissao = {
+          id: p.id,
+          codigo: p.codigo,
+          nome: p.nome,
+        };
+
+        // Evita duplicatas
+        if (!permissoesSet.has(p.codigo)) {
+          permissoesSet.set(p.codigo, permissao);
+        }
+
+        return permissao;
+      });
+
+      return {
+        id: tipo.id,
+        nome: tipo.nome,
+        descricao: tipo.descricao,
+        ativo: tipo.ativo,
+        nivel: {
+          id: nivel.id,
+          nome: nivel.nome,
+          descricao: nivel.descricao,
+          permissoes,
+        },
+      };
+    });
 
     return {
       id: perfil.id,
       nome: perfil.nome,
       descricao: perfil.descricao,
-      tipo: {
-        id: perfil.tipo?.id,
-        nome: perfil.tipo?.nome,
-        descricao: perfil.tipo?.descricao,
-        ativo: perfil.tipo?.ativo,
-        nivel: {
-          id: perfil.tipo?.nivel?.id,
-          nome: perfil.tipo?.nivel?.nome,
-          descricao: perfil.tipo?.nivel?.descricao,
-          permissoes: permissoes.map((p: any) => ({
-            id: p.id,
-            codigo: p.codigo,
-            nome: p.nome,
-          })),
-        },
-      },
+      tipos: tiposFormatados,
     };
   });
 
@@ -47,8 +65,10 @@ function mapUserData(data: any): IUser {
     created_by: data.created_by,
     updated_by: data.updated_by,
     perfis,
+    permissoes: Array.from(permissoesSet.values()),
   };
 }
+
 
 export function formatUserFromAuthResponse(data: any): IUser {
   if (!data || !data.user_id) {

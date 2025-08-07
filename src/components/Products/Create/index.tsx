@@ -3,7 +3,7 @@
 import { IProduto, IProdutoCreate } from '@/interfaces/IProduto';
 import { Button, Form, App } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
-import ProductForm from '../Form';
+import ProductFormInfo from '@/components/Products/Form/info';
 import { produtosService } from '@/services/product.service';
 import { useRouter } from 'next/navigation';
 import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
@@ -17,8 +17,8 @@ const ProductCreate: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const { user: authUser } = useAuth();
-  const permissions = getUserPermissions(authUser);
+  const { user } = useAuth();
+  const permissions = getUserPermissions(user);
 
   const canCreate = useMemo(
     () => permissions.includes('produtos_criar'),
@@ -31,51 +31,17 @@ const ProductCreate: React.FC = () => {
     form.validateFields().then(values => {
       setIsLoading(true);
 
-      const formData = new FormData();
 
-      formData.append('nome', values.nome);
-      formData.append('preco', String(values.preco));
-      formData.append('desconto', String(values.desconto || 0));
-      formData.append('quantidade', String(values.quantidade || 0));
-      formData.append('descricao', values.descricao || '');
-      formData.append('promocional', String(values.promocional || false));
-      formData.append('categoria_id', values.categoria_id);
-      formData.append('tenant', values.tenant); // deve vir do form, store ou auth
-      formData.append('ativo', String(values.ativo ?? true));
-
-      // Arrays simples
-      (values.remover || []).forEach((item: string) => {
-        formData.append('remover', item);
-      });
-
-      (values.composicao || []).forEach((item: string) => {
-        formData.append('composicao', item);
-      });
-
-      // Array de objetos (item, valor) – precisa serializar
-      (values.adicionar || []).forEach((item: { item: string; valor: number }) => {
-        formData.append('adicionar', JSON.stringify(item));
-      });
-
-      // Envio de imagem (uma ou várias)
-      if (values.imagem) {
-        const files = Array.isArray(values.imagem) ? values.imagem : [values.imagem];
-        files.forEach((file: File) => {
-          formData.append('imagens', file); // precisa bater com backend
-        });
-      }
 
       produtosService
-        .create(formData)
-        .then(() => {
-          notification.success({
-            message: 'Produto criado com sucesso!',
-          });
-          router.push('/dashboard/produtos');
+        .create(values)
+        .then((response) => {
+          notification.success({ message: 'Produto criado com sucesso!' });
+          router.push(`/dashboard/configuracoes/produtos/${response.data.id}/editar`);
         })
         .catch((error) => {
           const responseData = error?.response?.data;
-          console.error('Error response data:', error);
+          console.error('Erro na criação:', responseData); // <- adicione isso
           if (responseData && typeof responseData === 'object') {
             Object.entries(responseData).forEach(([field, messages]) => {
               const messageArray = Array.isArray(messages) ? messages : [messages];
@@ -96,6 +62,8 @@ const ProductCreate: React.FC = () => {
   }, [form, isLoading, canCreate, notification, router]);
 
 
+
+
   return (
     <div className="w-7xl container">
       <ProfileStructure
@@ -112,10 +80,10 @@ const ProductCreate: React.FC = () => {
       >
         <SectionSeparator title="Detalhes do Produto">
           <div className="container-conteudo-small mb-4">
-            <ProductForm form={form} isEditing={false} />
+            <ProductFormInfo form={form} isEditing={false} permissions={permissions}/>
             {canCreate ? (
-              <Button type="primary" className="mt-4" onClick={submitData} loading={isLoading}>
-                Criar Produto
+              <Button type="primary" className="mt-4 w-52" onClick={submitData} loading={isLoading}>
+                Salvar
               </Button>
             ) : (
               <p className="text-red-500 mt-4">Você não tem permissão para criar produtos.</p>

@@ -1,12 +1,14 @@
 import { IPerfil } from "@/interfaces/IPerfil";
 
 export interface AuthResponse {
+  remember: boolean;
   access: string;
   refresh: string;
-  access_level: {
-    level: string;
-    permissions: string[];
-  };
+  user_id: string;
+  username: string;
+  email: string;
+  is_active: boolean;
+  perfis: IPerfil[];
 }
 
 export interface JwtPayload {

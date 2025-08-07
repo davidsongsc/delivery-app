@@ -1,13 +1,15 @@
 import DeleteInColumn from '@/components/DeleteInColumn';
 import { Tag, Tooltip } from 'antd';
 import { ColumnGroupType, ColumnType } from 'antd/es/table';
-import dayjs from 'dayjs';
+import { Popover } from 'antd';
 import Link from 'next/link';
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
 
 import { IProduto } from '@/interfaces/IProduto';
 import { produtosService } from '@/services/product.service';
+import Image from 'next/image';
+import ActionColumn from '@/components/MiniComponents/ActionColumn';
 
 type ProductColumnProps = (
   fetchData: () => void,
@@ -17,161 +19,93 @@ type ProductColumnProps = (
 export const ProductColumn: ProductColumnProps = (fetchData, productPermissions) => {
   return [
     {
+      width: 300,
       title: 'Nome',
       dataIndex: 'nome',
       key: 'nome',
       render: (value: string) => <strong>{value}</strong>,
     },
     {
+      width: 150,
       title: 'Categoria',
-      dataIndex: 'categoria',
       key: 'categoria',
+      render: (_: any, record: IProduto) => {
+        return <span>{record?.categoria?.nome || '-'}</span>;
+      },
     },
+
     {
-      title: 'Descrição',
-      dataIndex: 'descricao',
-      key: 'descricao',
-      ellipsis: true,
-      render: (value: string) => (
-        <Tooltip title={value}>
-          <span>{value.length > 50 ? `${value.slice(0, 50)}...` : value}</span>
-        </Tooltip>
-      ),
-    },
-    {
+      width: 150,
       title: 'Preço',
       dataIndex: 'valor',
       key: 'valor',
       render: (value: number | undefined) =>
         value != null ? `R$ ${value.toFixed(2)}` : '-',
     },
+
     {
-      title: 'Desconto',
-      dataIndex: 'desconto',
-      key: 'desconto',
-      render: (value: number) => value > 0 ? `R$ ${value.toFixed(2)}` : '-',
-    },
-    {
-      title: 'Promocional',
-      dataIndex: 'promocional',
-      key: 'promocional',
-      render: (value: boolean) => (
-        <Tag color={value ? 'gold' : 'default'}>
-          {value ? 'Sim' : 'Não'}
-        </Tag>
-      ),
-    },
-    {
+      width: 100,
       title: 'Quantidade',
       dataIndex: 'quantidade',
       key: 'quantidade',
       render: (value: number) => <Tag color="blue">{value}</Tag>,
     },
+
     {
-      title: 'Adicionais',
-      key: 'adicionar',
+      title: 'Imagens',
+      key: 'imagens',
       render: (_: any, record: IProduto) => {
-        const { adicionar } = record;
-        if (!adicionar || adicionar.length === 0) return '-';
+        if (!record.imagens || record.imagens.length === 0) return <span>-</span>;
+
         return (
-          <Tooltip
-            title={
-              <ul className="list-disc pl-5">
-                {adicionar.map((item, idx) => (
-                  <li key={idx}>
-                    {item.item}: R$ {item.valor.toFixed(2)}
-                  </li>
+          <Popover
+            content={
+              <div className="flex gap-2 flex-wrap max-w-[300px]">
+                {record.imagens.map((img) => (
+                  <Image
+                    key={img.id}
+                    src={img.imagem}
+                    alt="Produto"
+                    width={60}
+                    height={60}
+                    style={{ objectFit: 'cover', borderRadius: 4 }}
+                  />
                 ))}
-              </ul>
+              </div>
             }
+            title="Imagens"
           >
-            <Tag color="green">{adicionar.length} item(s)</Tag>
-          </Tooltip>
+            <Image
+              src={record.imagens[0].imagem}
+              alt="Produto"
+              width={50}
+              height={50}
+              style={{ objectFit: 'cover', borderRadius: 4 }}
+            />
+          </Popover>
         );
       },
     },
-    {
-      title: 'Removíveis',
-      dataIndex: 'remover',
-      key: 'remover',
-      render: (value: string[]) =>
-        value && value.length > 0 ? (
-          <Tooltip
-            title={
-              <ul className="list-disc pl-5">
-                {value.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            }
-          >
-            <Tag color="red">{value.length} opção(ões)</Tag>
-          </Tooltip>
-        ) : (
-          '-'
-        ),
-    },
-    {
-      title: 'Composição',
-      dataIndex: 'composicao',
-      key: 'composicao',
-      render: (value: string[] | undefined) =>
-        value && value.length > 0 ? (
-          <Tooltip
-            title={
-              <ul className="list-disc pl-5">
-                {value.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            }
-          >
-            <Tag color="purple">{value.length} item(s)</Tag>
-          </Tooltip>
-        ) : (
-          '-'
-        ),
-    },
-    {
-      title: 'Imagem',
-      dataIndex: 'imagem',
-      key: 'imagem',
-      render: (value: string | undefined) =>
-        value ? (
-          <img
-            src={value}
-            alt="Produto"
-            style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 4 }}
-          />
-        ) : (
-          <span>-</span>
-        ),
-    },
+
     {
       title: 'Ações',
       key: 'actions',
       width: 120,
       render: (_: any, record: IProduto) => (
-        <div className="flex justify-around">
-          {productPermissions.includes('produtos_editar') && (
-            <Tooltip title="Editar">
-              <Link href={`/dashboard/configuracoes/produtos/${record.id}/editar`}>
-                <CiEdit size={20} />
-              </Link>
-            </Tooltip>
-          )}
-          {productPermissions.includes('produtos_deletar') && (
-            <DeleteInColumn
-              id={record.id}
-              service={produtosService}
-              refresh={fetchData}
-              title="Deseja deletar este produto?"
-              successMessage="Produto deletado com sucesso!"
-              errorMessage="Erro ao deletar produto"
-            />
-          )}
-        </div>
+        <ActionColumn
+          id={record.id}
+          editUrl={`/dashboard/configuracoes/produtos/${record.id}/editar`}
+          permissions={productPermissions}
+          requiredEditPermission="produtos_editar"
+          requiredDeletePermission="produtos_deletar"
+          service={produtosService}
+          refresh={fetchData}
+          deleteTitle="Deseja deletar este produto?"
+          deleteSuccess="Produto deletado com sucesso!"
+          deleteError="Erro ao deletar produto"
+        />
       ),
     },
+
   ];
 };

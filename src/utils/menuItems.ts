@@ -12,6 +12,10 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     key: '/dashboard/configuracoes/sistema',
                     label: 'Configurações',
                 },
+                permissions.includes('sistema_logs') && {
+                    key: '/dashboard/configuracoes/logs',
+                    label: 'Logs',
+                },
                 permissions.includes('sistema_empresas') && {
                     key: '/dashboard/configuracoes/empresas',
                     label: 'Empresas',
@@ -31,7 +35,7 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                             label: 'Colaboradores',
                         },
                         permissions.includes('usuarios_afiliados') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/afiliados',
                             label: 'Afiliados',
                         },
                         permissions.includes('usuarios_fornecedores') && {
@@ -42,11 +46,16 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                             key: '/dashboard/configuracoes/gerentes',
                             label: 'Gerentes',
                         },
-                        permissions.includes('permissoes_visualizar') && {
-                            key: '/dashboard/configuracoes/permissoes',
-                            label: 'Permissões',
-                        },
                     ].filter(Boolean),
+
+                },
+                permissions.includes('permissoes_visualizar') && {
+                    key: '/dashboard/configuracoes/permissoes',
+                    label: 'Permissões',
+                },
+                permissions.includes('cargos_visualizar') && {
+                    key: '/dashboard/configuracoes/cargos',
+                    label: 'Cargos',
                 },
                 permissions.includes('caixa_saidas') && {
                     key: 'escalas',

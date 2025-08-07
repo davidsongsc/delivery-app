@@ -44,12 +44,9 @@ export const useUsers = ({
         setData(users);
         setTotal(total);
         setDataInfo(res);
-        console.log("Resposta completa:", res); // Aqui funciona corretamente
 
       })
       .catch((error) => {
-        console.error("Erro ao listar usuários:", error); // Mostra detalhes do erro
-
         notification.error({
           message: 'Erro ao listar usuários',
         });

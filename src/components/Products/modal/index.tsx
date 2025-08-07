@@ -2,7 +2,7 @@
 import React from 'react';
 import { Modal, message } from 'antd';
 import { useCorporationStore } from '@/store/useCorporationStore';
-import CorporationRegisterForm from '../Form';
+import CorporationRegisterForm from '../Form/info';
 import axios from 'axios';
 import { CorporationMembership } from '../Create';
 

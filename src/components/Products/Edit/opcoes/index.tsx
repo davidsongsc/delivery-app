@@ -3,16 +3,18 @@
 import { IProduto } from '@/interfaces/IProduto';
 import { Button, Form, App, Spin } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import ProductForm from '../Form';
+import ProductFormOpcoes from '@/components/Products/Form/opcoes';
 import { produtosService } from '@/services/product.service';
 import { useParams, useRouter } from 'next/navigation';
 import { useProduto } from '@/hooks/useProduct';
 import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
 import { useAuth } from '@/contexts/AuthContext';
 import getUserPermissions from '@/utils/permissions';
-import ProfileStructure from '@/components/ProfileStructure';
+import flagsConfig from '@/components/constants/flags';
+import NotFound from '@/app/not-found';
 
-const ProductEdit: React.FC = () => {
+
+const ProductEditOpcoes: React.FC = () => {
   const { notification } = App.useApp();
   const [form] = Form.useForm<IProduto>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -20,13 +22,19 @@ const ProductEdit: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const { produto, produtoLoading, produtoRefresh } = useProduto({ id });
+  const defaultFlags = Object.fromEntries(flagsConfig.map(({ key }) => [key, false]));
 
   const { user: authUser } = useAuth();
   const permissions = getUserPermissions(authUser);
 
   // Preenche o formulário quando o produto carregar
   useEffect(() => {
+
     if (produto) {
+      const mergedFlags = {
+        ...defaultFlags,
+        ...produto.flags,
+      };
       form.setFieldsValue({
         nome: produto.nome,
         preco: produto.preco,
@@ -38,7 +46,6 @@ const ProductEdit: React.FC = () => {
         categoria_id: produto.categoria_id,
         ativo: produto.ativo,
         descricao: produto.descricao,
-        imagem: produto.imagem,
         promocional: produto.promocional,
         composicao: produto.composicao,
         volume: produto.volume,
@@ -46,7 +53,7 @@ const ProductEdit: React.FC = () => {
         unidade_medida: produto.unidade_medida,
         tenant: produto.tenant,
         sku: produto.sku,
-        imagens: produto.imagens,
+        flags: mergedFlags,
       });
     }
   }, [produto, form]);
@@ -78,6 +85,7 @@ const ProductEdit: React.FC = () => {
         tenant: values.tenant,
         sku: values.sku,
         imagens: values.imagens,
+        flags: JSON.stringify(values.flags),
       };
 
 
@@ -97,35 +105,23 @@ const ProductEdit: React.FC = () => {
         .finally(() => setIsLoading(false));
     });
   }, [form, isLoading, produto, notification, router]);
+  
+  if (!permissions.includes('produtos')) return NotFound();
 
   return (
-    <div className="w-7xl container">
-      <ProfileStructure
-        isLoading={produtoLoading}
-        navTitle="Produtos > Editar"
-        title="Editar Produto"
-        menuButtons={[
-          {
-            title: 'Informações',
-            link: `/dashboard/configuracoes/produtos/${id}/editar`,
-            isActive: true,
-          },
-        ]}
-      >
-        <SectionSeparator title="Detalhes do Produto">
-          <div className="container-conteudo-small mb-4">
-            <ProductForm form={form} isEditing />
-            {permissions.includes('produtos_editar') && (
-              <Button type="primary" className="mt-4" onClick={submitData} loading={isLoading}>
-                Salvar
-              </Button>
-            )}
-          </div>
-        </SectionSeparator>
-
-      </ProfileStructure>
-    </div>
+    <>
+      <SectionSeparator title="Informações e opções">
+        <div className="container-conteudo-small mb-4">
+          <ProductFormOpcoes form={form} isEditing permissions={permissions} />
+          {permissions.includes('produtos_editar') && (
+            <Button type="primary" className="mt-4" onClick={submitData} loading={isLoading}>
+              Salvar
+            </Button>
+          )}
+        </div>
+      </SectionSeparator>
+    </>
   );
 };
 
-export default React.memo(ProductEdit);
+export default React.memo(ProductEditOpcoes);

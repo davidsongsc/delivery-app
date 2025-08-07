@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Popconfirm, App } from "antd";
+import { Popconfirm, App, Button } from "antd";
 import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface DeleteInColumnProps<T> {
   id: number | string;
@@ -10,6 +11,9 @@ interface DeleteInColumnProps<T> {
   successMessage?: string;
   errorMessage?: string;
   method?: string;
+  span?: string;
+  permissions?: string[];
+  
 }
 
 const DeleteInColumn = <T extends object>({
@@ -20,11 +24,12 @@ const DeleteInColumn = <T extends object>({
   successMessage = "",
   errorMessage = "",
   method = "remove",
+  span = "",
+  permissions = [],
 }: DeleteInColumnProps<T>) => {
   const { notification } = App.useApp();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
   return (
     <Popconfirm
       title={title}
@@ -34,7 +39,7 @@ const DeleteInColumn = <T extends object>({
         if (loading) return false;
         setLoading(true);
 
-        // @ts-ignore - service type
+        // @ts-ignore - dynamic method access
         service[method](id)
           .then(() => {
             notification.success({
@@ -47,28 +52,36 @@ const DeleteInColumn = <T extends object>({
           .catch((e: any) => {
             notification.error({
               message: errorMessage,
-              description: e.response.data.message,
+              description: e.response?.data?.message || "Erro inesperado.",
             });
-            console.log(e);
+            console.error(e);
           })
           .finally(() => {
             setLoading(false);
           });
       }}
-      okButtonProps={{
-        loading,
-      }}
+      okButtonProps={{ loading }}
       onCancel={() => setOpen(false)}
     >
-      <Image
-        src="/images/icones/trash.svg"
-        width={17}
-        height={17}
-        alt="delete"
-        className="cursor-pointer"
-        onClick={() => setOpen(true)}
-      />
-
+      {span.length === 0 ? (
+        <Image
+          src="/images/icones/trash.svg"
+          width={17}
+          height={17}
+          alt="delete"
+          className="cursor-pointer"
+          onClick={() => setOpen(true)}
+        />
+      ) : (
+        <Button
+          type="default"
+          onClick={() => setOpen(true)}
+          className="cursor-pointer text-red-500 hover:underline top-4"
+          disabled={!permissions.includes('produtos_deletar')}
+        >
+          {span}
+        </Button>
+      )}
     </Popconfirm>
   );
 };

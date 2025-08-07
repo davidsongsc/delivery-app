@@ -47,7 +47,7 @@ const UserList: React.FC = () => {
     // Added some padding for the overall container for better spacing
     <div className="w-7xl container mx-auto">
       <PageTitle
-        navTitle="Sistema >"
+        navTitle="Sistema"
         title="Usuários"
         hasBackButton={true} 
         action={

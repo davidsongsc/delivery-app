@@ -1,25 +1,33 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Card, Collapse, Tag, Button } from 'antd';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
-import { IPerfil } from '@/interfaces/IPerfil';
+
+// Assuming IPerfil is the user data object, not just a single profile.
+import { IUser } from '@/interfaces/IUser'; // A more appropriate interface name
 
 const { Panel } = Collapse;
 
 interface ProfileViewerProps {
-    perfil: IPerfil;
+    userData: IUser;
+
 }
 
 const getGrupoNome = (prefix: string) => {
     const map: Record<string, string> = {
+        sistema: 'Sistema',
         usuarios: 'Usuários',
         endereco: 'Endereços',
         permissoes: 'Permissões',
-        sistema: 'Sistema',
-        produto: 'Produtos',
         estoque: 'Estoque',
+        produto: 'Produtos',
         composicao: 'Composição',
         adicional: 'Adicionais',
         caixa: 'Caixa',
+        comandas: 'Comandas',
+        escala: 'Escala',
+        afiliados: 'Afiliados',
+        mensagens: 'Mensagens',
+        // Adicione outros prefixos conforme necessário
     };
     return map[prefix] || 'Geral';
 };
@@ -35,60 +43,77 @@ const agruparPermissoes = (
     }, {} as Record<string, { codigo: string; nome: string }[]>);
 };
 
-const ProfileView: React.FC<ProfileViewerProps> = ({ perfil }) => {
-    const permissoes = perfil?.tipo?.nivel?.permissoes || [];
+const ProfileView: React.FC<ProfileViewerProps> = ({ userData }) => {
+    const [expandedTipos, setExpandedTipos] = useState<Record<string, boolean>>({});
 
-    const permissoesAgrupadas = useMemo(() => agruparPermissoes(permissoes), [permissoes]);
-
-    const [gruposExpandidos, setGruposExpandidos] = useState<Record<string, boolean>>({});
-
-    const toggleGrupo = (prefix: string) => {
-        setGruposExpandidos(prev => ({
+    const toggleTipo = (tipoId: string) => {
+        setExpandedTipos((prev) => ({
             ...prev,
-            [prefix]: !prev[prefix],
+            [tipoId]: !prev[tipoId],
         }));
     };
-
     return (
-        <Card title={perfil?.nome} bordered className="mb-1">
-            <p><strong>Descrição:</strong> {perfil.descricao || '-'}</p>
-            <p><strong>Tipo:</strong> {perfil.tipo?.nome || '-'}</p>
-            <p><strong>Nível:</strong> {perfil.tipo?.nivel?.nome || '-'}</p>
+        <Card title="Detalhes do Usuário" bordered className="mb-1">
+            <p><strong>Nome de Usuário:</strong> {userData?.username || '-'}</p>
+            <p><strong>E-mail:</strong> {userData?.email || '-'}</p>
+            <p><strong>Corporação:</strong> {userData?.corporation || '-'}</p>
 
-            <Collapse ghost defaultActiveKey={['1']}>
-                <Panel header="Permissões" key="1">
-                    {Object.entries(permissoesAgrupadas).map(([prefixo, grupo]) => {
-                        const grupoNome = getGrupoNome(prefixo);
-                        const mostrarTodas = gruposExpandidos[prefixo] || false;
-                        const permissoesParaExibir = mostrarTodas ? grupo : grupo.slice(0, 6);
+            <Collapse ghost>
+                {userData.perfis?.length > 0 ? (
+                    userData.perfis.map(perfil => (
+                        <Panel header={perfil.nome} key={perfil.id}>
+                            <p><strong>Descrição:</strong> {perfil.descricao || '-'}</p>
+                            {perfil.tipos?.length > 0 ? (
+                                perfil.tipos.map((tipo) => {
+                                    const tipoId = tipo.id;
+                                    const expanded = expandedTipos[tipoId] || false;
+                                    const permissoes = tipo.nivel?.permissoes || [];
 
-                        return (
-                            <div key={prefixo} className="mb-6 overflow-hidden">
-                                <p className="font-semibold mb-2">{grupoNome}:</p>
-                                <div className="grid grid-cols-4 lg:grid-cols-8 2xl:grid-cols-12 gap-2">
-                                    {permissoesParaExibir.map(p => (
-                                        <Tag key={p.codigo} color="blue" className="p-2 text-center uppercase rounded-md text-lg col-span-6 lg:col-span-3 2xl:col-span-2">
-                                            {p.nome.replace(new RegExp(`^${grupoNome}\\s*`, 'i'), '')}
-                                        </Tag>
-                                    ))}
-                                </div>
-                                {grupo.length > 6 && (
-                                    <div className="mt-2">
-                                        <Button
-                                            size="small"
-                                            type="link"
-                                            icon={mostrarTodas ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                                            onClick={() => toggleGrupo(prefixo)}
-                                        >
-                                            {mostrarTodas ? 'Ocultar extras' : 'Mostrar todas'}
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                    {permissoes.length === 0 && <p>Nenhuma permissão encontrada.</p>}
-                </Panel>
+                                    return (
+                                        <div key={tipoId} className="ml-4 my-4 p-4 border-l-2 border-gray-200">
+                                            <p><strong>Tipo:</strong> {tipo.nome || '-'}</p>
+                                            <p><strong>Nível:</strong> {tipo.nivel?.nome || '-'}</p>
+
+                                            {permissoes.length > 0 && (
+                                                <Button
+                                                    size="small"
+                                                    type="link"
+                                                    icon={expanded ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                                                    onClick={() => toggleTipo(tipoId)}
+                                                    className="mb-2 mt-1"
+                                                >
+                                                    {expanded ? 'Ocultar permissões' : `Mostrar permissões (${permissoes.length})`}
+                                                </Button>
+                                            )}
+
+                                            {expanded && (
+                                                <>
+                                                    <h4 className="font-semibold mt-4">Permissões:</h4>
+                                                    {Object.entries(agruparPermissoes(permissoes)).map(([prefix, grupo]) => (
+                                                        <div key={prefix} className="my-2">
+                                                            <h5 className="font-bold">{getGrupoNome(prefix)}</h5>
+                                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                                {grupo.map((perm) => (
+                                                                    <Tag key={perm.codigo} color="blue" className="text-sm uppercase">
+                                                                        {perm.nome}
+                                                                    </Tag>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="ml-4">Nenhum tipo de perfil encontrado.</p>
+                            )}
+                        </Panel>
+                    ))
+                ) : (
+                    <p>Nenhum perfil encontrado para este usuário.</p>
+                )}
             </Collapse>
         </Card>
     );

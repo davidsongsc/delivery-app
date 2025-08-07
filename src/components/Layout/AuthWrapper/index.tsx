@@ -1,42 +1,50 @@
-"use client";
+'use client';
 
-import { useAuthStore } from '@/store/authStore';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useLoginModal } from '@/contexts/LoginModalContext';  // import do modal
+import { useEffect, useState } from 'react';
 import External from '@/components/header/external';
-import { Spin } from 'antd'; // Importe um componente de loading do antd
+import AppLoading from '@/components/AppLoading';
 
 export default function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { user, isAuthenticated, hydrated, checkAuth, setHydrated } = useAuthStore();
-  const router = useRouter();
+  const { isAuthenticated, checkAuth } = useAuth();
+  const { openModal } = useLoginModal();  // pega a função para abrir o modal
+  const [checking, setChecking] = useState(true);
 
-  // useEffect para a lógica de autenticação
   useEffect(() => {
-    // Se o estado ainda não foi hidratado, o que acontece apenas no primeiro render
-    if (!hydrated) {
-      // Chama a função de verificação
-      checkAuth();
-      // Define o estado como hidratado após a verificação
-      setHydrated();
+    if (!isAuthenticated) {
+      const verify = async () => {
+        try {
+          await checkAuth();
+        } finally {
+          setChecking(false);
+        }
+      };
+      verify();
+    } else {
+      setChecking(false);
     }
-  }, [hydrated, checkAuth, setHydrated]);
+  }, [checkAuth, isAuthenticated]);
 
-  // Se o estado não foi hidratado, mostre o loader
-  if (!hydrated) {
+  useEffect(() => {
+    if (!checking && !isAuthenticated) {
+      // Em vez de redirecionar, abre o modal de login
+      openModal();
+    }
+  }, [checking, isAuthenticated, openModal]);
+
+  if (checking) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Spin size="large" tip="Carregando..." />
+      <div className="w-full h-screen flex justify-center items-center">
+        <AppLoading />
       </div>
     );
   }
 
-  // Se o usuário não está autenticado, redireciona
   if (!isAuthenticated) {
-    router.push('/login');
-    return null;
+    return null; // evita flicker, modal abrirá em paralelo
   }
 
-  // Se tudo estiver certo, renderiza o conteúdo
   return (
     <>
       <External />

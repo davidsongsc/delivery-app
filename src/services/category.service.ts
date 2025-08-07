@@ -12,7 +12,7 @@ const remove = async (id: string) => apiClient.delete(`/api/categories/${id}/`);
 const getAll = async (query: string = "") =>
   apiClient.get(`/api/categories` + query);
 
-const getById = async (id: string) => apiClient.get(`/api/categories/${id}`);
+const getById = async (id: string) => apiClient.get(`/api/categories/${id}/`);
 
 export const categoryService = {
   create,

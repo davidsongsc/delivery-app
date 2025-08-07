@@ -17,9 +17,9 @@ export default {
             },
             colors: {
                 // Branding e principais
-                primary: '#111827', // Preto',
-                secondary: '#374151',
-                tertiary: '#3B82F6',
+                primary: '#eeeeee', 
+                secondary: '#d6d6d6',
+                tertiary: '#2f4f4f',
                 grafite: '#AC0F0A',
                 aço: '#2F2F31',
                 gelo: '#F5F5F5',
@@ -53,6 +53,7 @@ export default {
                 darkTextoOff: '#374151',
                 darkTextoDescricao: '#9CA3AF',
                 darkTextoDescricaoOff: '#BBBBBB',
+                textoSeparador: '#444444',
 
                 // Design alternativo (d_)
                 d_primary: '#142579',              // Texto/ação primária

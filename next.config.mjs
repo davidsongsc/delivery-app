@@ -6,7 +6,9 @@ const baseConfig = {
   images: {
     domains: [
       "maps.googleapis.com",
-      "lojave.com.br"
+      "lojave.com.br",
+      "192.168.1.50"
+
     ],
     remotePatterns: [
       {
@@ -26,9 +28,14 @@ const baseConfig = {
         hostname: "lojave.com.br",
         pathname: "/files/**",
       },
+      {
+        protocol: 'http',
+        hostname: '192.168.1.50',
+        pathname: '/media/**',
+      },
     ],
   },
-  
+
 };
 
 // Wrapper do PWA

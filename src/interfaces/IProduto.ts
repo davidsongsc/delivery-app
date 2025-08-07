@@ -1,6 +1,30 @@
+interface IImagens {
+  id: string;
+  url: string;
+  is_primary: boolean;
+}
+
+export interface IProdutoFlags {
+  ativo: boolean;
+  is_delivery: boolean;
+  is_pickup: boolean;
+  is_visible: boolean;
+  is_digital: boolean;
+  is_scheduled: boolean;
+  has_stock_control: boolean;
+  is_limited: boolean;
+  is_blocked: boolean;
+  blocked_reason: string;
+  limited_stock: number;
+  is_free: boolean;
+  is_discounted: boolean;
+  requires_preparation: boolean;
+}
+
 export interface IProduto {
   id: number | string;
   nome: string;
+  nome_interno: string;
   preco: number;
   desconto: number;
   estoque: number;
@@ -18,9 +42,10 @@ export interface IProduto {
   unidade_medida?: string;
   tenant: string;
   sku?: string;
-  imagens?: string[];
+  imagens?: IImagens[];
+  flags: IProdutoFlags;
 }
 
 export type IProdutoCreate = Omit<IProduto, 'id' | "created_by" | "updated_by"> & {
-  
+
 };
