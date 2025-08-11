@@ -7,7 +7,6 @@ import { ColumnType } from 'antd/lib/table';
 import Link from 'next/link';
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
-import { MdDeleteOutline } from 'react-icons/md';
 
 type ProfileColumnProps = (
   fetchData: () => void,
@@ -23,19 +22,26 @@ export const ProfileColumn: ProfileColumnProps = (fetchData, userPermissions) =>
     },
     {
       title: 'Função',
-      dataIndex: ['tipo', 'nome'],
-      key: 'tipo_nome',
+      key: 'tipos_nome',
+      render: (_: any, record: IPerfil) => {
+        if (!record.tipos || record.tipos.length === 0) return '-';
+        const nomesTipos = record.tipos.map(t => t.nome).join(', ');
+        return nomesTipos;
+      },
     },
+    // Como não tem nível no objeto novo, você pode:
+    // 1. Remover essa coluna se não for relevante
+    // 2. Ou deixar uma coluna vazia ou com '-'
     {
       title: 'Nível',
-      dataIndex: ['tipo', 'nivel', 'nome'],
       key: 'nivel_nome',
+      render: () => '-',
     },
     {
       title: 'Permissões',
-      dataIndex: ['tipo', 'nivel', 'permissoes'],
       key: 'permissoes',
-      render: (permissoes: { codigo: string; nome: string }[]) => {
+      render: (__, record: IPerfil) => {
+        const permissoes = record.permissoes;
         if (!permissoes || permissoes.length === 0) return '-';
 
         const permissoesTooltip = permissoes.map(p => p.nome).join(', ');

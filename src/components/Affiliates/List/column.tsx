@@ -1,4 +1,3 @@
-import DeleteInColumn from '@/components/DeleteInColumn';
 import { Tag, Tooltip } from 'antd';
 import { ColumnGroupType } from 'antd/es/table';
 import { ColumnType } from 'antd/lib/table';
@@ -7,73 +6,53 @@ import Link from 'next/link';
 import React from 'react';
 import { CiEdit } from 'react-icons/ci';
 
-import { IUser } from '@/interfaces/IUser';
-import { userService } from '@/services/user.service';
+import DeleteInColumn from '@/components/DeleteInColumn';
+import { IAffiliate } from '@/interfaces/IAffiliate';
+import { affiliateService } from '@/services/affiliate.service';
 
-type UserColumnProps = (fetchData: () => void,
-  userPermissions: string[]) => (ColumnGroupType<any> | ColumnType<any>)[];
+type AffiliateColumnProps = (
+  fetchData: () => void,
+  userPermissions: string[]
+) => (ColumnGroupType<any> | ColumnType<any>)[];
 
-export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
+export const AffiliateColumn: AffiliateColumnProps = (fetchData, userPermissions) => {
   return [
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-    {
-      title: 'Usuário',
-      dataIndex: 'username',
-      key: 'username',
+      title: 'Código',
+      dataIndex: 'codigo_afiliado',
+      key: 'codigo_afiliado',
     },
     {
       title: 'Nome',
-      dataIndex: 'first_name',
-      key: 'first_name',
+      key: 'nome',
+      render: (_, record: IAffiliate & { user_info?: any }) =>
+        record.user_info
+          ? `${record.user_info.first_name} ${record.user_info.last_name}`
+          : '-',
     },
     {
-      title: 'Sobrenome',
-      dataIndex: 'last_name',
-      key: 'last_name',
+      title: 'Email',
+      key: 'email',
+      render: (_, record: IAffiliate & { user_info?: any }) =>
+        record.user_info?.email ?? '-',
     },
-    /*
-    {
-      title: 'CPF',
-      dataIndex: 'cpf',
-      key: 'cpf',
-    },
-    {
-      title: 'RG',
-      dataIndex: 'rg',
-      key: 'rg',
-    },
-    */
-    {
-      title: 'Telefone',
-      dataIndex: 'phone',
-      key: 'phone',
-      render: (value: string | null) => value ?? '-',
-    },
-    /*
     {
       title: 'Empresa',
-      dataIndex: 'corporation',
-      key: 'corporation',
+      key: 'empresa',
+      render: (_, record: IAffiliate & { corporation_info?: any }) =>
+        record.corporation_info?.nome ?? '-',
     },
-    */
+    {
+      title: 'Comissão (%)',
+      dataIndex: 'comissao_percentual',
+      key: 'comissao_percentual',
+    },
     {
       title: 'Ativo',
-      dataIndex: 'is_active',
-      key: 'is_active',
+      dataIndex: 'ativo',
+      key: 'ativo',
       render: (value: boolean) => (value ? 'Sim' : 'Não'),
     },
-    /*
-    {
-      title: 'Administrador',
-      dataIndex: 'is_superuser',
-      key: 'is_superuser',
-      render: (value: boolean) => (value ? 'Sim' : 'Não'),
-    },
-    */
     {
       title: 'Criado em',
       dataIndex: 'created_at',
@@ -83,23 +62,23 @@ export const UserColumn: UserColumnProps = (fetchData, userPermissions) => {
     {
       title: 'Ações',
       key: 'actions',
-      render: (_, record: IUser) => (
+      render: (_, record: IAffiliate) => (
         <div className="flex justify-around">
-          {userPermissions.includes('usuarios_visualizar') && (
+          {userPermissions.includes('afiliados_visualizar') && (
             <Tooltip title="Editar">
-              <Link href={`/dashboard/configuracoes/usuarios/${record.id}/editar`}>
+              <Link href={`/dashboard/afiliados/${record.id}/editar`}>
                 <CiEdit size={20} />
               </Link>
             </Tooltip>
           )}
-          {userPermissions.includes('usuarios_deletar') && (
+          {userPermissions.includes('afiliados_deletar') && (
             <DeleteInColumn
               id={record.id}
-              service={userService}
+              service={affiliateService}
               refresh={fetchData}
-              title="Deseja deletar esse usuário?"
-              successMessage="Usuário deletado com sucesso!"
-              errorMessage="Erro ao deletar usuário"
+              title="Deseja deletar esse afiliado?"
+              successMessage="Afiliado deletado com sucesso!"
+              errorMessage="Erro ao deletar afiliado"
             />
           )}
         </div>

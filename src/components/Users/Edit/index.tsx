@@ -28,7 +28,7 @@ const UserEdit: React.FC = () => {
 
   const { user: authUser } = useAuth();
   const permissions = getUserPermissions(authUser);
-  if (!permissions.includes('usuarios')) return NotFound();
+  if (!permissions.includes('usuarios_editar')) return NotFound();
 
   useEffect(() => {
     if (user?.id) {
@@ -89,56 +89,60 @@ const UserEdit: React.FC = () => {
   return (
     <div className="w-7xl container ">
       <ProfileStructure
+        user={user}
         isLoading={userLoading}
         navTitle="Sistema > Usuarios"
         title="Editar Usuarios"
         menuButtons={[
           {
             title: 'Informações',
-            link: `/dashboard/configuracoes/colaboradores/${id}/editar`,
+            link: `/dashboard/configuracoes/usuarios/${id}/editar`,
             isActive: true,
           },
           {
-            title: 'Cargos e Permissões',
-            link: `/dashboard/configuracoes/colaboradores/${id}/empresas`,
+            title: 'Salvar',
+            onClick: submitData,
+            isActive: false,
+            isVisible: permissions.includes('usuarios_editar'),
+          },
+          {
+            title: 'Novo Usuário',
+            link: `/dashboard/configuracoes/usuarios/cadastrar`,
             isActive: false,
           },
         ]}
       >
         <SectionSeparator title="Geral" >
-          <div className="container-conteudo-small mb-4">
+          <div className="container-conteudo-small ">
             <UserForm form={form} isEditing />
-            <>
-              {permissions.includes('usuarios_editar') && (
-                <Button type="primary" className="mt-4" onClick={submitData} loading={isLoading}>
-                  Salvar
-                </Button>
-              )}</>
-
           </div>
         </SectionSeparator>
-        {permissions.includes('permissoes_visualizar') && user?.perfis?.length! > 0 && (
-          <SectionSeparator title="Cargos">
-            <div className="container-conteudo-small mb-1">
-              {user?.perfis ? (
-                <ProfileView userData={user} />
-              ) : (
-                <p>Nenhum perfil associado ao usuário.</p>
-              )}
-            </div>
-          </SectionSeparator>
 
-        )}
-        {permissions.includes('endereco_visualizar') &&
-          <>
-            <SectionSeparator title="Endereços" >
-              <div className="container-conteudo-small mb-4">
-                <AddressList field="user_id" value={id} />
-              </div>
-            </SectionSeparator>
-          </>}
-
-
+        <div className='grid grid-cols-6 gap-4'>
+          <div className='col-span-6'>
+            {permissions.includes('permissoes_visualizar') && user?.perfis?.length! > 0 && (
+              <>
+                <SectionSeparator title="Cargos" />
+                <div className="container-conteudo-small mb-1">
+                  {user?.perfis ? (
+                    <ProfileView userData={user} />
+                  ) : (
+                    <p>Nenhum perfil associado ao usuário.</p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          <div className='col-span-6'>
+            {permissions.includes('endereco_visualizar') &&
+              <>
+                <SectionSeparator title="Endereços" />
+                <div className="container-conteudo-small mb-4">
+                  <AddressList field="user_id" value={id} />
+                </div>
+              </>}
+          </div>
+        </div>
       </ProfileStructure>
     </div>
   );

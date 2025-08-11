@@ -49,9 +49,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef 
   );
 
   return (
-    <Card className="w-full max-w-2xl p-8 shadow-xl rounded-lg bg-white relative" style={{ left: '-00px' }}>
-      <Typography.Title level={3} className="text-center mb-6 font-bold text-blue-600">
-        Acesso ao Sistema
+    <Card className="w-full max-w-2xl shadow-xl rounded-lg bg-white relative" style={{ left: '-00px' }}>
+      <Typography.Title level={3} className="text-center font-bold text-blue-600">
+        Login de Usuário
       </Typography.Title>
 
       <form onSubmit={handleSubmit}>

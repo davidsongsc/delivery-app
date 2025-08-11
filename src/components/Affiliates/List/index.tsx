@@ -5,14 +5,14 @@ import PageTitle from '@/components/MiniComponents/PageTitle';
 import { Button, Input, Table } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { UserColumn } from './column'; // Assuming CourseColumn is meant to be UserColumn
-import { useUsers } from '@/hooks/useUsers';
+import { AffiliateColumn } from './column'; // Assuming CourseColumn is meant to be UserColumn
 import PageSizeSelector from '@/components/MiniComponents/PageSizeSelector';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Constants } from '@/components/constants';
 import { useAuth } from '@/contexts/AuthContext';
 import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
+import { userAffiliaties } from '@/hooks/useAffiliaties';
 
 const AffiliatesList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
@@ -29,14 +29,13 @@ const AffiliatesList: React.FC = () => {
     { value: 'cpf', label: 'CPF' }, // Added CPF as a filter option
   ], []);
 
-  if (!permissions.includes('usuarios_colaborador')) return NotFound();
+  if (!permissions.includes('afiliados_acesso_visualizar')) return NotFound();
 
-  const { users, usersLoading, usersTotal, usersRefresh } = useUsers(
+  const { affiliaties, affiliatiesLoading, affiliatiesTotal, affiliatiesRefresh } = userAffiliaties(
     useMemo(
       () => ({
         page,
         limit: pageSize,
-        // Adiciona o tenant do usuário logado como um filtro
         filters: { ...debouncedFilter, tenant: user?.tenant },
       }),
       [page, debouncedFilter, pageSize, user]
@@ -52,7 +51,7 @@ const AffiliatesList: React.FC = () => {
         hasBackButton={true} 
         action={
           <>
-            {permissions.includes('afiliados_criar') && (
+            {permissions.includes('afiliados_acesso_criar') && (
               <Link href="/dashboard/configuracoes/afiliados/cadastrar">
                 {/* Styled button to match the new PageTitle aesthetic */}
                 <Button
@@ -82,13 +81,13 @@ const AffiliatesList: React.FC = () => {
 
         <Table
           rowKey="id"
-          columns={UserColumn(usersRefresh, permissions)}
-          dataSource={users}
-          loading={usersLoading}
+          columns={AffiliateColumn(affiliatiesRefresh, permissions)}
+          dataSource={affiliaties}
+          loading={affiliatiesLoading}
           pagination={{
             current: page,
             pageSize: pageSize,
-            total: usersTotal,
+            total: affiliatiesTotal,
             onChange: (page) => setPage(page),
             showSizeChanger: false,
             // Styling for Ant Design pagination (optional, but can enhance consistency)

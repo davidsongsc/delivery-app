@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import { IProdutoCreate } from '@/interfaces/IProduto';
+import { IProdutoCreate, IProdutoPartialUpdate, IProdutoUpdate } from '@/interfaces/IProduto';
 
 const toFormData = (data: Record<string, any>): FormData => {
   const formData = new FormData();
@@ -51,14 +51,13 @@ const create = async (data: IProdutoCreate) => {
   });
 };
 
-const update = async (id: string | number, data: Partial<IProdutoCreate>) => {
-  const formData = toFormData(data);
-  return apiClient.put(`/api/products/${id}/`, formData, {
+const update = async (id: string | number, data: Partial<IProdutoCreate> | FormData) => {
+  return apiClient.put(`/api/products/${id}/`, data, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };
 
-const partialUpdate = async (id: string | number, data: Partial<IProdutoCreate>) => {
+const partialUpdate = async (id: string | number, data: Partial<IProdutoPartialUpdate>) => {
   const formData = toFormData(data);
   return apiClient.patch(`/api/products/${id}/`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

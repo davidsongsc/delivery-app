@@ -1,8 +1,10 @@
-interface IImagens {
+export interface IProdutoImagem {
   id: string;
-  url: string;
-  is_primary: boolean;
+  imagem_url: string;
+  descricao?: string | null;
+  ordem?: number;
 }
+
 
 export interface IProdutoFlags {
   ativo: boolean;
@@ -42,10 +44,14 @@ export interface IProduto {
   unidade_medida?: string;
   tenant: string;
   sku?: string;
-  imagens?: IImagens[];
+  imagens?: IProdutoImagem[];
   flags: IProdutoFlags;
 }
 
-export type IProdutoCreate = Omit<IProduto, 'id' | "created_by" | "updated_by"> & {
+export type IProdutoCreate = Omit<IProduto, 'id' | 'created_by' | 'updated_by'>;
 
-};
+export type IProdutoUpdate = IProdutoCreate; 
+
+export type IProdutoPatch = Partial<IProdutoCreate>;
+
+export type IProdutoPartialUpdate = Partial<IProdutoUpdate>;

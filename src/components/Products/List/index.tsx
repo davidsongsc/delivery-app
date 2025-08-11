@@ -13,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
 import { useProdutos } from '@/hooks/useProducts';
-
+import { useRouter } from 'next/navigation';
 const ProductList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(Constants.per_page);
@@ -21,6 +21,7 @@ const ProductList: React.FC = () => {
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
   const { user } = useAuth();
+  const router = useRouter();
   const permissions = getUserPermissions(user);
 
   const filterOptions = useMemo(() => [
@@ -87,10 +88,11 @@ const ProductList: React.FC = () => {
           onRow={(record) => ({
             onClick: () => {
               if (permissions.includes('produtos_visualizar')) {
-                window.location.href = `/dashboard/configuracoes/produtos/${record.id}/editar`;
+                router.push(`/dashboard/configuracoes/produtos/${record.id}/editar`);
               }
             },
           })}
+
           pagination={{
             current: page,
             pageSize: pageSize,

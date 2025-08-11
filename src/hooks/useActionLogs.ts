@@ -39,8 +39,8 @@ export const useActionLogs = ({
     actionLogsService
       .getAll(`?page=${page}&per_page=${limit}${query}${orderers}`)
       .then(res => {
-        setactionLogs(res.data.results);
-        setActionLogsTotal(res.data.count);
+        setactionLogs(res.data.actionLogs.results);
+        setActionLogsTotal(res.data.actionLogs.count);
       })
       .catch(() => {
         notification.error({

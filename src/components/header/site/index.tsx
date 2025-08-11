@@ -10,6 +10,7 @@ import LogoIcon from '@/components/MiniComponents/LogoIcon';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { generateMenuItems } from '@/utils/menuItems';
 import { useLoginModal } from '@/contexts/LoginModalContext';
+import UserMenu from '@/components/MiniComponents/UserMenu';
 
 const { Header } = Layout;
 
@@ -19,16 +20,11 @@ const HeaderPage: NextPage = () => {
 
   const hydrated = useAuthStore((state) => state.hydrated);
   const { user } = useAuth();
-
+  console.log('meuUser', user);
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
   const menuItems = generateMenuItems(user);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!hydrated || !isClient) {
+  if (hydrated) {
     return (
       <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
@@ -60,7 +56,7 @@ const HeaderPage: NextPage = () => {
       <>
         <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50">
           <div className="flex items-center gap-4">
-            <LogoIcon texto={user?.corporation ? user.corporation.nome : '"Loja-vel Tech Solutions"'} />
+            <LogoIcon texto={user?.corporation ? user.corporation.nome : 'Loja-vel Tech Solutions'} />
           </div>
           <Space size="middle">
             <Link href="/" passHref>
@@ -97,21 +93,12 @@ const HeaderPage: NextPage = () => {
             <Menu
               mode="horizontal"
               onClick={({ key }) => router.push(key)}
-              className="text-black shadow-sm col-span-9"
+              className="text-black shadow-sm col-span-10"
               items={menuItems}
             />
 
-            <div className="flex items-center gap-4 col-span-3 p-2">
-              <div className="flex items-center gap-2">
-                <UserOutlined />
-                <span>{user.first_name}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                |
-                {user.perfis?.length > 0 && (
-                  <> {user.perfis[user.perfis.length - 1].nome}</>
-                )}
-              </div>
+            <div className="flex items-center gap-4 col-span-2 p-2 justify-between">
+              <UserMenu user={user} />
               <div className="flex items-center gap-2">
                 <Button type="text" onClick={logout}>
                   Sair

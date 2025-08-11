@@ -1,10 +1,15 @@
 "use client";
+import ProductEditInfo, { ProductEditInfoRef } from "@/components/Products/Edit";
+import { useRef, useEffect } from "react";
+import { useProdutoContext } from "@/contexts/ProdutoContext";
 
-import React from "react";
-import ProductEditInfo from "@/components/Products/Edit/Info";
+export default function Page() {
+  const infoRef = useRef<ProductEditInfoRef>(null);
+  const { registerSubmitHandler } = useProdutoContext(); // função no contexto para registrar o submit
 
-const Page: React.FC = () => {
-  return <ProductEditInfo  />;
-};
+  useEffect(() => {
+    registerSubmitHandler(() => infoRef.current?.submitForm());
+  }, [registerSubmitHandler]);
 
-export default React.memo(Page);
+  return <ProductEditInfo ref={infoRef} />;
+}

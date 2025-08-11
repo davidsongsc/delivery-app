@@ -3,7 +3,7 @@
 import { IProduto, IProdutoCreate } from '@/interfaces/IProduto';
 import { Button, Form, App } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
-import ProductFormInfo from '@/components/Products/Form/info';
+import ProductFormInfo from '@/components/Products/Form';
 import { produtosService } from '@/services/product.service';
 import { useRouter } from 'next/navigation';
 import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
@@ -32,7 +32,7 @@ const ProductCreate: React.FC = () => {
       setIsLoading(true);
 
 
-
+      console.log('Form values:', values);
       produtosService
         .create(values)
         .then((response) => {
@@ -41,7 +41,6 @@ const ProductCreate: React.FC = () => {
         })
         .catch((error) => {
           const responseData = error?.response?.data;
-          console.error('Erro na criação:', responseData); // <- adicione isso
           if (responseData && typeof responseData === 'object') {
             Object.entries(responseData).forEach(([field, messages]) => {
               const messageArray = Array.isArray(messages) ? messages : [messages];
@@ -61,9 +60,6 @@ const ProductCreate: React.FC = () => {
     });
   }, [form, isLoading, canCreate, notification, router]);
 
-
-
-
   return (
     <div className="w-7xl container">
       <ProfileStructure
@@ -71,25 +67,19 @@ const ProductCreate: React.FC = () => {
         navTitle="Produtos > Novo"
         title="Novo Produto"
         menuButtons={[
+
           {
-            title: 'Informações',
-            link: '/dashboard/produtos/novo',
-            isActive: true,
+            title: 'Salvar',
+            onClick: () => submitData(),
+            isActive: false,
+            disabled: !canCreate,
           },
         ]}
       >
-        <SectionSeparator title="Detalhes do Produto">
-          <div className="container-conteudo-small mb-4">
-            <ProductFormInfo form={form} isEditing={false} permissions={permissions}/>
-            {canCreate ? (
-              <Button type="primary" className="mt-4 w-52" onClick={submitData} loading={isLoading}>
-                Salvar
-              </Button>
-            ) : (
-              <p className="text-red-500 mt-4">Você não tem permissão para criar produtos.</p>
-            )}
-          </div>
-        </SectionSeparator>
+        <div >
+          <ProductFormInfo form={form} isEditing={false} permissions={permissions} />
+
+        </div>
       </ProfileStructure>
     </div>
   );

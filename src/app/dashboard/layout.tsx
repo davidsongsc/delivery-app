@@ -1,13 +1,21 @@
-
+"use client";
 import AuthWrapper from '@/components/Layout/AuthWrapper'; // Client Component
 import HeaderPage from '@/components/header/site';
+import { useAuth } from '@/contexts/AuthContext';
+import Notification from '@/components/DashBoardComponents/Notifications';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthWrapper>
-      <HeaderPage />
+  const { user } = useAuth();
 
-      {children}
-    </AuthWrapper>
+  return (
+    <>
+      {user && <Notification user={user} />}
+      <AuthWrapper>
+        <HeaderPage />
+
+        {children}
+      </AuthWrapper>
+    </>
   );
 }
+

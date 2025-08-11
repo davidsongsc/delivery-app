@@ -38,8 +38,8 @@ export const useProdutos = ({
     produtosService
       .getAll(`?page=${page}&per_page=${limit}${query}${orderers}`)
       .then(res => {
-        setProdutos(res.data.results);
-        setProdutosTotal(res.data.count);
+        setProdutos(res.data.products.result);
+        setProdutosTotal(res.data.products.total);
       })
       .catch((error) => {
 

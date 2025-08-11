@@ -22,15 +22,14 @@ const MesasComponent: React.FC = () => {
     const router = useRouter();
     const [page, setPage] = useState(1);
     const [selectedMesa, setSelectedMesa] = useState<IMesa | null>(null);
-    const { user, isAuthenticated, isLoading } = useAuth(); // Assume que useAuth fornece o objeto de usuário
+    const { user, isAuthenticated, loading } = useAuth(); // Assume que useAuth fornece o objeto de usuário
 
     // Lógica para verificar permissões
     const permissions = useMemo(() => user ? getUserPermissions(user) : [], [user]);
 
-    const canCreateMesas = permissions.includes('permissoes_criar_mesa');
-    const canVisualizeMesas = permissions.includes('permissoes_visualizar');
-    const canComandas = permissions.includes('comandas_visualizar');
-    if (!canComandas) return NotFound();
+    const canCreateMesas = permissions.includes('comanas_mesa_criar');
+    const canVisualizeMesas = permissions.includes('comanas_mesa_visualizar');
+    if (!canVisualizeMesas) return NotFound();
     // O hook agora suporta paginação   
     const tenantId = user?.tenant;
     const { mesas, mesasLoading, mesasRefresh } = useMesas(tenantId, page, 50);
@@ -83,7 +82,7 @@ const MesasComponent: React.FC = () => {
         }
     };
 
-    if (mesasLoading || isLoading) {
+    if (mesasLoading || loading) {
         return (
             <div style={{ textAlign: 'center', marginTop: '50px' }}>
                 <AppLoading />

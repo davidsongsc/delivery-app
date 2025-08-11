@@ -17,12 +17,8 @@ const getChangeIcon = (actionType: string) => {
 };
 
 const formatValue = (value: any) => {
-  if (value === null) {
-    return 'null';
-  }
-  if (typeof value === 'boolean') {
-    return value.toString();
-  }
+  if (value === null || value === undefined) return 'null';
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
   return String(value);
 };
 
@@ -36,8 +32,8 @@ const formatWhatsApp = (record: IActionLog, changes: { key: string; prev: any; n
     text += `\n*Alterações Detalhadas:*\n`;
     changes.forEach(change => {
       text += `• *${change.key}:*\n`;
-      text += `   - De: ${formatValue(change.prev)}\n`;
-      text += `   - Para: ${formatValue(change.new)}\n`;
+      text += `  - De: ${formatValue(change.prev)}\n`;
+      text += `  - Para: ${formatValue(change.new)}\n`;
     });
   } else {
     text += `\n*Nenhuma alteração detalhada encontrada.*\n`;
@@ -68,9 +64,7 @@ export const ChangeDetails: React.FC<ChangeDetailsProps> = ({ record }) => {
       const prevValue = record.dados_anteriores[key];
       const newValue = record.dados_novos[key];
 
-      if (JSON.stringify(prevValue) === JSON.stringify(newValue)) {
-        continue;
-      }
+      if (JSON.stringify(prevValue) === JSON.stringify(newValue)) continue;
 
       if (key === 'flags' && prevValue && newValue) {
         for (const flagKey in newValue) {
@@ -104,10 +98,9 @@ export const ChangeDetails: React.FC<ChangeDetailsProps> = ({ record }) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(text).then(() => {
         message.success('Log copiado para a área de transferência!');
-        setIsModalVisible(false); // Fecha o modal se a cópia for bem-sucedida
-      }).catch(err => {
+        setIsModalVisible(false);
+      }).catch(() => {
         message.error('Erro ao copiar automaticamente. Por favor, copie manualmente.');
-        console.error('Erro ao copiar o log:', err);
       });
     } else {
       message.error('O navegador não suporta a cópia automática.');
@@ -116,18 +109,15 @@ export const ChangeDetails: React.FC<ChangeDetailsProps> = ({ record }) => {
 
   const handlePrimaryCopy = () => {
     const logText = formatWhatsApp(record, changes);
-    handleCopyAttempt(logText); // Tenta a cópia automática imediatamente
-
-    // Se a cópia automática falhar ou não for suportada, abre o modal para cópia manual/secundária
-    // Isso será tratado pelo catch de handleCopyAttempt ou pela verificação inicial
+    handleCopyAttempt(logText);
     if (!(typeof navigator !== 'undefined' && navigator.clipboard)) {
-        setFormattedLog(logText);
-        setIsModalVisible(true);
+      setFormattedLog(logText);
+      setIsModalVisible(true);
     }
   };
 
   const handleModalCopy = () => {
-    handleCopyAttempt(formattedLog); // Tenta copiar o texto já formatado no modal
+    handleCopyAttempt(formattedLog);
   };
 
   const handleModalClose = () => {
@@ -137,64 +127,67 @@ export const ChangeDetails: React.FC<ChangeDetailsProps> = ({ record }) => {
   const hasChanges = changes.length > 0;
 
   return (
-    <div style={{ maxWidth: 'auto', backgroundColor: '#2d2d2d', color: '#fff', padding: 32, borderRadius: 16, fontFamily: 'monospace' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <UserOutlined style={{ color: '#1890ff', fontSize: 18, marginRight: 8 }} />
-          <span style={{ fontWeight: 'bold' }}>{record.usuario || '—'}</span>
-          <span style={{ color: '#aaa', marginLeft: 8 }}>{record.acao || '—'}</span>
-        </div>
-        <Button
-          type="text"
-          icon={<CopyOutlined style={{ color: '#fff' }} />}
-          onClick={handlePrimaryCopy} // Alterado para handlePrimaryCopy
-          title="Copiar log para a área de transferência"
-        />
-      </div>
-      <p style={{ margin: 0, paddingLeft: 26, color: '#fff' }}>{record.mensagem || '—'}</p>
+    <div className="flex justify-center items-center bg-gray-100 dark:bg-zinc-800 p-1">
+      <div className="w-full p-4 grid grid-cols-6 md:grid-cols-12 gap-4">
 
-      {hasChanges && (
-        <div style={{ marginTop: 16 }}>
-          <h5 style={{ margin: '0 0 8px', color: '#66ff66' }}>Alterações detalhadas:</h5>
-          <div style={{ maxHeight: 500, overflowY: 'auto' }}>
-            {changes.map((change) => (
-              <p key={change.key} style={{ margin: '4px 0', fontSize: 12 }}>
-                <span style={{ color: '#ff6666' }}>- {change.key}:</span> de {formatValue(change.prev)}
-                <br />
-                <span style={{ color: '#66ff66' }}>+ {change.key}:</span> para {formatValue(change.new)}
-              </p>
-            ))}
+        <div className="flex justify-between items-center  mb-4 col-span-2">
+          <UserOutlined className="text-blue-500 text-xl" />
+          <div className="flex flex-col items-center space-x-3">
+            <span className="font-bold text-lg text-gray-900 dark:text-white">{record.usuario || '—'}</span>
+            <span className="text-gray-500 dark:text-gray-400">{record.acao || '—'}</span>
           </div>
-        </div>
-      )}
-      {!hasChanges && (
-        <p style={{ marginTop: 16, color: '#aaa', fontSize: 12 }}>Nenhuma alteração detalhada encontrada.</p>
-      )}
 
-      {/* Modal para cópia manual/automática secundária */}
-      <Modal
-        title="Copiar Log"
-        open={isModalVisible}
-        onOk={handleModalClose}
-        onCancel={handleModalClose}
-        footer={[
-          <Button key="copy-auto" onClick={handleModalCopy} icon={<CopyOutlined />}>
-            Copiar Automaticamente
-          </Button>,
-          <Button key="close" onClick={handleModalClose}>
-            Fechar
-          </Button>,
-        ]}
-      >
-        <p>
-          Se a cópia automática falhou ou não é suportada, você pode tentar novamente ou copiar o texto abaixo manualmente.
-        </p>
-        <div style={{ backgroundColor: '#f0f0f0', padding: '16px', borderRadius: '4px' }}>
-          <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
-            {formattedLog}
-          </pre>
         </div>
-      </Modal>
+        <div className="flex flex-col items-center justify-start space-x-3 col-span-2">
+          <Button
+            type="text"
+            icon={<CopyOutlined className="text-gray-500 hover:text-blue-500" />}
+            onClick={handlePrimaryCopy}
+            title="Copiar log para a área de transferência"
+          />
+          <p className="text-gray-700 dark:text-gray-300 mb-4">{record.mensagem || '—'}</p>
+        </div>
+
+        {hasChanges ? (
+          <div className="col-span-8">
+            <h5 className="text-sm font-semibold text-green-500 mb-2">Alterações detalhadas:</h5>
+            <div className="max-h-64 overflow-y-auto bg-gray-50 dark:bg-zinc-800 p-4 rounded-md">
+              {changes.map(({ key, prev, new: newVal }) => (
+                <div key={key} className="text-xs mb-2">
+                  <p className="text-red-500 break-words">- {key}: de <span className="font-mono">{formatValue(prev)}</span></p>
+                  <p className="text-green-500 break-words">+ {key}: para <span className="font-mono">{formatValue(newVal)}</span></p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-400">Nenhuma alteração detalhada encontrada.</p>
+        )}
+
+        <Modal
+          title="Copiar Log"
+          open={isModalVisible}
+          onOk={handleModalClose}
+          onCancel={handleModalClose}
+          footer={[
+            <Button key="copy-auto" onClick={handleModalCopy} icon={<CopyOutlined />}>
+              Copiar Automaticamente
+            </Button>,
+            <Button key="close" onClick={handleModalClose}>
+              Fechar
+            </Button>,
+          ]}
+        >
+          <p className="mb-2">
+            Se a cópia automática falhou ou não é suportada, você pode tentar novamente ou copiar o texto abaixo manualmente.
+          </p>
+          <div className="bg-gray-100 dark:bg-zinc-800 p-4 rounded-md">
+            <pre className="whitespace-pre-wrap font-mono text-sm select-text">
+              {formattedLog}
+            </pre>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };

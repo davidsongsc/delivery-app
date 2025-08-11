@@ -44,7 +44,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
         <div
           className={`
             flex flex-col sm:flex-row sm:items-center sm:justify-between my-1
-            py-4 px-2 sm:px-3 lg:px-7 left-0 w-full z-50
+            py-4 px-2 sm:px-3 lg:px-4 left-0 w-full z-50
             bg-secondary text-option rounded-sm mx-auto 
             ${className || ""}
           `}

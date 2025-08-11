@@ -36,7 +36,6 @@ const UserList: React.FC = () => {
       () => ({
         page,
         limit: pageSize,
-        // Adiciona o tenant do usuário logado como um filtro
         filters: { ...debouncedFilter, tenant: user?.tenant },
       }),
       [page, debouncedFilter, pageSize, user]

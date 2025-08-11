@@ -20,6 +20,10 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     key: '/dashboard/configuracoes/empresas',
                     label: 'Empresas',
                 },
+                permissions.includes('permissoes_visualizar') && {
+                    key: '/dashboard/configuracoes/permissoes',
+                    label: 'Permissões',
+                },
             ].filter(Boolean),
         },
         {
@@ -39,7 +43,7 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                             label: 'Afiliados',
                         },
                         permissions.includes('usuarios_fornecedores') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/fornecedores',
                             label: 'Fornecedores',
                         },
                         permissions.includes('usuarios_gerentes') && {
@@ -49,10 +53,7 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     ].filter(Boolean),
 
                 },
-                permissions.includes('permissoes_visualizar') && {
-                    key: '/dashboard/configuracoes/permissoes',
-                    label: 'Permissões',
-                },
+
                 permissions.includes('cargos_visualizar') && {
                     key: '/dashboard/configuracoes/cargos',
                     label: 'Cargos',
@@ -97,7 +98,7 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                             key: '/dashboard/configuracoes/gerentes',
                             label: 'Contato',
                         },
-                        permissions.includes('permissoes_visualizar') && {
+                        permissions.includes('clientes_carrinho') && {
                             key: '/dashboard/configuracoes/permissoes',
                             label: 'Carrinho',
                         },
@@ -233,7 +234,7 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     key: `/dashboard/mensagens/${user?.tenant}/`,
                     label: 'Canal Interno',
                 },
-                permissions.includes('mensagens') && {
+                permissions.includes('mensagens_leads') && {
                     key: `/dashboard/mensagens/${user?.tenant}/leads`,
                     label: 'Leads',
                 },

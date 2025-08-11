@@ -99,63 +99,50 @@ export default function LoginModalIcon() {
     }
 
     return (
-        <>
-            {!open && !forceOpenModal && (
-                <div
-                    className='cursor-pointer'
-                    style={{
-                        position: 'fixed',
-                        bottom: 20,
-                        right: 20,
-                        zIndex: 1300,
-                    }}
-                >
-                    <Button
-                        type="primary"
-                        shape="circle"
-                        icon={<LoginOutlined style={{ fontSize: 24 }} />}
-                        size="large"
-                        aria-label="Abrir login"
-                        onClick={openModal}
-                    />
-                </div>
-            )}
+          <>
+      {!open && !forceOpenModal && (
+        <div
+          className="fixed bottom-5 right-5 z-[1300]"
+          aria-label="Abrir login"
+        >
+          <Button
+            type="primary"
+            shape="circle"
+            icon={<LoginOutlined style={{ fontSize: 24 }} />}
+            size="large"
+            onClick={openModal}
+            className="shadow-lg hover:shadow-xl transition-shadow duration-300"
+          />
+        </div>
+      )}
 
-            <Modal
-                title="Login de Usuário"
-                className='cursor-pointer'
-                open={open || forceOpenModal}
-                onCancel={handleModalClose}
-                footer={null}
-                centered
-                width={600}
-                destroyOnClose
-                maskClosable
-            >
-                <div style={{ position: 'relative' }}>
-                    {hasAccessViolation && (
-                        <div style={{
-                            marginBottom: 16,
-                            padding: 10,
-                            backgroundColor: '#fffbe6',
-                            border: '1px solid #ffe58f',
-                            borderRadius: 4,
-                            color: '#ad8b00',
-                            fontWeight: 500,
-                        }}>
-                            ⚠️ Acesso indevido! Faça login para continuar.
-                        </div>
-                    )}
+      <Modal
+        open={open || forceOpenModal}
+        onCancel={handleModalClose}
+        footer={null}
+        centered
+        width={480}
+        destroyOnClose
+        maskClosable
+        
+        className="rounded-lg shadow-xl"
+        closeIcon={<span className="text-gray-500 hover:text-gray-800">&times;</span>}
+      >
+        <div className="relative">
+          {hasAccessViolation && (
+            <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded text-yellow-800 font-medium flex items-center gap-2">
+              <span>⚠️</span> Acesso indevido! Faça login para continuar.
+            </div>
+          )}
 
-                    <LoginForm
-                        onSuccess={closeModal}
-                        emailRef={emailRef}
-                        passwordRef={passwordRef}
-                    />
-
-
-                </div>
-            </Modal>
-        </>
+          <LoginForm
+            onSuccess={closeModal}
+            emailRef={emailRef}
+            passwordRef={passwordRef}
+            
+          />
+        </div>
+      </Modal>
+    </>
     );
 }

@@ -5,10 +5,11 @@ import { DownOutlined } from '@ant-design/icons';
 interface SectionSeparatorProps {
   title: string;
   children?: React.ReactNode;
+  expanded?: boolean;
 }
 
-const SectionSeparator: React.FC<SectionSeparatorProps> = ({ title, children }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+const SectionSeparator: React.FC<SectionSeparatorProps> = ({ title, children, expanded = true }) => {
+  const [isExpanded, setIsExpanded] = useState(expanded);
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<string | number>("auto");
 

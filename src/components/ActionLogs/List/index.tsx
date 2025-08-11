@@ -34,7 +34,7 @@ const ActionLogsList: React.FC = () => {
     { value: 'cpf', label: 'CPF' },
   ], []);
 
-  if (!permissions.includes('produtos')) return NotFound();
+  if (!permissions.includes('logs_acesso')) return NotFound();
 
   const { actionLogs, actionLogsLoading, actionLogsTotal, actionLogsRefresh } = useActionLogs(
     useMemo(
@@ -107,13 +107,15 @@ const ActionLogsList: React.FC = () => {
           columns={columns}
           dataSource={actionLogs}
           loading={actionLogsLoading}
-          onRow={(record, rowIndex) => ({
-            onClick: () => {
-              // Alterna a visibilidade do popover
-              setPopoverRecord(record);
-              setPopoverVisible(prev => !prev || popoverRecord?.id !== record.id);
-            },
-          })}
+          expandable={{
+            expandedRowRender: (record) => (
+              <div className="">
+                <ChangeDetails record={record} />
+              </div>
+            ),
+            rowExpandable: () => true,
+            expandRowByClick: true,
+          }}
           pagination={{
             current: page,
             pageSize: pageSize,

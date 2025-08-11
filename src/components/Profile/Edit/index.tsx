@@ -2,80 +2,78 @@
 
 import { IPerfil } from '@/interfaces/IPerfil';
 import { Button, Form, App } from 'antd';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import ProfileStructure from '@/components/ProfileStructure';
+import ProfileForm from '../Form';
 import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
+import { useProfile } from '@/hooks/useProfile'; // importe seu hook
 import { profileService } from '@/services/profile.service';
-import ProfileForm from '../Form'; // seu form de perfil aqui
 
 const ProfileEdit: React.FC = () => {
-  const { notification } = App.useApp();
-  const [form] = Form.useForm<IPerfil>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [profile, setProfile] = useState<IPerfil | null>(null);
-  const [loadingProfile, setLoadingProfile] = useState(true);
+  const { notification } = App.useApp();
+  const [form] = Form.useForm<IPerfil>();
 
-  const fetchProfile = useCallback(() => {
-    setLoadingProfile(true);
-    profileService
-      .getById(id)
-      .then(data => setProfile(data))
-      .finally(() => setLoadingProfile(false));
-  }, [id]);
+  const { profile, profileLoading, profileRefresh } = useProfile({ id });
 
   useEffect(() => {
     if (profile) {
+      const permissoesObj = profile.permissoes?.reduce((acc, perm) => {
+        acc[perm.codigo] = true;
+        return acc;
+      }, {} as Record<string, boolean>) ?? {};
+
+      console.log('Permissões formatadas para form:', permissoesObj);
+
       form.setFieldsValue({
         nome: profile.nome,
         descricao: profile.descricao,
-        tipo_id: profile.tipo?.id ?? null, // seta o id do tipo ou limpa
+        tipos: profile.tipos?.map(t => t.id) ?? [],
+        permissoes: permissoesObj,
       });
     }
   }, [profile, form]);
 
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const submitData = useCallback(() => {
-    if (isLoading || !profile?.id) return;
+    if (isSaving || !profile?.id) return;
 
     form.validateFields().then(values => {
-      setIsLoading(true);
-
-      const updatedData: Partial<IPerfil> = {
-        nome: values.nome,
-        descricao: values.descricao,
-        tipo_id: values.tipo_id, // usado para atualizar tipo
-      };
+      setIsSaving(true);
 
       profileService
-        .update(profile.id, updatedData)
+        .update(profile.id, {
+          nome: values.nome,
+          descricao: values.descricao,
+          tipo_id: values.tipo_id,
+        })
         .then(() => {
-          notification.success({
-            message: 'Perfil atualizado com sucesso!',
-          });
+          notification.success({ message: 'Perfil atualizado com sucesso!' });
           router.back();
         })
         .catch(error => {
           const detail = error?.response?.data?.detail || 'Erro ao atualizar perfil';
           notification.error({ message: detail });
         })
-        .finally(() => setIsLoading(false));
+        .finally(() => setIsSaving(false));
     });
+  }, [form, isSaving, profile, notification, router]);
 
-  }, [form, isLoading, profile, notification, router]);
+  if (profileLoading) return <p>Carregando perfil...</p>;
 
   return (
     <div className="container w-7xl">
       <SectionSeparator title="Informações do Perfil">
         <div className="container-conteudo-small mb-4">
-          <ProfileForm form={form} isEditing />
-          <Button type="primary" className="mt-4" onClick={submitData} loading={isLoading}>
+          <ProfileForm form={form} isEditing permissoes={profile?.permissoes} />
+          <Button
+            type="primary"
+            className="mt-4"
+            onClick={submitData}
+            loading={isSaving}
+          >
             Salvar
           </Button>
         </div>

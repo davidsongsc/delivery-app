@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { AutoComplete, Spin } from 'antd';
+import { AutoComplete, Spin, Button, Space, Tooltip } from 'antd';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import { useCategoriesAutoComplete } from '@/hooks/useCategoriesAutoComplete';
 import { ICategory } from '@/interfaces/ICategory';
 import { useDebounce } from '@/hooks/useDebounce';
+import { CategoriaCreateModal } from '@/components/Category/Create';
+import { CategoriaEditModal } from '@/components/Category/Edit'; 
 
 interface SelectCategoryAutoCompleteProps {
   value?: string;
@@ -19,22 +22,24 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [internalValue, setInternalValue] = useState('');
+  const [modalCreateVisible, setModalCreateVisible] = useState(false);
+  const [modalEditVisible, setModalEditVisible] = useState(false);
+  const [categoriesCache, setCategoriesCache] = useState<ICategory[]>([]);
+
   const debouncedSearchTerm = useDebounce(searchTerm, 1500);
   const filters = useMemo(() => ({ name: debouncedSearchTerm }), [debouncedSearchTerm]);
+
+  const { categories, loading } = useCategoriesAutoComplete({ filters });
 
   useEffect(() => {
     setInternalValue(value || '');
   }, [value]);
 
-  // Debounce opcional, pode usar seu hook useDebounce para otimizar
-  const { categories, loading } = useCategoriesAutoComplete({
-    filters,
-  });
+  useEffect(() => {
+    setCategoriesCache(categories);
+  }, [categories]);
 
-  const selectedCategory = useMemo(
-    () => categories.find((cat) => cat.id === value),
-    [categories, value]
-  );
+  const selectedCategory = useMemo(() => categories.find((cat) => cat.id === value), [categories, value]);
 
   const handleClear = useCallback(() => {
     setSearchTerm('');
@@ -51,39 +56,93 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
     [categories, onChange]
   );
 
+  const handleModalCreated = (novaCategoria: ICategory) => {
+    setCategoriesCache((prev) => [novaCategoria, ...prev]);
+    setSearchTerm(novaCategoria.nome);
+    onChange?.(novaCategoria.id, novaCategoria);
+    setModalCreateVisible(false);
+  };
+
+  const handleModalUpdated = (categoriaAtualizada: ICategory) => {
+    setCategoriesCache((prev) =>
+      prev.map((cat) => (cat.id === categoriaAtualizada.id ? categoriaAtualizada : cat))
+    );
+    setSearchTerm(categoriaAtualizada.nome);
+    onChange?.(categoriaAtualizada.id, categoriaAtualizada);
+    setModalEditVisible(false);
+  };
+
   return (
-    <Spin spinning={loading}>
-      <AutoComplete
-        disabled={isDisabled}
-        showSearch
-        placeholder="Selecione uma categoria"
-        filterOption={false}
-        options={categories
-          .filter((cat) => !excludedCategoryIds.includes(cat.id))
-          .map((cat) => ({
-            label: cat.nome,
-            value: cat.id,
-          }))}
-        value={searchTerm}
-        onChange={(text) => {
-          if (!text) {
-            handleClear();
-          } else {
-            setSearchTerm(text);
-          }
-        }}
-        onSearch={setSearchTerm}
-        onSelect={handleSelect}
-        onBlur={() => {
-          if (!internalValue) {
-            setSearchTerm('');
-          } else if (selectedCategory) {
-            setSearchTerm(selectedCategory.nome);
-          }
-        }}
-        allowClear
+    <>
+      <Space align="center" style={{ width: '100%' }}>
+        <Spin spinning={loading} style={{ flexGrow: 1, minWidth: 0 }}>
+          <AutoComplete
+            disabled={isDisabled}
+            showSearch
+            placeholder="Selecione uma categoria"
+            filterOption={false}
+            options={categoriesCache
+              .filter((cat) => !excludedCategoryIds.includes(cat.id))
+              .map((cat) => ({
+                label: cat.nome,
+                value: cat.id,
+              }))}
+            value={searchTerm}
+            onChange={(text) => {
+              if (!text) {
+                handleClear();
+              } else {
+                setSearchTerm(text);
+              }
+            }}
+            onSearch={setSearchTerm}
+            onSelect={handleSelect}
+            onBlur={() => {
+              if (!internalValue) {
+                setSearchTerm('');
+              } else if (selectedCategory) {
+                setSearchTerm(selectedCategory.nome);
+              }
+            }}
+            allowClear
+            style={{ width: '100%' }}
+          />
+        </Spin>
+
+        <Button
+          type="default"
+          icon={<PlusOutlined />}
+          onClick={() => setModalCreateVisible(true)}
+          disabled={isDisabled}
+        />
+
+        {selectedCategory && (
+          <Tooltip title="Editar categoria selecionada">
+            <Button
+              type="default"
+              icon={<EditOutlined />}
+              onClick={() => setModalEditVisible(true)}
+              disabled={isDisabled}
+            />
+          </Tooltip>
+        )}
+      </Space>
+
+      <CategoriaCreateModal
+        visible={modalCreateVisible}
+        onClose={() => setModalCreateVisible(false)}
+        onCreated={handleModalCreated}
+        parentCategories={categoriesCache}
       />
-    </Spin>
+
+      <CategoriaEditModal
+        visible={modalEditVisible}
+        onClose={() => setModalEditVisible(false)}
+        onUpdated={handleModalUpdated}
+        categoryToEdit={selectedCategory || null}
+        parentCategories={categoriesCache}
+      />
+    </>
   );
 };
 

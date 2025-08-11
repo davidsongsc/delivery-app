@@ -8,13 +8,15 @@ import UserForm from "../Form";
 import { userService } from "@/services/user.service";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import ProfileStructure from "@/components/ProfileStructure";
+import SectionSeparator from "@/components/MiniComponents/SectionSeparator";
 
 const UserCreate: React.FC = () => {
   const { notification } = App.useApp();
   const [form] = Form.useForm<IUserCreate>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const {user} = useAuth();
+  const { user, loading, permissions } = useAuth();
   const submitData = useCallback(() => {
     if (isLoading) return;
     form.validateFields().then(values => {
@@ -73,13 +75,32 @@ const UserCreate: React.FC = () => {
 
   return (
     <div className="w-7xl container mx-auto pb-4">
-      <PageTitle hasBackButton navTitle="Sistema > Usuarios >" title="Cadastrar Usuario" />
-      <div className="container-conteudo-small">
-        <UserForm form={form} />
-        <Button type="primary" className="mt-4" onClick={submitData}>
-          {isLoading ? "Carregando..." : "Cadastrar"}
-        </Button>
-      </div>
+      <ProfileStructure
+        isLoading={loading}
+        navTitle="Sistema > Usuarios"
+        title="Cadastrar Usuarios"
+        menuButtons={[
+          {
+            title: 'Todos Usuários',
+            link: `/dashboard/configuracoes/usuarios/`,
+            isActive: false,
+          },
+          {
+            title: 'Salvar Novo Usuário',
+            onClick: submitData,
+            isActive: false,
+          },
+        ]}
+      >
+        <div >
+          <SectionSeparator title="Geral" >
+            <div className="container-conteudo-small">
+              <UserForm form={form} />
+            </div>
+
+          </SectionSeparator>
+        </div>
+      </ProfileStructure>
     </div>
   );
 };
