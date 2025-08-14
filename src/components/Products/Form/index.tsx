@@ -2,14 +2,16 @@
 
 import SelectCategoryAutoComplete from '@/components/Category/AutoComplete';
 import { IProdutoCreate } from '@/interfaces/IProduto';
-import { Form, FormInstance, Input, Select, InputNumber, Checkbox, Upload, Modal, Switch } from 'antd'; // Importe o Modal do Ant Design
+import { Form, FormInstance, Input, Select, InputNumber, Checkbox, Upload, Modal, Switch } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons'; // Importe o ícone de 'mais'
+import { PlusOutlined } from '@ant-design/icons';
 import flagsConfig from '@/components/constants/flags';
 import FlagSwitch from '@/components/MiniComponents/FlagsSwitch';
 import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
 import Image from 'next/image';
 import dynamic from "next/dynamic";
+import { formatCurrencyBR, parseCurrencyBR } from '@/utils/formatCurrency';
+const MAX_VALUE = 1_000_000; // 1 milhão
 
 const RichEditor = dynamic(
   () => import("@/components/MiniComponents/RichEditor"),
@@ -28,6 +30,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
+  const [preco, setPreco] = useState('0,00');
 
 
   const handlePreview = async (file: any) => {
@@ -45,7 +48,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
-
+  
   return (
     <>
       <Form form={form} layout="vertical" requiredMark={false}>
@@ -76,7 +79,10 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                   className="col-span-6"
                   rules={[{ required: true, message: 'Selecione uma categoria' }]}
                 >
-                  <SelectCategoryAutoComplete />
+                  <SelectCategoryAutoComplete
+                    value={form.getFieldValue('categoria_id')}
+                    onChange={(id) => form.setFieldsValue({ categoria_id: id })}
+                  />
                 </Form.Item>
 
                 <Form.Item<IProdutoCreate>
@@ -98,14 +104,25 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                   label={<span className="font-bold text-xl">Preço (R$):</span>}
                   name="preco"
                   className="col-span-6"
+                  initialValue={0}
                   rules={[{ required: true, message: 'Campo obrigatório' }]}
                 >
-                  <Input placeholder="0.00" disabled={!permissions?.includes('produtos_editar_preco')} value={0} />
+                  <Input
+                    disabled={!permissions?.includes('produtos_editar_preco')}
+                    value={preco}
+                    onChange={(e) => {
+                      const formatted = formatCurrencyBR(e.target.value);
+                      setPreco(formatted);
+                      form.setFieldValue('preco', parseCurrencyBR(formatted));
+                    }}
+                    placeholder="R$ 0,00"
+                  />
                 </Form.Item>
                 <Form.Item<IProdutoCreate>
                   label={<span className="font-bold">Desconto (%):</span>}
                   name="desconto"
                   className="col-span-6"
+                  initialValue={0}
                 >
                   <InputNumber
                     min={0}
@@ -120,6 +137,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                   name="estoque"
                   className="col-span-6"
                   rules={[{ required: true, message: 'Campo obrigatório' }]}
+                  initialValue={10}
                 >
                   <InputNumber
                     min={0}
@@ -135,6 +153,8 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                   name="ativo"
                   className="col-span-6"
                   valuePropName="checked"
+                  initialValue={true}
+
                 >
                   <Switch
                     disabled={!permissions?.includes('produtos_editar_promocional')}
@@ -260,7 +280,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
         </SectionSeparator>
       </Form >
       <Modal
-        visible={previewVisible}
+        open={previewVisible}
         title={previewTitle}
         footer={null}
         onCancel={handleCancel}

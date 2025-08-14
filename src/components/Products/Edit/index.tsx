@@ -95,7 +95,7 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
         remover: produto.remover ?? [],
         adicionar: produto.adicionar ?? [],
         quantidade: produto.quantidade ?? 0,
-        categoria_id: produto.categoria_id ?? '',
+        categoria_id: produto.categoria.id ?? '',
         ativo: produto.ativo ?? false,
         descricao: produto.descricao ?? '',
         imagens: convertImagensToFileList(produto.imagens || []),

@@ -84,10 +84,16 @@ export const authService = {
     },
 
     checkAuth: async (): Promise<{ user: IUser }> => {
-        const response = await apiClient.get('/api/token/refresh/');
-        const user = formatUserFromAuthResponse(response.data);
+        await apiClient.post('/api/token/refresh/');
+
+        const userResponse = await apiClient.get('/api/token/refresh/');
+
+        const user = formatUserFromAuthResponse(userResponse.data);
         useAuthStore.getState().setUser(user);
+
         return { user };
     },
+
+
 };
 

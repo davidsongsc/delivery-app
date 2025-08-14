@@ -10,24 +10,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import LoginModalIcon from "@/components/Login";
 import { LoginModalProvider } from "@/contexts/LoginModalContext";
 
-
-const fullConfig = resolveConfig(tailwindConfig);
-const theme = {
-    token: {
-        borderRadius: 8,
-    },
-    components: {
-        Layout: {
-            colorBgContainer: fullConfig.theme?.colors?.primary || "#1C1C1E",
-
-        },
-        
-        Input: {
-            // colorBgContainer: fullConfig.theme?.colors?.aço || "#1C1C1E",
-        }
-    },
-};
-
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const config = useMemo(() => resolveConfig(tailwindConfig), []);
 

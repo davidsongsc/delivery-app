@@ -40,7 +40,7 @@ export const useActionLogs = ({
       .getAll(`?page=${page}&per_page=${limit}${query}${orderers}`)
       .then(res => {
         setactionLogs(res.data.actionLogs.results);
-        setActionLogsTotal(res.data.actionLogs.count);
+        setActionLogsTotal(res.data.actionLogs.total);
       })
       .catch(() => {
         notification.error({

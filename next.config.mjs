@@ -3,6 +3,7 @@ import nextPwa from 'next-pwa';
 /** @type {import('next').NextConfig} */
 const baseConfig = {
   reactStrictMode: false,
+  turbo: true, 
   images: {
     domains: [
       "maps.googleapis.com",

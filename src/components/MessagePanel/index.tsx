@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useChatUsers } from '@/hooks/useChatUsers';
 import {
@@ -12,6 +12,7 @@ import {
   Typography,
   Divider,
   Layout,
+  Empty,
 } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { IUser } from '@/interfaces/IUser';
@@ -26,140 +27,191 @@ interface MessagePanelProps {
 }
 
 const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId, currentUser }) => {
-  if (!currentUser) {
-    return null;
-  }
-  
   const [messageText, setMessageText] = useState('');
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { users, usersLoading } = useChatUsers();
-  const { messages, isConnected, sendMessage } = useWebSocket(tenantId);
+  const { messages, onlineUsers, isConnected, sendMessage } = useWebSocket(tenantId, currentUser.id);
 
+  // Scroll automático para última mensagem
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, selectedUser]);
+
+  // Filtra usuários excluindo o currentUser
+  const otherUsers = users.filter((u) => u.id !== currentUser.id);
+
+  // Ordena usuários para mostrar primeiro os online (com base na lista real onlineUsers)
+  const usersForChat = otherUsers.sort((a, b) => {
+    const aOnline = onlineUsers.some((user) => user.id === a.id);
+    const bOnline = onlineUsers.some((user) => user.id === b.id);
+    if (aOnline && !bOnline) return -1;
+    if (!aOnline && bOnline) return 1;
+    return 0;
+  });
+
+  // Mensagens da conversa atual (entre currentUser e selectedUser)
+  const currentConversation = selectedUser
+    ? messages.filter((msg) => {
+      if (!msg.remetente_id || !msg.destinatario_id) return false;
+      return (
+        (msg.remetente_id === currentUser.id && msg.destinatario_id === selectedUser.id) ||
+        (msg.remetente_id === selectedUser.id && msg.destinatario_id === currentUser.id)
+      );
+    })
+    : [];
+
+  // Handler para enviar mensagem
   const handleSendMessage = () => {
     if (messageText.trim() && selectedUser) {
-      // Ajuste na chamada: envia a mensagem como 'corpo'
-      sendMessage(messageText, selectedUser.id!);
+      sendMessage(messageText.trim(), selectedUser.id);
       setMessageText('');
     }
   };
 
-  const currentConversation = selectedUser ? messages.filter(
-    (msg: any) => {
-      if (!msg || !msg.remetente_id || !msg.destinatario_id) {
-        return false;
-      }
-      return (msg.remetente_id === currentUser.id && msg.destinatario_id === selectedUser.id) ||
-        (msg.remetente_id === selectedUser.id && msg.destinatario_id === currentUser.id);
+  // Envio ao pressionar Enter (sem Shift)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
-  ) : [];
+  };
 
   if (usersLoading) {
-    return <Spin size="large" />;
+    return (
+      <div style={{ padding: 50, textAlign: 'center' }}>
+        <Spin size="large" />
+      </div>
+    );
   }
-
-  // Lógica para ordenar usuários: online primeiro
-  const usersForChat = users.filter(user => user.id !== currentUser.id).sort((a, b) => {
-    const aIsOnline = isConnected; // Lógica simplificada: se o WebSocket está conectado, o usuário está online
-    const bIsOnline = isConnected; // Em um sistema real, essa lógica seria mais complexa
-    if (aIsOnline && !bIsOnline) return -1;
-    if (!aIsOnline && bIsOnline) return 1;
-    return 0;
-  });
 
   return (
     <Layout style={{ minHeight: '100vh', background: '#fff' }}>
-      <Sider width={250} style={{ background: '#f0f2f5' }}>
+      <Sider
+        width={280}
+        style={{
+          background: '#f0f2f5',
+          borderRight: '1px solid #ddd',
+          overflowY: 'auto',
+          padding: '16px 8px',
+        }}
+      >
         <Card
           title={
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span>Usuários Online</span>
-              <Text strong style={{ color: isConnected ? 'green' : 'red' }}>
-                ({usersForChat.length})
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text strong>Usuários</Text>
+              <Text type={isConnected ? 'success' : 'danger'}>
+                {isConnected ? 'Online' : 'Offline'}
               </Text>
             </div>
           }
-          style={{ height: '100%' }}
+          bordered={false}
+          bodyStyle={{ padding: 0 }}
         >
           <List
             dataSource={usersForChat}
-            renderItem={(user) => (
-              <List.Item
-                style={{ cursor: 'pointer', background: selectedUser?.id === user.id ? '#e6f7ff' : 'transparent' }}
-                onClick={() => setSelectedUser(user)}
-              >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  {isConnected ? (
-                    <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />
-                  ) : (
-                    <CloseCircleOutlined style={{ color: 'red', marginRight: '8px' }} />
-                  )}
-                  <Text strong>{user.username}</Text>
-                </div>
-              </List.Item>
-            )}
+            locale={{ emptyText: 'Nenhum usuário disponível' }}
+            renderItem={(user) => {
+              const isOnline = onlineUsers.some((u) => u.id === user.id);
+              return (
+                <List.Item
+                  key={user.id}
+                  style={{
+                    cursor: 'pointer',
+                    background: selectedUser?.id === user.id ? '#bae7ff' : undefined,
+                    padding: '10px 16px',
+                    borderRadius: 4,
+                    margin: '4px 8px',
+                  }}
+                  onClick={() => setSelectedUser(user)}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {isOnline ? (
+                      <CheckCircleOutlined style={{ color: 'green', marginRight: 8 }} />
+                    ) : (
+                      <CloseCircleOutlined style={{ color: 'red', marginRight: 8 }} />
+                    )}
+                    <Text strong>{user.username}</Text>
+                  </div>
+                </List.Item>
+              );
+            }}
           />
         </Card>
       </Sider>
-      <Content style={{ padding: '0 24px', background: '#fff' }}>
-        <Card
-          title={selectedUser ? `Conversa com ${selectedUser.username}` : 'Selecione um usuário para conversar'}
-          style={{ height: '100%' }}
-        >
-          {!isConnected ? (
-            <div style={{ textAlign: 'center', padding: '20px' }}>
-              <Spin size="large" />
-              <p>Conectando ao servidor...</p>
-            </div>
-          ) : (
-            <>
-              {selectedUser ? (
-                <>
-                  <List
-                    dataSource={currentConversation}
-                    style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
-                    renderItem={(item, index) => (
-                      <List.Item key={index} style={{ justifyContent: item.remetente_id === currentUser.id ? 'flex-end' : 'flex-start' }}>
+
+      <Layout>
+        <Content style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+          <Card
+            title={
+              selectedUser ? `Conversa com ${selectedUser.username}` : 'Selecione um usuário para conversar'
+            }
+            style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
+          >
+            {!isConnected ? (
+              <div style={{ textAlign: 'center', padding: 40 }}>
+                <Spin size="large" />
+                <p>Conectando ao servidor...</p>
+              </div>
+            ) : !selectedUser ? (
+              <Empty description="Nenhuma conversa selecionada" />
+            ) : (
+              <>
+                <List
+                  dataSource={currentConversation}
+                  style={{ flexGrow: 1, overflowY: 'auto', marginBottom: 16 }}
+                  renderItem={(item, idx) => {
+                    const isOwnMessage = item.remetente_id === currentUser.id;
+                    return (
+                      <List.Item
+                        key={idx}
+                        style={{
+                          justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
+                          padding: '4px 0',
+                        }}
+                      >
                         <Card
                           size="small"
                           style={{
                             maxWidth: '70%',
-                            backgroundColor: item.remetente_id === currentUser.id ? '#e6f7ff' : '#f0f0f0',
-                            borderRadius: '8px',
+                            backgroundColor: isOwnMessage ? '#e6f7ff' : '#f5f5f5',
+                            borderRadius: 8,
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            wordBreak: 'break-word',
                           }}
                         >
-                          <Text strong>{item.remetente}:</Text> {item.corpo}
+                          <Text strong>{isOwnMessage ? 'Você' : item.remetente}:</Text>{' '}
+                          <Text>{item.corpo}</Text>
                         </Card>
                       </List.Item>
-                    )}
-                  />
-                  <Divider />
-                  <Input.Group compact style={{ display: 'flex' }}>
-                    <TextArea
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      placeholder="Digite sua mensagem aqui..."
-                      style={{ flex: 1 }}
-                      onPressEnter={handleSendMessage}
-                    />
-                    <Button
-                      type="primary"
-                      onClick={handleSendMessage}
-                      disabled={!messageText.trim()}
-                    >
-                      Enviar
-                    </Button>
-                  </Input.Group>
-                </>
-              ) : (
-                <div style={{ textAlign: 'center', padding: '20px' }}>
-                  <Text type="secondary">Selecione um usuário para iniciar a conversa.</Text>
-                </div>
-              )}
-            </>
-          )}
-        </Card>
-      </Content>
+                    );
+                  }}
+                />
+                <div ref={messagesEndRef} />
+                <Divider />
+                <Input.TextArea
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  rows={3}
+                  placeholder={`Mensagem para ${selectedUser.username}`}
+                  maxLength={1000}
+                  allowClear
+                />
+                <Button
+                  type="primary"
+                  onClick={handleSendMessage}
+                  disabled={!messageText.trim()}
+                  style={{ marginTop: 12, alignSelf: 'flex-end' }}
+                >
+                  Enviar
+                </Button>
+              </>
+            )}
+          </Card>
+        </Content>
+      </Layout>
     </Layout>
   );
 };

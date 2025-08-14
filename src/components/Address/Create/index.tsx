@@ -8,7 +8,7 @@ import { addressService } from "@/services/address.service";
 import { useAuthStore } from "@/store/authStore";
 
 interface AddressCreateProps {
-  field: "user_id" | "corporation_id";
+  field: "user_id" | "corporation_id" | "client_id";
   value: string;
   fetchData: () => void;
   children?: React.ReactNode;
@@ -30,17 +30,14 @@ const AddressCreate: React.FC<AddressCreateProps> = ({
     form.validateFields().then(values => {
       setIsLoading(true);
 
-      addressService
-        .create({
-          ...values,
-          content_type_model: "usuario",
-          object_id: user?.id,
-          [field]: value,
-        })
+      const payload: any = {
+        ...values,
+        [field]: value, // user_id, corporation_id ou client_id
+      };
+
+      addressService.create(payload)
         .then(() => {
-          notification.success({
-            message: "Endereço cadastrada com sucesso!",
-          });
+          notification.success({ message: "Endereço cadastrado com sucesso!" });
           fetchData();
           setIsOpen(false);
           form.resetFields();
@@ -48,13 +45,13 @@ const AddressCreate: React.FC<AddressCreateProps> = ({
         .catch((e) => {
           notification.error({
             message: "Erro ao cadastrar endereço",
-            description: e.response.data.message,
+            description: e.response?.data?.message || "Erro inesperado",
           });
-
         })
         .finally(() => setIsLoading(false));
     });
   }, [form, isLoading, field, value, fetchData]);
+
 
   return (
     <>

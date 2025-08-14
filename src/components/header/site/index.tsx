@@ -7,7 +7,6 @@ import { Menu, Button, Layout, Space } from 'antd';
 import { useAuthStore } from '@/store/authStore';
 import { useAuth } from '@/contexts/AuthContext';
 import LogoIcon from '@/components/MiniComponents/LogoIcon';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { generateMenuItems } from '@/utils/menuItems';
 import { useLoginModal } from '@/contexts/LoginModalContext';
 import UserMenu from '@/components/MiniComponents/UserMenu';
@@ -15,43 +14,13 @@ import UserMenu from '@/components/MiniComponents/UserMenu';
 const { Header } = Layout;
 
 const HeaderPage: NextPage = () => {
-  const { logout } = useAuthStore((state) => state);
+  const { logout } = useAuthStore((state: any) => state);
   const { openModal } = useLoginModal();
-
-  const hydrated = useAuthStore((state) => state.hydrated);
   const { user } = useAuth();
-  console.log('meuUser', user);
   const router = useRouter();
   const menuItems = generateMenuItems(user);
 
-  if (hydrated) {
-    return (
-      <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <LogoIcon texto="Lojavel System" />
-        </div>
-        <Space size="middle">
-          <Link href="/" passHref>
-            <Button type="text">Início</Button>
-          </Link>
-          {!user ? (
-            <>
-              <Button onClick={() => openModal()} type="text">Login</Button>
-              <Link href="/register" passHref>
-                <Button type="primary">Cadastre-se</Button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/assinatura" passHref>
-                <Button type="primary">Assinatura</Button>
-              </Link>
-            </>
-          )}
-        </Space>
-      </Header>
-    );
-  } else {
+  {
     return (
       <>
         <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50">

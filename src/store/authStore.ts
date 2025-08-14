@@ -235,49 +235,28 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             checkAuth: async () => {
-                // Tenta obter o token do cookie
-                const token = getTokenFromCookie();
-
-                // Se não houver token no cookie, limpa o estado e sai
-                if (!token) {
-                    set({
-                        token: null,
-                        user: null,
-                        isAuthenticated: false,
-                        loading: false,
-                        permissions: [],
-                    });
-                    return;
-                }
-
                 set({ loading: true });
                 try {
-                    // Tenta verificar o token com o serviço de autenticação
-                    const response = await authService.checkAuth(token); // Passa o token para checkAuth
-                    set((state) => ({
+                    const response = await authService.checkAuth(); 
+                    set({
                         user: response.user,
                         isAuthenticated: true,
-                        token: token, // Mantém o token que foi encontrado no cookie
                         loading: false,
-                        rememberMe: state.rememberMe, // Mantém o estado de rememberMe
-                        // CORREÇÃO: Mapeia IPermissao[] para string[]
-                        permissions: (response.user.permissoes || []).map(p => p.code), // Assumindo que IPermissao tem uma propriedade 'code'
-                    }));
-                } catch (err) {
-                    // Se a verificação falhar (token inválido/expirado), limpa o estado
+                        permissions: (response.user.permissoes || []).map(p => p.code),
+                    });
+                } catch (error) {
                     set({
-                        token: null,
                         user: null,
                         isAuthenticated: false,
                         loading: false,
                         permissions: [],
                     });
-                    // Opcional: remover o cookie inválido aqui também
-                    document.cookie = 'token=; path=/; max-age=0; SameSite=Lax';
+
                 } finally {
-                    set({ hydrated: true }); // Marca como hidratado após a tentativa de autenticação
+                    set({ hydrated: true });
                 }
             }
+
         }),
         {
             name: 'auth-storage',

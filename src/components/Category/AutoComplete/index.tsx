@@ -5,7 +5,7 @@ import { useCategoriesAutoComplete } from '@/hooks/useCategoriesAutoComplete';
 import { ICategory } from '@/interfaces/ICategory';
 import { useDebounce } from '@/hooks/useDebounce';
 import { CategoriaCreateModal } from '@/components/Category/Create';
-import { CategoriaEditModal } from '@/components/Category/Edit'; 
+import { CategoriaEditModal } from '@/components/Category/Edit';
 
 interface SelectCategoryAutoCompleteProps {
   value?: string;
@@ -21,7 +21,6 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
   isDisabled = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [internalValue, setInternalValue] = useState('');
   const [modalCreateVisible, setModalCreateVisible] = useState(false);
   const [modalEditVisible, setModalEditVisible] = useState(false);
   const [categoriesCache, setCategoriesCache] = useState<ICategory[]>([]);
@@ -32,14 +31,27 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
   const { categories, loading } = useCategoriesAutoComplete({ filters });
 
   useEffect(() => {
-    setInternalValue(value || '');
-  }, [value]);
-
-  useEffect(() => {
     setCategoriesCache(categories);
   }, [categories]);
 
-  const selectedCategory = useMemo(() => categories.find((cat) => cat.id === value), [categories, value]);
+  // SINCRONIZA searchTerm com o value (id da categoria)
+  useEffect(() => {
+    if (!value) {
+      setSearchTerm('');
+      return;
+    }
+    const selected = categoriesCache.find((cat) => cat.id === value);
+    if (selected) {
+      setSearchTerm(selected.nome);
+    } else {
+      setSearchTerm('');
+    }
+  }, [value, categoriesCache]);
+
+  const selectedCategory = useMemo(() => categoriesCache.find((cat) => cat.id === value), [
+    categoriesCache,
+    value,
+  ]);
 
   const handleClear = useCallback(() => {
     setSearchTerm('');
@@ -48,29 +60,13 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
 
   const handleSelect = useCallback(
     (selectedId: string) => {
-      const selected = categories.find((cat) => cat.id === selectedId);
+      const selected = categoriesCache.find((cat) => cat.id === selectedId);
       if (!selected) return;
       setSearchTerm(selected.nome);
       onChange?.(selected.id, selected);
     },
-    [categories, onChange]
+    [categoriesCache, onChange]
   );
-
-  const handleModalCreated = (novaCategoria: ICategory) => {
-    setCategoriesCache((prev) => [novaCategoria, ...prev]);
-    setSearchTerm(novaCategoria.nome);
-    onChange?.(novaCategoria.id, novaCategoria);
-    setModalCreateVisible(false);
-  };
-
-  const handleModalUpdated = (categoriaAtualizada: ICategory) => {
-    setCategoriesCache((prev) =>
-      prev.map((cat) => (cat.id === categoriaAtualizada.id ? categoriaAtualizada : cat))
-    );
-    setSearchTerm(categoriaAtualizada.nome);
-    onChange?.(categoriaAtualizada.id, categoriaAtualizada);
-    setModalEditVisible(false);
-  };
 
   return (
     <>
@@ -89,16 +85,13 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
               }))}
             value={searchTerm}
             onChange={(text) => {
-              if (!text) {
-                handleClear();
-              } else {
-                setSearchTerm(text);
-              }
+              setSearchTerm(text);
+              onChange?.(''); // limpa seleção para evitar inconsistência
             }}
             onSearch={setSearchTerm}
             onSelect={handleSelect}
             onBlur={() => {
-              if (!internalValue) {
+              if (!value) {
                 setSearchTerm('');
               } else if (selectedCategory) {
                 setSearchTerm(selectedCategory.nome);
@@ -131,14 +124,26 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
       <CategoriaCreateModal
         visible={modalCreateVisible}
         onClose={() => setModalCreateVisible(false)}
-        onCreated={handleModalCreated}
+        onCreated={(novaCategoria) => {
+          setCategoriesCache((prev) => [novaCategoria, ...prev]);
+          setSearchTerm(novaCategoria.nome);
+          onChange?.(novaCategoria.id, novaCategoria);
+          setModalCreateVisible(false);
+        }}
         parentCategories={categoriesCache}
       />
 
       <CategoriaEditModal
         visible={modalEditVisible}
         onClose={() => setModalEditVisible(false)}
-        onUpdated={handleModalUpdated}
+        onUpdated={(categoriaAtualizada) => {
+          setCategoriesCache((prev) =>
+            prev.map((cat) => (cat.id === categoriaAtualizada.id ? categoriaAtualizada : cat))
+          );
+          setSearchTerm(categoriaAtualizada.nome);
+          onChange?.(categoriaAtualizada.id, categoriaAtualizada);
+          setModalEditVisible(false);
+        }}
         categoryToEdit={selectedCategory || null}
         parentCategories={categoriesCache}
       />

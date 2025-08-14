@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { notification } from 'antd';
 
 interface NotificationMessage {
@@ -10,60 +10,53 @@ interface NotificationMessage {
   destinatario_id: string;
 }
 
-
 export const useNotifications = (userId: string | null) => {
-  const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
   const ws = useRef<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
 
   useEffect(() => {
     if (!userId) return;
 
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-    const wsProtocol = apiBaseUrl?.startsWith('https') ? 'wss:' : 'ws:';
-    const wsHost = apiBaseUrl?.replace(/^https?:\/\//, '');
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || window.location.origin;
+    const isSecure = apiBaseUrl.startsWith('https');
+    const wsProtocol = isSecure ? 'wss' : 'ws';
 
-    const wsUrl = `${wsProtocol}//${wsHost}/ws/notifications/${userId}/`;
-    console.log(`Conectando ao WebSocket em: ${wsUrl}`);
+    // Ajusta URL WebSocket para produção local/domínio
+    const wsUrl = `${wsProtocol}://${window.location.host}/ws/notifications/${userId}/`;
 
     ws.current = new WebSocket(wsUrl);
 
     ws.current.onopen = () => {
-      console.log('WebSocket conectado');
       setIsConnected(true);
-      notification.success({ message: 'Conexão estabelecida com notificações' });
+      notification.success({ message: 'Conexão WebSocket estabelecida.' });
     };
 
     ws.current.onmessage = (event) => {
       try {
         const data: NotificationMessage = JSON.parse(event.data);
-        console.log('Notificação recebida:', data);
-
-        // Adiciona à lista interna
         setNotifications((prev) => [...prev, data]);
 
-        // Exibe notificação visual
         notification.info({
           message: data.titulo || 'Nova notificação',
           description: data.corpo,
           placement: 'topRight',
           duration: 5,
         });
-      } catch (error) {
-        console.error('Erro ao processar mensagem do WebSocket', error);
+      } catch (err) {
+        console.error('Erro ao processar mensagem WS', err);
       }
     };
 
     ws.current.onerror = (error) => {
-      console.error('WebSocket erro:', error);
       setIsConnected(false);
-      notification.error({ message: 'Erro na conexão WebSocket' });
+      notification.error({ message: 'Erro na conexão WebSocket.' });
+      console.error('WebSocket error:', error);
     };
 
     ws.current.onclose = () => {
-      console.log('WebSocket desconectado');
       setIsConnected(false);
-      notification.warning({ message: 'Conexão WebSocket encerrada' });
+      notification.warning({ message: 'Conexão WebSocket encerrada.' });
     };
 
     return () => {
@@ -71,14 +64,5 @@ export const useNotifications = (userId: string | null) => {
     };
   }, [userId]);
 
-  // Função para enviar mensagem via WebSocket, se quiser implementar envio
-  const sendNotification = (payload: Partial<NotificationMessage>) => {
-    if (ws.current && isConnected) {
-      ws.current.send(JSON.stringify(payload));
-    } else {
-      notification.error({ message: 'WebSocket não está conectado' });
-    }
-  };
-
-  return { notifications, isConnected, sendNotification };
+  return { notifications, isConnected };
 };

@@ -64,13 +64,13 @@ export const CategoriaEditModal: React.FC<CategoriaEditModalProps> = ({
   return (
     <Modal
       title="Editar Categoria"
-      visible={visible}
+      open={visible}
       onCancel={() => {
         form.resetFields();
         onClose();
       }}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}

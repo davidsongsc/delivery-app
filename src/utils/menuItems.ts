@@ -78,28 +78,32 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
             key: 'clientes',
             label: 'Clientes',
             children: [
+                permissions.includes('caixa_entradas') && {
+                    key: '/dashboard/configuracoes/clientes',
+                    label: 'Clientes',
+                },
                 permissions.includes('usuarios_listar') && {
                     key: 'site',
                     label: 'Site',
                     children: [
                         permissions.includes('caixa_entradas') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/vendas/pedidos',
                             label: 'Pedidos',
                         },
                         permissions.includes('caixa_entradas') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/feedback',
                             label: 'Feedbacks',
                         },
                         permissions.includes('caixa_entradas') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/usuentregasarios',
                             label: 'Entregas',
                         },
                         permissions.includes('caixa_entradas') && {
-                            key: '/dashboard/configuracoes/gerentes',
+                            key: '/dashboard/configuracoes/contato',
                             label: 'Contato',
                         },
                         permissions.includes('clientes_carrinho') && {
-                            key: '/dashboard/configuracoes/permissoes',
+                            key: '/dashboard/configuracoes/carrinho',
                             label: 'Carrinho',
                         },
                     ].filter(Boolean),
@@ -109,11 +113,11 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     label: 'Fila e Reservas',
                     children: [
                         permissions.includes('escala_servicos') && {
-                            key: '/dashboard/escalas/servicos',
+                            key: '/dashboard/reservas',
                             label: 'Reservas',
                         },
                         permissions.includes('escala_apoio') && {
-                            key: '/dashboard/escalas/apoio',
+                            key: '/dashboard/fila',
                             label: 'Fila de espera',
                         },
                     ].filter(Boolean),
@@ -129,15 +133,15 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     label: 'Painel Afiliados',
                     children: [
                         permissions.includes('afiliados_cadastrar_cliente') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/afiliados/clientes/cadastrar',
                             label: 'Cadastrar Cliente',
                         },
                         permissions.includes('afiliados_alterar_plano') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/afiliados/clientes/editar',
                             label: 'Alterar Plano',
                         },
                         permissions.includes('afiliados_clientes_listar') && {
-                            key: '/dashboard/configuracoes/usuarios',
+                            key: '/dashboard/configuracoes/afiliados/clientes',
                             label: 'Lista de Clientes',
                         },
 
@@ -148,31 +152,31 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     label: 'Leads',
                     children: [
                         permissions.includes('afiliados_leads') && {
-                            key: '/dashboard/escalas/servicos',
+                            key: '/dashboard/leads/lista',
                             label: 'Listar leads',
                         },
                         permissions.includes('afiliados_buscar_leads') && {
-                            key: '/dashboard/escalas/apoio',
+                            key: '/dashboard/configuracoes/afiliados/leads',
                             label: 'Buscar leads',
                         },
                         permissions.includes('afiliados_campanhas') && {
-                            key: '/dashboard/escalas/apoio',
+                            key: '/dashboard/configuracoes/afiliados/campanha',
                             label: 'Campanhas',
                         },
-                        permissions.includes('afiliados_historico_leads') && {
+                        permissions.includes('afiliados_configuracoes/afiliados/leads') && {
                             key: 'historico_leads',
                             label: 'Historico leads',
                             children: [
                                 permissions.includes('afiliados_convertidos_leads') && {
-                                    key: '/dashboard/escalas/servicos',
+                                    key: '/dashboard/configuracoes/afiliados/convertidos',
                                     label: 'Convertidos',
                                 },
                                 permissions.includes('afiliados_nao_convertidos_leads') && {
-                                    key: '/dashboard/escalas/apoio',
+                                    key: '/dashboard/configuracoes/afiliados/leads/conversao',
                                     label: 'Nao convertidos',
                                 },
                                 permissions.includes('afiliados_geral_leads') && {
-                                    key: '/dashboard/escalas/apoio',
+                                    key: '/dashboard/configuracoes/afiliados/geral',
                                     label: 'Geral',
                                 },
                             ].filter(Boolean),

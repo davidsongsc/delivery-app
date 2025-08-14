@@ -47,13 +47,13 @@ export const CategoriaCreateModal: React.FC<CategoriaCreateModalProps> = ({
   return (
     <Modal
       title="Criar Categoria"
-      visible={visible}
+      open={visible}
       onCancel={() => {
         form.resetFields();
         onClose();
       }}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}

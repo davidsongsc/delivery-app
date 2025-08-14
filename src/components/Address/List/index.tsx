@@ -12,7 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import getUserPermissions from "@/utils/permissions";
 
 interface AddressListProps {
-  field: "user_id" | "corporation_id";
+  field: "user_id" | "corporation_id" | "client_id";
   value: string;
   children?: React.ReactNode;
 }

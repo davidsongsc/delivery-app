@@ -8,26 +8,6 @@ import { IProduto } from "@/interfaces/IProduto";
 import { IUser } from "@/interfaces/IUser";
 import { UserOutlined } from "@ant-design/icons";
 
-interface IBaseProfile {
-  id?: number | string;
-  name?: string;
-  cpf?: string;
-  document?: string;
-  category?: {
-    name: string;
-  } | null;
-  supplier?: {
-    name: string;
-  } | null;
-}
-
-// Nova interface para imagem do produto (simplificada)
-interface IProdutoImagem {
-  id: string;
-  imagem_url: string;
-  ordem?: number;
-}
-
 
 interface ProfileStructureProps {
   isLoading: boolean;
