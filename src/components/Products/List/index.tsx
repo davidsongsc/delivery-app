@@ -10,7 +10,6 @@ import PageSizeSelector from '@/components/MiniComponents/PageSizeSelector';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Constants } from '@/components/constants';
 import { useAuth } from '@/contexts/AuthContext';
-import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
 import { useProdutos } from '@/hooks/useProducts';
 import { useRouter } from 'next/navigation';
@@ -20,10 +19,9 @@ const ProductList: React.FC = () => {
   const [selectedField, setSelectedField] = useState<string>('first_name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-  const { user } = useAuth();
+  const { user, permissions } = useAuth();
   const router = useRouter();
-  const permissions = getUserPermissions(user);
-
+  console.log('permissions', permissions);
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
     { value: 'email', label: 'Email' }, // Added email as a filter option

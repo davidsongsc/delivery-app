@@ -17,8 +17,7 @@ const ProductCreate: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const { user } = useAuth();
-  const permissions = getUserPermissions(user);
+  const { permissions } = useAuth();
 
   const canCreate = useMemo(
     () => permissions.includes('produtos_criar'),

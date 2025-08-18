@@ -12,7 +12,6 @@ import { LoginModalProvider } from "@/contexts/LoginModalContext";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const config = useMemo(() => resolveConfig(tailwindConfig), []);
-
     return (<ConfigProvider
         locale={ptBR}
         theme={{

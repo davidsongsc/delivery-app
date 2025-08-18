@@ -28,7 +28,6 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (!checking && !isAuthenticated) {
-      // Em vez de redirecionar, abre o modal de login
       openModal();
     }
   }, [checking, isAuthenticated, openModal]);

@@ -11,6 +11,7 @@ import NotFound from '@/app/not-found';
 import { useProdutoContext } from '@/contexts/ProdutoContext';
 import flagsConfig from '@/components/constants/flags';
 import { showChangesNotification } from '@/utils/notification';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface ProductEditInfoRef {
   submitForm: () => void;
@@ -74,8 +75,9 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
   const [isLoading, setIsLoading] = useState(false);
   const [initialProduto, setInitialProduto] = useState<IProduto | null>(null);
   const router = useRouter();
-  const { registerSubmitHandler, produto, permissions } = useProdutoContext();
+  const { registerSubmitHandler, produto } = useProdutoContext();
   const defaultFlags = Object.fromEntries(flagsConfig.map(({ key }) => [key, false]));
+  const { permissions } = useAuth();
 
   if (!permissions?.includes('produtos')) return <NotFound />;
 

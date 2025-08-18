@@ -2,6 +2,7 @@ import axios from 'axios';
 import apiClient from '@/services/apiClient';
 import { useAuthStore } from '@/store/authStore';
 import { AuthResponse } from '@/types/auth';
+import { CookiesHandler } from '@/cookies';
 
 import type { IUser } from '@/interfaces/IUser';
 import { formatUserFromAuthResponse } from '@/utils/formatUser';
@@ -10,52 +11,27 @@ import { ILoginResponse } from '@/interfaces/ILoginResponse';
 import parseApiError from '@/utils/parseApiError';
 
 export const authService = {
-    login: async (
-        email: string,
-        password: string,
-    ): Promise<{
-        user: IUser;
-        perfis: IPerfil[];
-        access: string;
-        refresh: string;
-    }> => {
-        try {
-            const response = await apiClient.post<AuthResponse>('/api/token/', {
-                email,
-                password,
-            });
+    login: async (email: string, password: string) => {
+        const response = await apiClient.post('/api/token/', { email, password });
+        const { access, refresh } = response.data;
 
-            const user = formatUserFromAuthResponse(response.data);
+        // Salva tokens
+        await CookiesHandler.session.set({ token: access, refresh });
 
-            return {
-                user,
-                perfis: user.perfis,
-                access: response.data.access,
-                refresh: response.data.refresh
-            };
-        } catch (error: any) {
-            if (axios.isAxiosError(error) && error.response) {
-                // Retorna erro formatado vindo da API
-                throw parseApiError(error);
-            } else {
-                throw parseApiError(error);
-            }
-        }
+        // Busca dados do usuário
+        const userResponse = await apiClient.get('/api/users/me/');
+        const user = userResponse.data;
+
+        useAuthStore.getState().setUser(user);
+
+        return user;
     },
 
-    logout: async (): Promise<void> => {
-        try {
-            await apiClient.post('/api/auth/logout/');
-            useAuthStore.getState().logout();
-        } catch (error: any) {
-            if (axios.isAxiosError(error) && error.response) {
-                throw parseApiError(error);
-            } else {
-                throw parseApiError(error);
-            }
-        }
-    },
 
+    logout: async () => {
+        await CookiesHandler.session.remove();
+        useAuthStore.getState().logout();
+    },
     register: async (userData: any): Promise<void> => {
         try {
             await apiClient.post('/api/auth/register/', userData);
@@ -83,16 +59,28 @@ export const authService = {
         return response.data;
     },
 
-    checkAuth: async (): Promise<{ user: IUser }> => {
-        await apiClient.post('/api/token/refresh/');
+    checkAuth: async () => {
+        try {
+            const refresh = (await CookiesHandler.session.get()).refresh;
+            if (!refresh) throw new Error('Não autenticado');
 
-        const userResponse = await apiClient.get('/api/token/refresh/');
+            const refreshResponse = await apiClient.post('/api/token/refresh/', { refresh });
+            const access = refreshResponse.data?.access;
 
-        const user = formatUserFromAuthResponse(userResponse.data);
-        useAuthStore.getState().setUser(user);
+            if (!access) throw new Error('Não autenticado');
 
-        return { user };
+            await CookiesHandler.session.set({ token: access });
+            const userResponse = await apiClient.get('/api/users/me/'); // sua rota para pegar dados do user
+            useAuthStore.getState().setUser(userResponse.data);
+
+            return userResponse.data;
+        } catch {
+            await CookiesHandler.session.remove();
+            useAuthStore.getState().logout();
+            throw new Error('Não autenticado');
+        }
     },
+
 
 
 };

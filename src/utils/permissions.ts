@@ -1,12 +1,25 @@
+import { IUserProfile } from "@/interfaces/IUserProfile";
+
 type Permissao = string;
 
-function getUserPermissions(user: any ): Permissao[] {
-  
-  if (!Array.isArray(user?.permissoes)) return [];
+function getUserPermissions(usuarioPerfilArray: IUserProfile[] = []): Permissao[] {
+  if (!Array.isArray(usuarioPerfilArray)) return [];
 
-  return user.permissoes
-    .filter((p: any) => typeof p?.codigo === 'string')
-    .map((p: any) => p.codigo);
+  const permissoesSet = new Set<string>();
+
+  usuarioPerfilArray.forEach((up) => {
+    const perfil = up.perfil;
+    if (perfil && Array.isArray(perfil.permissoes)) {
+      perfil.permissoes.forEach((p: any) => {
+        if (typeof p?.codigo === 'string') {
+          permissoesSet.add(p.codigo);
+        }
+      });
+    }
+  });
+
+  return Array.from(permissoesSet);
 }
 
 export default getUserPermissions;
+export { getUserPermissions };

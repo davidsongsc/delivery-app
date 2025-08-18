@@ -1,4 +1,3 @@
-// src/store/authStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authService } from '@/services/authService';
@@ -11,13 +10,13 @@ import { IPerfil } from '@/interfaces/IPerfil';
 
 export interface AuthState {
     token: string | null;
-    user: IUser | null;
+    user: any | null;
     isAuthenticated: boolean;
     loading: boolean;
     error: string | null;
     access_level?: any;
     rememberMe?: boolean;
-    permissions: string[]; // array com os códigos das permissões
+    permissions: string[];
     setpermissions: (permissions: string[]) => void;
     login: (username: string, password: string) => Promise<void>;
     register: (userData: any) => Promise<void>;
@@ -62,8 +61,9 @@ export const useAuthStore = create<AuthState>()(
             error: null,
             rememberMe: false, // Adicionado de volta
             hydrated: false,
-            setUser: (user) => set({ user }),
+            setUser: user => set({ user, isAuthenticated: true }),
             perfis: [],
+            logout: () => set({ user: null, isAuthenticated: false, loading: false }),
             permissions: [],
             setpermissions: (permissions) => set({ permissions }),
             setHydrated: () => set({ hydrated: true }),
@@ -94,28 +94,18 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             login: async (username: string, password: string) => {
-                set({ loading: true, error: null });
+                set({ error: null });
                 try {
-                    const { user, perfis, access, refresh } = await authService.login(username, password);
-
+                    const { user, token, refresh } = await authService.login(username, password);
+                    console.log('user', user);
                     set({
                         user,
-                        token: access,
-                        refreshToken: refresh,
                         isAuthenticated: true,
                         loading: false,
-                        perfis,
-                        permissions: user.permissoes || [],
+                        error: null,
+                        token: token,
+                        refreshToken: refresh,
                     });
-
-                    // Salva o token no cookie para o middleware do Axios
-                    // Adicionei o `SameSite=Lax` para melhor compatibilidade e segurança
-                    document.cookie = `token=${access}; path=/; max-age=3600; SameSite=Lax`;
-
-                    // Se você ainda usa localStorage para algo (como o refresh token para re-login silencioso), mantenha:
-                    localStorage.setItem('authToken', access);
-                    localStorage.setItem('refreshToken', refresh);
-
 
                     notification.open({
                         message: `Bem-vindo, ${user.first_name || user.username}!`,
@@ -125,7 +115,7 @@ export const useAuthStore = create<AuthState>()(
                 } catch (error: any) {
                     const title = error?.title || 'Erro ao fazer login';
                     const detail = error?.detail || 'Tente novamente mais tarde';
-
+                    console.log('error', error);
                     set({
                         isAuthenticated: false,
                         loading: false,
@@ -136,7 +126,7 @@ export const useAuthStore = create<AuthState>()(
                         message: title,
                         description: detail,
                     });
-                    throw error; // Propaga o erro para que o componente chamador possa tratá-lo
+                    throw error;
                 }
             },
 
@@ -237,19 +227,17 @@ export const useAuthStore = create<AuthState>()(
             checkAuth: async () => {
                 set({ loading: true });
                 try {
-                    const response = await authService.checkAuth(); 
+                    const response = await authService.checkAuth();
                     set({
                         user: response.user,
                         isAuthenticated: true,
                         loading: false,
-                        permissions: (response.user.permissoes || []).map(p => p.code),
                     });
                 } catch (error) {
                     set({
                         user: null,
                         isAuthenticated: false,
                         loading: false,
-                        permissions: [],
                     });
 
                 } finally {

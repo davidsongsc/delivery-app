@@ -1,0 +1,20 @@
+.container-login {
+  height: calc(100vh - 64px);
+
+  & .hr-item {
+    height: calc(1vh - 7px);
+    width: calc(100% - 7px);
+  }
+}
+
+.ant-form-item-label > label {
+  @apply font-bold;
+}
+
+.selected {
+  border: 2px solid #1890ff;
+}
+
+.card-item {
+  border: 2px solid white;
+}

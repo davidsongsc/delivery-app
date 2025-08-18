@@ -7,7 +7,7 @@ import { CookiesHandler } from '@/cookies';
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 30000,
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use(
@@ -17,32 +17,66 @@ apiClient.interceptors.request.use(
       config.headers = config.headers || {};
       config.headers['Authorization'] = `Bearer ${session.token}`;
     }
-
     return config;
   },
   (error: AxiosError) => Promise.reject(error)
 );
 
-let alreadyRedirected = false;
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+function onRefreshed(token: string) {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+}
+
+async function clearSession() {
+  await CookiesHandler.session.remove();
+  useAuthStore.getState().logout();
+}
 
 apiClient.interceptors.response.use(
   response => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401 && !alreadyRedirected) {
-      alreadyRedirected = true;
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-      // Limpa estado de autenticação
-      useAuthStore.getState().logout();
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-      // Feedback amigável
-      notification.error({
-        message: 'Sessão expirada',
-        description: 'Você precisa fazer login novamente.',
-        duration: 4,
-      });
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          refreshSubscribers.push((token: string) => {
+            if (token) originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            resolve(apiClient(originalRequest));
+          });
+        });
+      }
 
-      if (Router.pathname !== '/login') {
-        Router.push('/login');
+      isRefreshing = true;
+
+      try {
+        const refreshResponse = await apiClient.post('/api/token/refresh/');
+        const newToken = refreshResponse.data?.access;
+
+        if (newToken) {
+          await CookiesHandler.session.set({ token: newToken });
+          onRefreshed(newToken);
+
+          originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+          return apiClient(originalRequest);
+        } else {
+          throw new Error('Token não recebido');
+        }
+      } catch {
+        await clearSession();
+        notification.error({
+          message: 'Sessão expirada',
+          description: 'Você precisa fazer login novamente.',
+          duration: 4,
+        });
+        if (Router.pathname !== '/login') Router.push('/login');
+      } finally {
+        isRefreshing = false;
       }
     }
 

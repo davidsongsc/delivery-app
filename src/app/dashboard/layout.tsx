@@ -8,13 +8,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { user } = useAuth();
 
   return (
-    <>
+    < >
       {user && <Notification user={user} />}
-      <AuthWrapper>
-        <HeaderPage />
+      <HeaderPage />
+      {children}
 
-        {children}
-      </AuthWrapper>
     </>
   );
 }

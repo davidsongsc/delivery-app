@@ -1,8 +1,8 @@
-import getUserPermissions from '@/utils/permissions';
+import { useAuth } from '@/contexts/AuthContext';
 import { MenuProps } from 'antd';
 
 export const generateMenuItems = (user: any): MenuProps['items'] => {
-    const permissions = typeof window !== 'undefined' && user ? getUserPermissions(user) : [];
+    const { permissions } = useAuth();
     return [
         {
             key: 'sistema',
@@ -75,12 +75,21 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
             ].filter(Boolean),
         },
         {
-            key: 'clientes',
-            label: 'Clientes',
+            key: 'publico',
+            label: 'Publico',
             children: [
                 permissions.includes('caixa_entradas') && {
                     key: '/dashboard/configuracoes/clientes',
                     label: 'Clientes',
+                },
+                permissions.includes('escala_servicos') && {
+                    key: '/dashboard/reservas',
+                    label: 'Reservas',
+                },
+
+                permissions.includes('escala_apoio') && {
+                    key: '/dashboard/fila',
+                    label: 'Fila de espera',
                 },
                 permissions.includes('usuarios_listar') && {
                     key: 'site',
@@ -108,20 +117,7 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                         },
                     ].filter(Boolean),
                 },
-                permissions.includes('caixa_saidas') && {
-                    key: 'fila_reserva',
-                    label: 'Fila e Reservas',
-                    children: [
-                        permissions.includes('escala_servicos') && {
-                            key: '/dashboard/reservas',
-                            label: 'Reservas',
-                        },
-                        permissions.includes('escala_apoio') && {
-                            key: '/dashboard/fila',
-                            label: 'Fila de espera',
-                        },
-                    ].filter(Boolean),
-                },
+
             ].filter(Boolean),
         },
         {

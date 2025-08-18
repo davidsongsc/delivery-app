@@ -12,16 +12,18 @@ import { useRouter } from 'next/navigation';
 import { useCategoriasStore } from '@/store/categoriasStore';
 import { useBreakpoint } from '@/utils/useBreakpoint';
 import { useLojaStore } from '@/store/useLojaStore';
+import { ICorporation } from '@/interfaces/ICorporation';
+interface HeaderProps {
+    loja: ICorporation
+}
 
-
-const Header = () => {
-    const router = useRouter();
-    const loja = useLojaStore((state) => state.loja);
-    const [imageSrc, setImageSrc] = useState(`/files/imagens/logo/${loja?.page}.png`);
+const Header = ({ loja }: HeaderProps) => {
 
     if (!loja) {
         return null;
     }
+    const router = useRouter();
+    const [imageSrc, setImageSrc] = useState(loja.result[0].logo_url);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [open, setOpen] = useState(false);
     const categorias = useCategoriasStore((state) => state.categorias);
@@ -105,7 +107,7 @@ const Header = () => {
                         height={100}
                         onError={() => setImageSrc("/files/imagens/logo/lojavel_logo2.png")}
                     />
-                    <span className="text-lg font-bold text-black">{loja?.nome_fantasia}</span>
+                    <span className="text-lg font-bold text-black">{loja.result[0].nome}</span>
                 </div>
 
                 <nav className="flex-1 justify-center hidden lg:flex ">
@@ -157,7 +159,7 @@ const Header = () => {
 
             </header>
 
-            
+
         </>
     );
 };

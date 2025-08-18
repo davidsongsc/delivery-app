@@ -1,4 +1,3 @@
-import { CompanyPropsState } from "@/context/company.context";
 import { ILogin } from "@/interfaces/ILogin";
 import { ISession } from "@/interfaces/ISession";
 import Cookies from "js-cookie";
@@ -22,63 +21,27 @@ interface ICookiesHandler {
     get: () => Promise<Pick<ILogin, "email" | "password"> | false>;
     remove: () => Promise<void>;
   };
-  company: {
-    set: (obj: CompanyPropsState) => Promise<void>;
-    get: () => Promise<CompanyPropsState | false>;
-    remove: () => Promise<void>;
-  };
 }
 
-export const CookiesHandler: ICookiesHandler = {
+export const CookiesHandler = {
   session: {
-    set: async obj => {
-      await Cookies.set(COOKIES_TYPES.SESSION, JSON.stringify(obj), {
-        expires: 10,
-      });
-    },
     get: async () => {
-      const session = Cookies.get(COOKIES_TYPES.SESSION);
-      if (!!session) {
-        return JSON.parse(session);
-      }
-      return false;
+      return {
+        token: document.cookie
+          .split('; ')
+          .find(row => row.startsWith('access_token='))?.split('=')[1],
+        refresh: document.cookie
+          .split('; ')
+          .find(row => row.startsWith('refresh_token='))?.split('=')[1],
+      };
+    },
+    set: async ({ token, refresh }: { token?: string; refresh?: string }) => {
+      if (token) document.cookie = `access_token=${token}; path=/;`;
+      if (refresh) document.cookie = `refresh_token=${refresh}; path=/;`;
     },
     remove: async () => {
-      await Cookies.remove(COOKIES_TYPES.SESSION);
-    },
-  },
-  login: {
-    set: async obj => {
-      await Cookies.set(COOKIES_TYPES.LOGIN, JSON.stringify(obj), {
-        expires: 10,
-      });
-    },
-    get: async () => {
-      const login = Cookies.get(COOKIES_TYPES.LOGIN);
-      if (!!login) {
-        return JSON.parse(login);
-      }
-      return false;
-    },
-    remove: async () => {
-      await Cookies.remove(COOKIES_TYPES.LOGIN);
-    },
-  },
-  company: {
-    set: async obj => {
-      await Cookies.set(COOKIES_TYPES.COMPANY, JSON.stringify(obj), {
-        expires: 10,
-      });
-    },
-    get: async () => {
-      const company = Cookies.get(COOKIES_TYPES.COMPANY);
-      if (!!company) {
-        return JSON.parse(company);
-      }
-      return false;
-    },
-    remove: async () => {
-      await Cookies.remove(COOKIES_TYPES.COMPANY);
+      document.cookie = `access_token=; path=/; max-age=0`;
+      document.cookie = `refresh_token=; path=/; max-age=0`;
     },
   },
 };

@@ -15,15 +15,11 @@ type LoginFormProps = {
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{ username?: boolean; password?: boolean }>({});
   const [errorMessage, setErrorMessage] = useState<{ title?: string; detail?: string }>({});
 
   const { login, loading } = useAuthStore();
-  const router = useRouter();
-
-  const toggleShowPassword = () => setShowPassword((show) => !show);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {

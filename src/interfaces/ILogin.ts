@@ -1,7 +1,5 @@
-export interface IUser {
-  id: string;
-  username: string;
+export interface ILogin {
   email: string;
-  is_active: boolean;
-  perfis?: any[]; // ou defina um tipo específico para perfil
+  password: string;
+  tenant_id: string;
 }
