@@ -6,37 +6,38 @@ import Image from 'next/image';
 import DOMPurify from 'dompurify';
 import 'slick-carousel/slick/slick.css'; // Mantém só o css básico do slick
 
+
 interface Promocional {
   id: string;
   imageUrl: string;
   title?: string;
   description?: string;
-  corsys?: string;
+  bgColor?: string; // Cor de fundo do overlay (hex ou rgb)
 }
 
 interface PromocionalSliderProps {
-  Promocionals?: Promocional[];
+  promocionals?: Promocional[];
   className?: string;
-
 }
 
 const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ className }) => {
-  const Promocionals = [
+  const promocionals: Promocional[] = [
     {
-      id: '1',
+      id: '3',
       imageUrl: '/files/imagens/cardapio/3.png',
       title: 'Super Combo Gourmet',
       description: 'Hambúrguer + Batata + Açaí por R$39,90',
-      corsys: 'd_am_acento',
+      bgColor: 'rgba(0,0,0,0.5)',
     },
     {
-      id: '4',
+      id: '7',
       imageUrl: '/files/imagens/cardapio/7.png',
       title: 'Novidade!',
-      description: 'Esfirra de Frango com Cream Cheasse.',
-      corsys: '',
+      description: 'Esfirra de Frango com Cream Cheese',
+      bgColor: 'rgba(0,0,0,0.4)',
     },
   ];
+
   const settings = {
     dots: true,
     infinite: true,
@@ -46,60 +47,59 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ className }) => {
     autoplay: true,
     autoplaySpeed: 4000,
     arrows: false,
-    customPaging: () => (
-      <div className="w-3 h-3 bg-gray-400 rounded-full" />
+    customPaging: (i: number) => (
+      <div className="hidden"></div>
     ),
-    dotsClass: 'slick-dots flex justify-center gap-3 mt-4',
+    dotsClass: 'slick-dots flex justify-center gap-3 mt-1',
   };
 
   const createMarkup = (description?: string) => {
     if (!description) return { __html: '' };
-
-    let html = description
-      .replace(/\n\n/g, '</p><p>')
-      .replace(/\n/g, '<br />');
-
+    let html = description.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />');
     html = `<p>${html}</p>`;
-
     if (typeof window !== 'undefined') {
       return { __html: DOMPurify.sanitize(html) };
     }
     return { __html: '' };
   };
 
-
   return (
-    <div className={`mt-4 xl:mt-48 mx-auto px-2 overflow-hidden w-screen xl:w-full ${className}`}>
-
+    <div className={`mt-6 mx-auto px-2 overflow-hidden w-screen xl:w-full ${className}`}>
       <Slider {...settings}>
-        {Promocionals.map((Promocional) => (
+        {promocionals.map((promo) => (
           <div
-            key={Promocional.id}
-            className="relative h-[250px] xl:h-[400px] rounded-xl overflow-hidden shadow-lg mx-auto"
+            key={promo.id}
+            className="relative aspect-[16/9] xl:aspect-[7/7] rounded-xl overflow-hidden shadow-lg mx-auto"
           >
             <Image
-              src={`/files/imagens/cardapio/${Promocional.id}.png`}
-              alt={Promocional.title || 'Promocional'}
+              src={promo.imageUrl}
+              alt={promo.title || 'Promocional'}
               fill
               className="object-cover w-full h-full"
               sizes="(max-width: 768px) 100vw, 1200px"
               priority
             />
-            {(Promocional.title || Promocional.description) && (
+            {(promo.title || promo.description) && (
               <div
-                className={`absolute inset-0 bg-${Promocional.corsys} flex flex-col justify-center p-6 text-white`}
+                className="absolute inset-0 flex flex-col justify-center items-center p-6 text-center text-white"
+                style={{ backgroundColor: promo.bgColor }}
               >
-                {Promocional.title && (
-                  <h2 className="text-2xl md:text-4xl font-bold">
-                    {Promocional.title}
+                {promo.title && (
+                  <h2 className="text-2xl md:text-4xl font-extrabold uppercase drop-shadow-lg">
+                    {promo.title}
                   </h2>
                 )}
-                {Promocional.description && (
+                {promo.description && (
                   <p
-                    className="text-sm md:text-lg mt-2"
-                    dangerouslySetInnerHTML={createMarkup(Promocional.description)}
+                    className="text-sm md:text-lg mt-2 drop-shadow-sm"
+                    dangerouslySetInnerHTML={createMarkup(promo.description)}
                   />
                 )}
+                <button
+                  className="mt-4 px-6 py-3 bg-d_primary text-white font-bold rounded-full shadow-md hover:bg-d_primary/90 transition"
+                >
+                  Peça Agora
+                </button>
               </div>
             )}
           </div>
@@ -109,4 +109,4 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ className }) => {
   );
 };
 
-export default PromocionalSlider;
+export default React.memo(PromocionalSlider);

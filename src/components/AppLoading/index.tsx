@@ -1,43 +1,45 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './styles.css'; 
-import LogoIcon from '../MiniComponents/LogoIcon';
+'use client';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Card } from 'antd';
+import LogoIcon from '../MiniComponents/LogoIcon';
+
 interface AnimatedLogoProps {
-    className?: string; // Para passar classes Tailwind CSS externas
+  className?: string;
 }
 
 const AppLoading: React.FC<AnimatedLogoProps> = ({ className }) => {
-    const logoRef = useRef<HTMLDivElement>(null);
-    const [loaded, setLoaded] = useState(false);
-
-    useEffect(() => {
-        // Adiciona a classe 'opacity-100' após o componente ser montado,
-        // o que aciona a transição CSS definida pelo Tailwind.
-        if (logoRef.current) {
-            // Pequeno delay para garantir que a opacidade inicial de 0 seja aplicada antes da transição
-            const timer = setTimeout(() => {
-                setLoaded(true);
-            }, 100);
-            return () => clearTimeout(timer);
-        }
-    }, []);
-
-    return (
-        <div
-            ref={logoRef}
-
-            className={`opacity-0 transition-opacity duration-1000 ease-in-out ${loaded ? 'opacity-100' : ''} ${className || ''}`}
+  return (
+    <div className={`flex items-center justify-center min-h-screen ${className || ''}`}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: 'easeInOut' }}
+        className="w-full max-w-sm"
+      >
+        <Card
+          className="shadow-xl bg-white/80 backdrop-blur-lg rounded-2xl flex flex-col items-center justify-center p-8 border border-gray-100"
+          bordered={false}
         >
-            <Card
-                className="w-full max-w-sm mx-auto shadow-lg bg-[#FEFEFE] flex flex-col items-center justify-center p-6" // Tailwind no Card do Antd
-                variant={false}
-            >
+          <motion.div
+            className="flex items-center justify-center"
+            transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+          >
+            <LogoIcon tamanho={80} texto="" animacao={true} />
+          </motion.div>
 
-                <LogoIcon tamanho={80} texto='Carragando...' animacao={true} />
-                <p className="mt-4 text-xl font-semibold text-gray-800">Carragando...</p>
-            </Card>
-        </div>
-    );
+          <motion.p
+            className="mt-6 text-lg font-semibold text-gray-700 tracking-wide"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            Carregando...
+          </motion.p>
+        </Card>
+      </motion.div>
+    </div>
+  );
 };
 
 export default React.memo(AppLoading);

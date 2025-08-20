@@ -17,9 +17,9 @@ export default {
             },
             colors: {
                 // Branding e principais
-                primary: '#eeeeee', 
-                secondary: '#d6d6d6',
-                tertiary: '#2f4f4f',
+                primary: '#a9a9a9', 
+                secondary: '#eeeeee',
+                tertiary: '#111111',
                 grafite: '#AC0F0A',
                 aço: '#2F2F31',
                 gelo: '#F5F5F5',
@@ -56,14 +56,14 @@ export default {
                 textoSeparador: '#444444',
 
                 // Design alternativo (d_)
-                d_primary: '#142579',              // Texto/ação primária
-                d_secondary: '#FFB100',            // Acento quente
-                d_am_acento: '#1B9C85',            // Acento fresco
-                d_am_fundo_c: '#FFF3E0',           // Fundo claro acolhedor
-                d_am_fundo_e: '#3E2723',           // Fundo escuro base
+                d_primary: '#C1121F',              // Texto/ação primária
+                d_secondary: '#FFB703',            // Acento quente
+                d_am_acento: '#780000',            // Acento fresco
+                d_am_fundo_c: '#FFF8E1',           // Fundo claro acolhedor
+                d_am_fundo_e: '#2B2D42',           // Fundo escuro base
                 d_tx_primary: '#1A1A1A',           // Texto principal
-                d_tx_secondary: '#7A7A7A',         // Texto secundário
-                d_notificacao_erro: '#D80032',     // Alerta de erro
+                d_tx_secondary: '#6C757D',         // Texto secundário
+                d_notificacao_erro: '#D62828',     // Alerta de erro
                 d_notificacao_sucesso: '#2DBE60',  // Alerta de sucesso
 
                 // Papéis e cargos

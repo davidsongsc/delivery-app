@@ -21,8 +21,7 @@ const ActionLogsList: React.FC = () => {
   const [selectedField, setSelectedField] = useState<string>('first_name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-  const { user } = useAuth();
-  const permissions = getUserPermissions(user);
+  const { user, permissions } = useAuth();
 
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [popoverRecord, setPopoverRecord] = useState<IActionLog | null>(null);

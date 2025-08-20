@@ -13,6 +13,7 @@ import { Constants } from '@/components/constants';
 import { useAuth } from '@/contexts/AuthContext';
 import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
+import AccessDenied from '@/app/access-denied';
 
 const UserList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
@@ -20,8 +21,7 @@ const UserList: React.FC = () => {
   const [selectedField, setSelectedField] = useState<string>('first_name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-  const { user } = useAuth();
-  const permissions = getUserPermissions(user);
+  const { user, permissions } = useAuth();
   
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
@@ -29,7 +29,7 @@ const UserList: React.FC = () => {
     { value: 'cpf', label: 'CPF' }, // Added CPF as a filter option
   ], []);
 
-  if (!permissions.includes('usuarios_colaborador')) return NotFound();
+  if (!permissions.includes('usuarios_colaborador')) return AccessDenied();
 
   const { users, usersLoading, usersTotal, usersRefresh } = useUsers(
     useMemo(

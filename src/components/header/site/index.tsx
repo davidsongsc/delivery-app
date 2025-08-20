@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react'; // Import useState
+import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -20,65 +20,68 @@ const HeaderPage: NextPage = () => {
   const router = useRouter();
   const menuItems = generateMenuItems(user);
 
-  {
-    return (
-      <>
-        <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50">
-          <div className="flex items-center gap-4">
-            <LogoIcon texto={user?.corporation ? user.corporation.nome : 'Loja-vel Tech Solutions'} />
-          </div>
-          <Space size="middle">
-            <Link href="/" passHref>
-              <Button type="text">Início</Button>
-            </Link>
+  // Estado para renderização no cliente
+  const [mounted, setMounted] = useState(false);
 
-            {user ? (
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <>
+      <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50 bg-primary ">
+        <div className="flex items-center gap-4">
+          {mounted && <LogoIcon texto={user?.corporation || 'Lojavel'} />}
+        </div>
+        <Space size="middle">
+          <Link href="/" passHref>
+            <Button type="default">Início</Button>
+          </Link>
+
+          {mounted && user ? (
+            <>
+              <Link href="/assinaturas" passHref>
+                <Button type="default">Assinatura</Button>
+              </Link>
+              <Link href="/consulta-financeira" passHref>
+                <Button type="default">Nova simulação</Button>
+              </Link>
+              <Link href="/dashboard" passHref>
+                <Button type="default">Perfil</Button>
+              </Link>
+            </>
+          ) : (
+            mounted && (
               <>
-                <Link href="/assinaturas" passHref>
-                  <Button type="text">Assinatura</Button>
-                </Link>
-                <Link href="/consulta-financeira" passHref>
-                  <Button type="text">Nova simulação</Button>
-                </Link>
-                <Link href="/dashboard" passHref>
-                  <Button type="primary">Perfil</Button>
-                </Link>
-
-              </>
-            ) : (
-              <>
-                <Button onClick={() => openModal()} type="text">Login</Button>
-
                 <Link href="/register" passHref>
                   <Button type="primary">Cadastre-se</Button>
                 </Link>
               </>
-            )}
-          </Space>
-        </Header>
+            )
+          )}
+        </Space>
+      </Header>
 
-        {user && ( // Only render this div if user exists and is on the client
-          <div className='grid grid-cols-12 gap-4 border-b border-gray-100 cursor-pointer'>
-            <Menu
-              mode="horizontal"
-              onClick={({ key }) => router.push(key)}
-              className="text-black shadow-sm col-span-10"
-              items={menuItems}
-            />
+      {mounted && user && (
+        <div className="grid grid-cols-12 gap-4 border-b border-gray-100 cursor-pointer rounded-b-md shadow-sm m-2">
+          <Menu
+            mode="horizontal"
+            onClick={({ key }) => router.push(key)}
+            className="text-black shadow-sm col-span-10"
+            items={menuItems}
+          />
 
-            <div className="flex items-center gap-4 col-span-2 p-2 justify-between">
-              <UserMenu user={user} />
-              <div className="flex items-center gap-2">
-                <Button type="text" onClick={logout}>
-                  Sair
-                </Button>
-              </div>
+          <div className="flex items-center gap-4 col-span-2 p-2 justify-between">
+            <div className="flex items-center gap-2">
+
             </div>
+            <UserMenu user={user} />
+
           </div>
-        )}
-      </>
-    );
-  }
+        </div>
+      )}
+    </>
+  );
 };
 
 export default React.memo(HeaderPage);

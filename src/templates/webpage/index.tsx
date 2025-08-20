@@ -1,6 +1,6 @@
 import React from 'react';
 import { NextPage } from 'next';
-import { Layout, Menu, Card, Button, Tooltip, Spin } from 'antd';
+import { Layout, Menu, Card, Button, Tooltip, Spin } from 'antd/es';
 import './styles.css';
 import HeroSection from '@/components/MiniComponents/Section/HeroSection';
 import UseCasesSection from '@/components/MiniComponents/Section/UseCase';
@@ -84,8 +84,11 @@ const Home: NextPage = () => {
       <Content >
         <HeroSection />
         <UseCasesSection />
-        <ComparisonSection />
-        <FAQSection />
+        <div className='grid grid-cols-2 gap-4'>
+          <ComparisonSection />
+          <FAQSection />
+        </div>
+
         <TestimonialsSection />
         <FinalCTASection />
       </Content>

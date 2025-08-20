@@ -1,7 +1,9 @@
+import { IProduto } from "./IProduto";
+
 export interface IItemPedido {
   id: number;
   pedido: number;
-  produto: number;
+  produto: IProduto;
   produto_nome: string;
   produto_preco: number;
   quantidade: number;

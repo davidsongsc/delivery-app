@@ -9,7 +9,6 @@ import AddressCreate from "../Create";
 import { IAddress } from "@/interfaces/IAddress";
 import AddressEdit from "../Edit";
 import { useAuth } from "@/contexts/AuthContext";
-import getUserPermissions from "@/utils/permissions";
 
 interface AddressListProps {
   field: "user_id" | "corporation_id" | "client_id";
@@ -20,8 +19,7 @@ interface AddressListProps {
 const AddressList: React.FC<AddressListProps> = ({ field, value, children }) => {
   const [page, setPage] = useState<number>(1);
 
-  const { user } = useAuth();
-  const permissions = getUserPermissions(user);
+  const { permissions } = useAuth();
   const { addresses, addressesLoading, addressesTotal, addressesRefresh } =
     useAddresses(
       useMemo(

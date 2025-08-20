@@ -17,7 +17,6 @@ const LojaContext = createContext<LojaContextProps | undefined>(undefined);
 export function LojaProvider({ children, initialPage }: { children: ReactNode, initialPage: string }) {
   const [page, setPage] = useState(initialPage);
   const { corporation, loading } = useCorporationByPage({ page });
-  console.log('params', initialPage, corporation);
   return (
     <LojaContext.Provider value={{ page, setPage, corporation, loading }}>
       {children}

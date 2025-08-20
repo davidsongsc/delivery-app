@@ -104,9 +104,9 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section className="w-full bg-gray-50 py-20 text-gray-800">
-      <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12">O que estão dizendo em nosso feedback?</h2>
+    <section className="w-full bg-gray-50  text-gray-800">
+      <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center py-20">
+        <h2 className="text-3xl md:text-4xl font-bold mb-12">O que nossos clientes dizem</h2>
 
         <div className="grid gap-10 md:grid-cols-3">
           {visibleTestimonials.map((item, idx) => (

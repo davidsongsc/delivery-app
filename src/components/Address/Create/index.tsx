@@ -6,6 +6,7 @@ import AddressForm from "../Form";
 import { IAddressCreate } from "@/interfaces/IAddress";
 import { addressService } from "@/services/address.service";
 import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AddressCreateProps {
   field: "user_id" | "corporation_id" | "client_id";
@@ -24,7 +25,7 @@ const AddressCreate: React.FC<AddressCreateProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [form] = Form.useForm<IAddressCreate>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { user } = useAuthStore();
+  const { permissions } = useAuth();
   const submitData = useCallback(() => {
     if (isLoading) return;
     form.validateFields().then(values => {

@@ -5,7 +5,7 @@ import PageTitle from '@/components/MiniComponents/PageTitle';
 import { Button, Input, Table } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ProductColumn } from './column'; // Assuming CourseColumn is meant to be UserColumn
+import { ProductColumn } from './column';
 import PageSizeSelector from '@/components/MiniComponents/PageSizeSelector';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Constants } from '@/components/constants';
@@ -19,9 +19,9 @@ const ProductList: React.FC = () => {
   const [selectedField, setSelectedField] = useState<string>('first_name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-  const { user, permissions } = useAuth();
+  const { user, permissions = [] } = useAuth();
   const router = useRouter();
-  console.log('permissions', permissions);
+
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
     { value: 'email', label: 'Email' }, // Added email as a filter option
@@ -31,18 +31,15 @@ const ProductList: React.FC = () => {
   if (!permissions.includes('produtos')) return NotFound();
 
   const { produtos, produtosLoading, produtosTotal, produtosRefresh } = useProdutos(
-    useMemo(
-      () => ({
-        page,
-        limit: pageSize,
-        filters: { ...debouncedFilter, tenant: user?.tenant },
-      }),
-      [page, debouncedFilter, pageSize, user]
-    )
+    useMemo(() => ({
+      page,
+      limit: pageSize,
+      filters: { ...(debouncedFilter || {}), tenant: user?.tenant || '' },
+    }), [page, pageSize, debouncedFilter, user?.tenant])
   );
 
+
   return (
-    // Added some padding for the overall container for better spacing
     <div className="w-7xl container mx-auto">
       <PageTitle
         navTitle="Sistema >"

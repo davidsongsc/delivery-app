@@ -3,6 +3,7 @@ import { parseFilters } from "@/utils/parseFilters";
 import { App } from "antd";
 import { useEffect, useState } from "react";
 import { IProduto } from "../interfaces/IProduto";
+import { useGlobalLoadingStore } from "@/store/useGlobalLoadingStore";
 
 interface UseProdutosProps {
   page?: number;
@@ -29,26 +30,32 @@ export const useProdutos = ({
   const [produtosLoading, setProdutosLoading] = useState<boolean>(false);
   const [produtosTotal, setProdutosTotal] = useState<number>(0);
 
+  const startGlobalLoading = useGlobalLoadingStore((state) => state.startLoading);
+  const stopGlobalLoading = useGlobalLoadingStore((state) => state.stopLoading);
+
   const produtosRefresh = () => {
     if (produtosLoading) return;
+
     setProdutosLoading(true);
+    startGlobalLoading("produtos"); // ativa overlay global
 
     const query = parseFilters(filters);
 
     produtosService
       .getAll(`?page=${page}&per_page=${limit}${query}${orderers}`)
-      .then(res => {
+      .then((res) => {
         setProdutos(res.data.products.result);
         setProdutosTotal(res.data.products.total);
       })
       .catch((error) => {
-
-
         notification.error({
-          message: error.message || 'Erro ao listar produtos',
+          message: error.message || "Erro ao listar produtos",
         });
       })
-      .finally(() => setProdutosLoading(false));
+      .finally(() => {
+        setProdutosLoading(false);
+        stopGlobalLoading("produtos"); // desativa overlay global
+      });
   };
 
   useEffect(() => {

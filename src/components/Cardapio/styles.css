@@ -1,0 +1,4 @@
+.card-image {
+  @apply h-40 w-full object-cover scale-125  transition-transform duration-300 ease-in-out hover:scale-100 hover:object-contain hover:rounded-lg
+         ;
+}

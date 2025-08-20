@@ -11,7 +11,7 @@ export function formatPhoneNumber(phone: string): string {
 
 
 export function formatPhoneNumberWeb(phone: string | number): string {
-    const cleaned = phone.toString().replace(/\D/g, ''); // Remove tudo que não for número
+    const cleaned = phone.toString().replace(/\D/g, ''); 
     const match = cleaned.match(/^(\d{2})(\d{1})(\d{4})(\d{4})$/);
 
     if (match) {

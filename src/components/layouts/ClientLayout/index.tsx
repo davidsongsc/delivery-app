@@ -7,8 +7,11 @@ import tailwindConfig from "../../../../tailwind.config";
 import { useEffect, useMemo } from "react";
 import ptBR from "antd/locale/pt_BR";
 import { AuthProvider } from "@/contexts/AuthContext";
+import GlobalLoader from "@/components/ui/GlobalLoader";
+
 import LoginModalIcon from "@/components/Login";
 import { LoginModalProvider } from "@/contexts/LoginModalContext";
+import { BgColorsOutlined } from "@ant-design/icons";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const config = useMemo(() => resolveConfig(tailwindConfig), []);
@@ -17,31 +20,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         theme={{
             token: {
                 colorPrimary: config.theme.colors.primary,
-                colorBgBase: config.theme.colors.darkBg,
-                colorBorder: config.theme.colors.darkModal,
-                colorBgContainer: config.theme.colors.darkBg,
-                colorBgLayout: config.theme.colors.darkBg,
-                colorTextBase: config.theme.colors.darkTexto,
-                colorBgElevated: config.theme.colors.darkModal,
+                colorBgBase: config.theme.colors.secondary,
+                colorBorder: config.theme.colors.tertiary,
+                colorBgContainer: config.theme.colors.secondary,
             },
             components: {
-                Layout: {
-                    headerBg: config.theme.colors.darkModal,
-                },
-                Button: {
-                    colorPrimary: config.theme.colors.btnPrimary, // cor do botão primário (fundo)
-                    colorTextLightSolid: config.theme.colors.darkTexto, // cor do texto do botão primário
-                    colorPrimaryHover: config.theme.colors.btnHoverPrimary, // hover
-                    colorPrimaryActive: config.theme.colors.btnActivePrimary, // clique
-                    colorPrimaryBorder: config.theme.colors.btnPrimary, // borda primária
-                    colorBorder: config.theme.colors.btnPrimary, // borda padrão
-                    defaultBg: config.theme.colors.darkModal, // cor de fundo do botão default
-                    defaultColor: config.theme.colors.darkTexto, // cor do texto do botão default
-                    defaultHoverBg: config.theme.colors.btnHoverPrimary, // hover botão default
-                    defaultHoverColor: config.theme.colors.darkTextoDescricaoOff,
-                    defaultActiveBg: config.theme.colors.btnActivePrimary, // click no botão default
-                    defaultActiveColor: config.theme.colors.darkTexto,
-                },
                 Tag: {
                     colorSuccess: config.theme.colors.sistemaGreen,
                     colorSuccessBg: config.theme.colors.transparent,
@@ -50,35 +33,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     colorWarningBg: config.theme.colors.transparent,
                     colorWarningBorder: config.theme.colors.transparent,
                 },
-                Menu: {
-                    itemBg: config.theme.colors.darkBg,
-                    darkItemSelectedBg: config.theme.colors.primary,
-                    darkItemBg: config.theme.colors.darkModal,
-                    darkSubMenuItemBg: config.theme.colors.darkModal,
-                    darkItemHoverBg: config.theme.colors.darkSelecao,
-                    darkItemSelectedColor: config.theme.colors.primary,
-                    darkPopupBg: config.theme.colors.darkModal,
-                },
-                Table: {
-                    colorBgContainer: config.theme.colors.darkModal,
-                    colorBgLayout: config.theme.colors.darkModal,
-                    colorBorder: config.theme.colors.darkModal,
-                    colorBorderSecondary: config.theme.colors.darkModal,
-                },
-
+               
                 Select: {
                     optionSelectedBg: config.theme.colors.darkSelecao,
                     optionSelectedColor: config.theme.colors.darkTextoDescricaoOff,
                     colorBgElevated: config.theme.colors.darkBg,
                 },
-                Input: {
-                    colorBgContainer: config.theme.colors.darkBg,
-                    colorBgLayout: config.theme.colors.darkBg,
-                    colorBorder: config.theme.colors.darkModal,
-                    colorBorderSecondary: config.theme.colors.darkModal,
-                    hoverBorderColor: config.theme.colors.darkModal,
-                    activeBorderColor: config.theme.colors.darkBg,
-                },
+
                 Notification: {
                     colorSuccess: config.theme.colors.sistemaGreen,
                     colorWarning: config.theme.colors.sistemaYellow,
@@ -97,6 +58,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                             <LoginModalIcon />
 
                             {children}
+                            <GlobalLoader />
                         </LoginModalProvider>
                     </AuthProvider>
                 </Layout.Content>

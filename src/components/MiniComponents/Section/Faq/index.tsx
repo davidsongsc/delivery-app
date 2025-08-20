@@ -39,8 +39,8 @@ export default function FAQSection() {
   }));
 
   return (
-    <section className="w-full py-20 bg-gray-50 text-gray-800">
-      <div className="container mx-auto px-6 md:px-12 lg:px-24">
+    <section className="w-full bg-gray-50 text-gray-800 flex items-center justify-center">
+      <div className="container h-full mx-auto px-6 md:px-12 lg:px-24 py-20">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Perguntas frequentes</h2>
         <Collapse items={items} accordion bordered={false} className="bg-white rounded-xl shadow-md" />
 

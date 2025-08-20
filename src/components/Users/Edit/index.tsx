@@ -14,6 +14,7 @@ import ProfileStructure from '@/components/ProfileStructure';
 import { useAuth } from '@/contexts/AuthContext';
 import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
+import AccessDenied from '@/app/access-denied';
 
 const UserEdit: React.FC = () => {
   const { notification } = App.useApp();
@@ -26,9 +27,8 @@ const UserEdit: React.FC = () => {
     useMemo(() => ({ id }), [id])
   );
 
-  const { user: authUser } = useAuth();
-  const permissions = getUserPermissions(authUser);
-  if (!permissions.includes('usuarios_editar')) return NotFound();
+  const { permissions } = useAuth();
+  if (!permissions.includes('usuarios_editar')) return AccessDenied();
 
   useEffect(() => {
     if (user?.id) {

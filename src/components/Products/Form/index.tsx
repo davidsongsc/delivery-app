@@ -52,7 +52,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
   return (
     <>
       <Form form={form} layout="vertical" requiredMark={false}>
-        <SectionSeparator title="Detalhes do Produto">
+        <SectionSeparator title="Informações Gerais">
           <div className='grid grid-cols-12 gap-1 mb-4 container-conteudo-small'>
 
             <div className="col-span-12 md:col-span-6 bg-darkBg rounded-lg p-4">

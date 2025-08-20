@@ -2,7 +2,7 @@
 
 import PageTitle from "@/components/MiniComponents/PageTitle";
 import { IUserCreate } from "@/interfaces/IUser";
-import { Button, Form, App } from "antd";
+import { Button, Form, App } from "antd/es";
 import React, { use, useCallback, useState } from "react";
 import UserForm from "../Form";
 import { userService } from "@/services/user.service";
@@ -10,13 +10,18 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import ProfileStructure from "@/components/ProfileStructure";
 import SectionSeparator from "@/components/MiniComponents/SectionSeparator";
+import AccessDenied from "@/app/access-denied";
 
 const UserCreate: React.FC = () => {
   const { notification } = App.useApp();
+  const { user, loading, permissions } = useAuth();
+
+  if (!permissions.includes('usuarios_criar')) return AccessDenied();
+
   const [form] = Form.useForm<IUserCreate>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const { user, loading, permissions } = useAuth();
+
   const submitData = useCallback(() => {
     if (isLoading) return;
     form.validateFields().then(values => {
@@ -40,9 +45,16 @@ const UserCreate: React.FC = () => {
           notification.success({
             message: "Usuario cadastrado com sucesso!",
           });
-          router.push(
-            `/dashboard/configuracoes/usuarios/${res.data.id}/editar`
-          );
+          if (!permissions.includes('usuarios_editar')) {
+            router.push(
+              `/dashboard/configuracoes/usuarios/${res.data.id}/editar`
+            )
+          } else {
+            router.push(
+              `/dashboard/configuracoes/usuarios/`
+            )
+          }
+
 
         })
         .catch((e) => {

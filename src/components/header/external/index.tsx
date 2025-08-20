@@ -1,36 +1,32 @@
 'use client'
 import React, { useState } from 'react';
-import { Menu, Drawer, Button } from 'antd';
+import { Menu, Drawer } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { FaShoppingCart } from "react-icons/fa";
 import CarrinhoPedido from '@/components/SalesCart/Cart';
 import Image from 'next/image';
-import './styles.css';
 import { useAuthStore } from '@/store/authStore';
 import { useDeliveryStore } from '@/store/deliveryStore';
 import { useRouter } from 'next/navigation';
 import { useCategoriasStore } from '@/store/categoriasStore';
 import { useBreakpoint } from '@/utils/useBreakpoint';
-import { useLojaStore } from '@/store/useLojaStore';
 import { ICorporation } from '@/interfaces/ICorporation';
-interface HeaderProps {
-    loja: ICorporation
-}
+import { useLoja } from '@/contexts/LojaContext';
 
-const Header = ({ loja }: HeaderProps) => {
 
-    if (!loja) {
-        return null;
-    }
+const Header = () => {
+
+    const { corporation } = useLoja();
+    const lojaObj = corporation.result[0];
+    console.log(corporation)
     const router = useRouter();
-    const [imageSrc, setImageSrc] = useState(loja.result[0].logo_url);
+    const [imageSrc, setImageSrc] = useState(lojaObj.logo_url);
     const [openDrawer, setOpenDrawer] = useState(false);
-    const [open, setOpen] = useState(false);
+    const [openCart, setOpenCart] = useState(false);
+
     const categorias = useCategoriasStore((state) => state.categorias);
     const breakpoint = useBreakpoint();
-    const isMobile = breakpoint === 'mobile';
-    const isTablet = breakpoint === 'tablet';
-    const isSmallScreen = breakpoint === 'mobile' || breakpoint === 'tablet';
+    const isMobile = breakpoint === 'mobile' || breakpoint === 'tablet';
 
     const user = useAuthStore((state) => state.user);
     const itensPedido = useDeliveryStore((state) => state.itensPedido);
@@ -39,128 +35,115 @@ const Header = ({ loja }: HeaderProps) => {
     const cardapioChildren = categorias
         .filter((cat) => cat !== 'Todos')
         .map((cat) => ({
-            key: `/loja/cardapio/${cat.toLowerCase()}`,
+            key: `#${cat}`,
             label: cat,
         }));
 
-    const showDrawer = () => setOpen(true);
-    const closeDrawer = () => setOpen(false);
+    const menuItemsDesktop = [
+        { key: `/${lojaObj.page}`, label: 'Início' },
+        { key: `/${lojaObj.page}/cardapio`, label: 'Cardápio', children: cardapioChildren },
+        { key: `/${lojaObj.page}/promocoes`, label: 'Promoções' },
+        { key: `/${lojaObj.page}/sobre`, label: 'Sobre Nós' },
+        { key: 'carrinho', label: 'Carrinho' },
+    ];
 
-    const handleDrawerToggle = () => setOpenDrawer(!openDrawer);
+    const menuItemsMobile = [
+        { key: `/${lojaObj.page}', label: 'Início` },
+        
+        { key: `/${lojaObj.page}/promocoes`, label: 'Promoções' },
+        { key: 'carrinho', label: 'Carrinho' },
+    ];
 
-    const onMenuClick = (e: any) => {
-        if (e.key === 'carrinho') {
-            showDrawer();
-        } else {
+    const handleMenuClick = (e: any) => {
+        if (e.key === 'carrinho') setOpenCart(true);
+        else {
             router.push(e.key);
             setOpenDrawer(false);
         }
     };
 
-    const menuItemsDesktop = [
-        { key: '/loja', label: 'Início' },
-        {
-            key: '/loja/cardapio',
-            label: 'Cardápio',
-            children: cardapioChildren,
-
-        },
-        { key: '/loja/promocoes', label: 'Promoções' },
-        { key: '/loja/sobre', label: 'Sobre Nós' },
-        { key: 'carrinho', label: 'Carrinho' },
-    ];
-
-    const menuItemsMobile = [
-        { key: '/loja', label: 'Início' },
-        { key: '/loja/cardapio', label: 'Cardápio' },
-        ...categorias
-            .filter((cat) => cat !== 'Todos')
-            .map((cat) => ({
-                key: `/loja/cardapio/${cat.toLowerCase()}`,
-                label: `- ${cat}`,
-            })),
-        { key: '/loja/promocoes', label: 'Promoções' },
-        { key: 'carrinho', label: 'Carrinho' },
-    ];
-
-
     return (
-        <>
-            <header className="m_fundo_c text-d_primary shadow-md md:px-20 xl:px-40 2xl:px-60 py-3 flex items-center justify-between">
-                <div className='absolute right-[250px] top-[15px] flex flex-row items-center justify-Start'>
-                    <span className="flex items-start gap-2 cursor-pointer">
-                        {totalItens > 0 && (
-                            <span
-                                onClick={showDrawer}
-                                className="absolute -top-[-27px] -right-20 bg-red-600 text-white text-[26px] font-bold rounded-md h-12 w-[100px] p-3 flex items-center justify-between"
-                            >
-                                {totalItens} <FaShoppingCart />
-                            </span>
-                        )}
-                    </span>
-                </div>
-                <div className="flex items-center gap-2 logo-empresa w-1/4">
-                    <Image
-                        src={imageSrc}
-                        alt="Logo"
-                        width={100}
-                        height={100}
-                        onError={() => setImageSrc("/files/imagens/logo/lojavel_logo2.png")}
-                    />
-                    <span className="text-lg font-bold text-black">{loja.result[0].nome}</span>
-                </div>
+        <header className="bg-red-600 text-white shadow-lg fixed w-full z-50 px-4 md:px-10 py-3 flex items-center justify-between">
 
-                <nav className="flex-1 justify-center hidden lg:flex ">
-                    <Menu
-                        mode="horizontal"
-                        items={menuItemsDesktop}
-                        onClick={onMenuClick}
-                        className="border-none bg-transparent text-white w-1/2"
-                    />
-                </nav>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/loja')}>
+                <Image
+                    src={imageSrc}
+                    alt="Logo"
+                    width={60}
+                    height={60}
+                    className="rounded-full"
+                    onError={() => setImageSrc("/files/imagens/logo/lojavel_logo2.png")}
+                />
+                <span className="text-xl font-bold drop-shadow-lg">{corporation.result[0].nome}</span>
+            </div>
 
-                {isSmallScreen && (
-                    <button
-                        onClick={handleDrawerToggle}
-                        className="fixed bottom-4 right-4 z-50 bg-d_am_acento text-white p-4 rounded-full shadow-lg hover:bg-d_am_acento/90 transition"
-                    >
-                        <MenuOutlined style={{ fontSize: 24 }} />
-                    </button>
-                )}
 
-                <Drawer
-                    title="Menu"
-                    placement="right"
-                    closable
-                    onClose={handleDrawerToggle}
-                    open={openDrawer}
-                    bodyStyle={{ padding: 0, backgroundColor: '#1C1C1E' }}
-                    width={isMobile ? '100%' : '300px'}
+            {/* Menu Desktop */}
+            {!isMobile && (
+                <Menu
+                    mode="horizontal"
+                    items={menuItemsDesktop}
+                    onClick={handleMenuClick}
+                    className="bg-red-600 border-none flex-1 justify-center text-white font-semibold"
+                />
+            )}
+
+            {/* Carrinho Desktop */}
+            {!isMobile && (
+                <button
+                    onClick={() => setOpenCart(true)}
+                    className="relative bg-yellow-400 text-black p-3 rounded-full shadow-xl hover:bg-yellow-500 transition"
                 >
-                    <Menu
-                        mode="vertical"
-                        items={menuItemsMobile}
-                        onClick={onMenuClick}
-                        className="text-white"
-                    />
-                </Drawer>
+                    <FaShoppingCart size={24} />
+                    {totalItens > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-red-600 text-white text-sm font-bold rounded-full px-2">
+                            {totalItens}
+                        </span>
+                    )}
+                </button>
+            )}
 
-
-                <Drawer
-                    title="Seu Pedido"
-                    placement="right"
-                    onClose={closeDrawer}
-                    open={open}
-                    width={isMobile ? '100%' : '300px'}
-                    bodyStyle={{ padding: 0 }}
+            {/* Menu Mobile */}
+            {isMobile && (
+                <button
+                    onClick={() => setOpenDrawer(true)}
+                    className="bg-yellow-400 text-black p-3 rounded-full shadow-lg hover:bg-yellow-500 transition"
                 >
-                    <CarrinhoPedido />
-                </Drawer>
+                    <MenuOutlined style={{ fontSize: 24 }} />
+                </button>
+            )}
 
-            </header>
+            {/* Drawer Mobile */}
+            <Drawer
+                title="Menu"
+                placement="right"
+                closable
+                onClose={() => setOpenDrawer(false)}
+                open={openDrawer}
+                bodyStyle={{ backgroundColor: '#1C1C1E', padding: 0 }}
+                width={isMobile ? '100%' : 300}
+            >
+                <Menu
+                    mode="vertical"
+                    items={menuItemsMobile}
+                    onClick={handleMenuClick}
+                    className="bg-black text-white"
+                />
+            </Drawer>
 
+            {/* Drawer Carrinho */}
+            <Drawer
+                title="Seu Pedido"
+                placement="right"
+                onClose={() => setOpenCart(false)}
+                open={openCart}
+                width={isMobile ? '100%' : 350}
+                bodyStyle={{ padding: 0, backgroundColor: '#fff' }}
+            >
+                <CarrinhoPedido />
+            </Drawer>
 
-        </>
+        </header>
     );
 };
 

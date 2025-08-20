@@ -1,10 +1,4 @@
-'use client';
-import HomePageDelivery from '@/templates/delivery/homepage';
-import BannerSlider from '@/components/Banner';
-import { listaProdutos } from '@/components/serverside';
-
-export default function DeliveryPage() {
-  const banners = [
+export const banners = [
     {
       id: '1',
       imageUrl: '/files/imagens/cardapio/1.png',
@@ -32,11 +26,3 @@ export default function DeliveryPage() {
 
     },
   ];
-  return (
-
-    <div className='grid grid-cols-1 gap-4'>
-      <BannerSlider banners={banners} />
-      <HomePageDelivery />
-    </div>
-  );
-}
