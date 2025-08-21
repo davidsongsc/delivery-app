@@ -3,24 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Menu, Button, Layout, Space } from 'antd';
-import { useAuthStore } from '@/store/authStore';
+import { Menu, Button, Layout, Space } from 'antd/es';
 import { useAuth } from '@/contexts/AuthContext';
 import LogoIcon from '@/components/MiniComponents/LogoIcon';
 import { generateMenuItems } from '@/utils/menuItems';
-import { useLoginModal } from '@/contexts/LoginModalContext';
 import UserMenu from '@/components/MiniComponents/UserMenu';
 
 const { Header } = Layout;
 
 const HeaderPage: NextPage = () => {
-  const { logout } = useAuthStore((state: any) => state);
-  const { openModal } = useLoginModal();
   const { user } = useAuth();
   const router = useRouter();
   const menuItems = generateMenuItems(user);
 
-  // Estado para renderização no cliente
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,7 +26,8 @@ const HeaderPage: NextPage = () => {
     <>
       <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50 bg-primary ">
         <div className="flex items-center gap-4">
-          {mounted && <LogoIcon texto={user?.corporation || 'Lojavel'} />}
+          {mounted && <LogoIcon texto={user?.corporation?.nome || 'Lojavel'} />}
+
         </div>
         <Space size="middle">
           <Link href="/" passHref>
@@ -67,15 +63,15 @@ const HeaderPage: NextPage = () => {
           <Menu
             mode="horizontal"
             onClick={({ key }) => router.push(key)}
-            className="text-black shadow-sm col-span-10"
+            className="text-black shadow-sm col-span-9"
             items={menuItems}
           />
 
-          <div className="flex items-center gap-4 col-span-2 p-2 justify-between">
+          <div className="flex items-center gap-4 col-span-3 p-2 justify-between">
             <div className="flex items-center gap-2">
 
             </div>
-            <UserMenu user={user} />
+            <UserMenu />
 
           </div>
         </div>

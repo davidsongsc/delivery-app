@@ -1,6 +1,6 @@
 'use client';
-import HomePageDelivery from '@/templates/delivery/homepage';
 import BannerSlider from '@/components/Banner';
+import Cardapio from '@/components/Cardapio';
 import { listaProdutos } from '@/components/serverside';
 import dynamic from 'next/dynamic';
 const AppHeader = dynamic(() => import('@/components/header/external'), { ssr: false });
@@ -40,7 +40,7 @@ export default function DeliveryPage() {
 
       <div className='grid grid-cols-1 gap-4 mt-16'>
         <BannerSlider banners={banners} />
-        <HomePageDelivery />
+        <Cardapio />
       </div>
     </>
   );

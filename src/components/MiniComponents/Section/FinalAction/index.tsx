@@ -3,8 +3,8 @@ import { Button } from 'antd/es/index';
 
 export default function FinalCTASection() {
   return (
-    <section className="w-full bg-indigo-600 py-16 text-white h-full">
-      <div className="container mx-auto px-6 md:px-12 lg:px-24 text-center">
+    <section className="w-full bg-gradient-to-r from-primary to-secondary  py-16 text-white h-full">
+      <div className="container mx-auto px-6 md:px-12 lg:px-24 py-10 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">
           Transforme a gestão do seu negócio hoje
         </h2>

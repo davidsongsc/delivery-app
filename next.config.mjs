@@ -3,13 +3,11 @@ import nextPwa from 'next-pwa';
 /** @type {import('next').NextConfig} */
 const baseConfig = {
   reactStrictMode: false,
-  turbo: true, 
   images: {
     domains: [
       "maps.googleapis.com",
       "lojave.com.br",
       "192.168.1.50"
-
     ],
     remotePatterns: [
       {
@@ -30,13 +28,12 @@ const baseConfig = {
         pathname: "/files/**",
       },
       {
-        protocol: 'http',
-        hostname: '192.168.1.50',
-        pathname: '/media/**',
+        protocol: "http",
+        hostname: "192.168.1.50",
+        pathname: "/media/**",
       },
     ],
   },
-
 };
 
 // Wrapper do PWA

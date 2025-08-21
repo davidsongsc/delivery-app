@@ -141,8 +141,14 @@ const Cardapio: React.FC = () => {
 
     return (
         <div className="p-4 mx-auto md:px-2 xl:px-4 2xl:px-6 space-y-8">
-
-            {/* Categoria - estilo carrossel */}
+     
+            <Input.Search
+                placeholder="🍔 Buscar no cardápio..."
+                allowClear
+                onChange={(e) => setBusca(e.target.value)}
+                className="w-full rounded-full shadow-sm border-2 border-gray-200"
+                size="large"
+            />
             <div className="flex overflow-x-auto gap-3 pb-3 scrollbar-hide">
                 {categoriasNomes.map((categoria) => (
                     <button
@@ -158,14 +164,8 @@ const Cardapio: React.FC = () => {
                 ))}
             </div>
 
-            {/* Busca */}
-            <Input.Search
-                placeholder="🍔 Buscar no cardápio..."
-                allowClear
-                onChange={(e) => setBusca(e.target.value)}
-                className="w-full rounded-full shadow-sm border-2 border-gray-200"
-                size="large"
-            />
+
+
 
             {categoriasFiltradas.map(categoria => (
                 <div id={categoria} key={categoria} className="pt-8 mt-8">

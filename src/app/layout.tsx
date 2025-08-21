@@ -18,9 +18,11 @@ export const metadata: Metadata = {
     icon: '/icons/icon-192x192.png',
     apple: '/icons/icon-192x192.png',
   },
-  themeColor: '#317EFB',
-};
 
+};
+export const viewport = {
+  themeColor: '#a9a9a9',
+};
 export default function RootLayout({
   children,
 }: {
@@ -30,7 +32,6 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${montserrat.variable} antialiased ocultar-scroll max-w-[1900px] mx-auto`}>
-
         <ClientLayout>
           {children}
         </ClientLayout>

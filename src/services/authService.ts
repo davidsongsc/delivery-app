@@ -26,11 +26,15 @@ export const authService = {
 
         return user;
     },
-
-
     logout: async () => {
-        await CookiesHandler.session.remove();
-        useAuthStore.getState().logout();
+        try {
+            await apiClient.post('/api/auth/logout/');
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+        } finally {
+            await CookiesHandler.session.remove();
+            
+        }
     },
     register: async (userData: any): Promise<void> => {
         try {

@@ -84,7 +84,7 @@ const Home: NextPage = () => {
       <Content >
         <HeroSection />
         <UseCasesSection />
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid 2xl:grid-cols-2 grid-cols-1 gap-4'>
           <ComparisonSection />
           <FAQSection />
         </div>

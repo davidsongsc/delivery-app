@@ -41,11 +41,11 @@ const PromocionalSlider: React.FC<PromocionalSliderProps> = ({ className }) => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 700,
+    speed: 2100,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 6000,
     arrows: false,
     customPaging: (i: number) => (
       <div className="hidden"></div>

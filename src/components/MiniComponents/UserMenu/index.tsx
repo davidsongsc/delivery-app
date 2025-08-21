@@ -33,7 +33,7 @@ export default function UserMenu() {
             key: 'logout',
             icon: <LogoutOutlined />,
             label: 'Sair',
-            onClick: () => console.log('Fazer logout'),
+            onClick: () => { logout() },
         },
     ];
 

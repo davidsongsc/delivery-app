@@ -22,11 +22,11 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
   const settings = {
     dots: true,
     infinite: true,
-    speed: 1900,
+    speed: 2100,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 12000,
     arrows: false,
     customPaging: () => (
       <div className="hidden"></div>
@@ -43,12 +43,15 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
   };
 
   return (
-    <div className="w-full max-w-screen-2xl mx-auto mt-6 px-4 overflow-hidden">
-      <Slider {...settings}>
+    <div className="w-full max-w-screen-2xl mx-2 mt-6 overflow-hidden bg-terciary">
+      <Slider {...settings} className="w-full">
         {banners.map((banner) => (
-          <div key={banner.id} className="flex flex-col md:flex-row gap-6 rounded-xl overflow-hidden w-full px-2">
-            
-            <div className={`flex-1 bg-${banner.corsys || 'red-600'} flex items-center justify-center p-4 rounded-xl shadow-lg`}>
+          <div key={banner.id} className="flex flex-col md:flex-row gap-6 rounded-xl overflow-hidden w-full px-1 ">
+
+            <div className={`flex-1 bg-${banner.corsys || 'red-600'} flex flex-col items-center justify-center  rounded-xl shadow-lg `}>
+              {banner.title && (
+                <h2 className={`text-center text-1xl md:text-xl font-bold text-primary mb-2 `}>{banner.title}</h2>
+              )}
               <Image
                 src={banner.imageUrl}
                 alt={banner.title || 'Banner'}
@@ -60,13 +63,10 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
             </div>
 
             {(banner.title || banner.description) && (
-              <div className="flex-1 bg-white flex flex-col justify-center p-6 rounded-xl shadow-inner">
-                {banner.title && (
-                  <h2 className="text-2xl md:text-4xl font-bold text-red-700">{banner.title}</h2>
-                )}
+              <div className="flex-1 bg-white flex flex-col justify-center p-4 rounded-xl shadow-lg mt-4">
                 {banner.description && (
                   <p
-                    className="text-sm md:text-lg mt-3 text-gray-800"
+                    className="text-sm md:text-lg text-gray-800"
                     dangerouslySetInnerHTML={createMarkup(banner.description)}
                   />
                 )}
