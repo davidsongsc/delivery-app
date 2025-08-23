@@ -3,7 +3,7 @@
 import SelectCategoryAutoComplete from '@/components/Category/AutoComplete';
 import { IProdutoCreate } from '@/interfaces/IProduto';
 import { Form, FormInstance, Input, Select, InputNumber, Checkbox, Upload, Modal, Switch } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import flagsConfig from '@/components/constants/flags';
 import FlagSwitch from '@/components/MiniComponents/FlagsSwitch';
@@ -11,6 +11,8 @@ import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
 import Image from 'next/image';
 import dynamic from "next/dynamic";
 import { formatCurrencyBR, parseCurrencyBR } from '@/utils/formatCurrency';
+import { useProdutoComposicao } from '@/hooks/useProdutoComposicao';
+import ProdutoComposicaoManager from '../Composition';
 const MAX_VALUE = 1_000_000; // 1 milhão
 
 const RichEditor = dynamic(
@@ -32,7 +34,6 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
   const [previewTitle, setPreviewTitle] = useState('');
   const [preco, setPreco] = useState('0,00');
 
-
   const handlePreview = async (file: any) => {
     const imageUrl = file.url || (file.preview as string);
     setPreviewImage(imageUrl);
@@ -48,7 +49,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
-  
+
   return (
     <>
       <Form form={form} layout="vertical" requiredMark={false}>
@@ -240,38 +241,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-6 gap-x-4 border p-4 rounded-lg bg-gray-100 col-span-2">
-              <div className="col-span-12 md:col-span-6">
-                <h2 className="text-2xl font-semibold mb-4">Montagem / Composição</h2>
-                <div className="grid grid-cols-12 gap-1">
-                  <Form.Item<IProdutoCreate>
-                    label={<span className="font-bold">Itens para Remoção:</span>}
-                    name="remover"
-                    className="col-span-12"
-                  >
-                    <Select mode="tags" placeholder="Ex: tomate, cebola..." />
-                  </Form.Item>
-
-                  <Form.Item<IProdutoCreate>
-                    label={<span className="font-bold">Itens para Adicionar:</span>}
-                    name="adicionar"
-                    className="col-span-12 form-observations"
-                  >
-                    {/* Você pode criar um componente customizado para lidar com múltiplos itens + valor */}
-                    <RichEditor />
-                  </Form.Item>
-
-                  <Form.Item<IProdutoCreate>
-                    label={<span className="font-bold">Composição (fixa):</span>}
-                    name="composicao"
-                    className="col-span-12"
-                  >
-                    <Select mode="tags" placeholder="Ex: pão, carne, queijo..." />
-                  </Form.Item>
-                </div>
-              </div>
-
-            </div>
+            
           </div>
           {/* Campos ocultos (tenant, etc.) */}
           <Form.Item name="tenant" hidden>

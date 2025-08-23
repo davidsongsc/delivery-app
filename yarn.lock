@@ -1543,13 +1543,6 @@
   dependencies:
     tslib "^2.4.0"
 
-"@types/antd@^0.12.32":
-  version "0.12.32"
-  resolved "https://registry.yarnpkg.com/@types/antd/-/antd-0.12.32.tgz#5670754613569b7dcdf3b670f3a48fa96d0cc006"
-  integrity sha512-PcCbMdpxoZ1BCTe2sQtVoSurgdVxYjln6a0eqlAGKG38Lb/J28jOIOCB8htoCIvSgpBRReoouxB6ZPSOSbV3lg==
-  dependencies:
-    "@types/react" "*"
-
 "@types/backbone@1.4.15":
   version "1.4.15"
   resolved "https://registry.yarnpkg.com/@types/backbone/-/backbone-1.4.15.tgz#505323ab8fea11ecaec74cb3f73d569a4e5eb779"

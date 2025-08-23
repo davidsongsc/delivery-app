@@ -16,6 +16,7 @@ const getById = async (id: string) => apiClient.get(`/api/corporations/${id}/`);
 
 const getByPage = async (id: string) => apiClient.get(`/api/delivery/?filter_page=${id}`);
 const getByCnpj = async (id: string) => apiClient.get(`/api/delivery/?filter_cnpj=${id}`);
+const getAllPublic = async (query: string = "") => apiClient.get(`/api/delivery` + query);
 
 export const corporationService = {
   create,
@@ -24,5 +25,6 @@ export const corporationService = {
   getAll,
   getById,
   getByPage,
-  getByCnpj
+  getByCnpj,
+  getAllPublic,
 };

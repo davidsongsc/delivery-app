@@ -29,7 +29,7 @@ const SectionSeparator: React.FC<SectionSeparatorProps> = ({ title, children, ex
   }, [isExpanded, children]);
 
   return (
-    <>
+    <div className="h-auto w-full ">
       <div
         className="bg-darkModal rounded-sm px-4 py-4 my-1 grid grid-cols-12 shadow-md shadow-black/20
                     items-center cursor-pointer select-none shadow-md shadow-black/20"
@@ -65,7 +65,7 @@ const SectionSeparator: React.FC<SectionSeparatorProps> = ({ title, children, ex
           {children}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

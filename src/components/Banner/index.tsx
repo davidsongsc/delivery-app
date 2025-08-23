@@ -50,7 +50,7 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
 
             <div className={`flex-1 bg-${banner.corsys || 'red-600'} flex flex-col items-center justify-center  rounded-xl shadow-lg `}>
               {banner.title && (
-                <h2 className={`text-center text-1xl md:text-xl font-bold text-primary mb-2 `}>{banner.title}</h2>
+                <h2 className={`text-center text-xl md:text-xl font-bold text-primary mb-2 `}>{banner.title}</h2>
               )}
               <Image
                 src={banner.imageUrl}
@@ -62,15 +62,16 @@ const BannerSlider: React.FC<BannerSliderProps> = ({ banners }) => {
               />
             </div>
 
-            {(banner.title || banner.description) && (
-              <div className="flex-1 bg-white flex flex-col justify-center p-4 rounded-xl shadow-lg mt-4">
-                {banner.description && (
-                  <p
-                    className="text-sm md:text-lg text-gray-800"
-                    dangerouslySetInnerHTML={createMarkup(banner.description)}
-                  />
-                )}
+            {(banner.description) && (
+              <div className="flex-1 bg-white flex flex-col justify-center p-4 rounded-xl shadow-lg mt-2 max-h-[500px] overflow-y-auto">
+
+                <p
+                  className="text-sm md:text-lg text-gray-800"
+                  dangerouslySetInnerHTML={createMarkup(banner.description)}
+                />
+
               </div>
+
             )}
 
           </div>

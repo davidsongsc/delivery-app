@@ -1,13 +1,24 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Modal, Button } from 'antd';
-import { LoginOutlined, UserOutlined } from '@ant-design/icons';
+import { Modal, Button } from 'antd/es';
 import LoginForm from '@/components/Login/Form';
 import { useAuth } from '@/contexts/AuthContext';
 import UserMenu from '@/components/MiniComponents/UserMenu';
 import type { InputRef } from 'antd/es/input';
 import { Typography } from 'antd/lib';
+import dynamic from "next/dynamic";
+
+const LoginOutlined = dynamic(
+  () => import("@ant-design/icons/LoginOutlined"),
+  { ssr: false }
+);
+
+const UserOutlined = dynamic(
+  () => import("@ant-design/icons/UserOutlined"),
+  { ssr: false }
+);
+
 
 export default function LoginModalIcon() {
   const { user } = useAuth();
@@ -29,7 +40,7 @@ export default function LoginModalIcon() {
             onClick={() => setUserMenuOpen((prev) => !prev)}
             className="shadow-lg hover:shadow-2xl transition-all duration-300 bg-white"
           />
-          {userMenuOpen && <UserMenu user={user} onClose={() => setUserMenuOpen(false)} />}
+          {userMenuOpen && <UserMenu />}
         </>
       ) : (
         <>

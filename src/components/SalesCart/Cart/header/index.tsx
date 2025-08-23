@@ -5,7 +5,6 @@ import { formatCNPJ } from '@/utils/formatCnpj'
 import { ILoja } from '@/interfaces/ILoja'
 import { ICliente } from '@/interfaces/ICliente'
 import { IPedido } from '@/interfaces/IPedido'
-import { useLojaStore } from '@/store/useLojaStore'
 import { useLoja } from '@/contexts/LojaContext'
 import { X } from 'lucide-react'
 
@@ -20,7 +19,6 @@ const CarrinhoHeader: React.FC<ICarrinhoHeaderProps> = ({
   cliente,
   pedido
 }) => {
-  const { loja: lojaStore } = useLojaStore()
   const { corporation } = useLoja()
   const corporationReduce = corporation.result[0]
 
@@ -50,7 +48,7 @@ const CarrinhoHeader: React.FC<ICarrinhoHeaderProps> = ({
         </button>
       </div>
 
-      {/* Telefones */}
+      
       {corporationReduce.telefones?.length > 0 && (
         <div className="flex gap-2 flex-wrap px-4 pb-2">
           {corporationReduce.telefones.slice(0, 2).map((telObj, index) => {

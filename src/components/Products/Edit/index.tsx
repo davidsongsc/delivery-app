@@ -2,7 +2,7 @@
 
 import { IProduto } from '@/interfaces/IProduto';
 import { Button, Form, App } from 'antd';
-import React, { useCallback, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useCallback, useEffect, useState, forwardRef, useImperativeHandle, useMemo } from 'react';
 import ProductFormInfo from '@/components/Products/Form';
 import { produtosService } from '@/services/product.service';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,10 @@ import { useProdutoContext } from '@/contexts/ProdutoContext';
 import flagsConfig from '@/components/constants/flags';
 import { showChangesNotification } from '@/utils/notification';
 import { useAuth } from '@/contexts/AuthContext';
+import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
+import { ProdutoComposicaoCreateModal } from '@/components/ItemsComposicao/Create';
+import { ProdutoComposicaoTable } from '@/components/ItemsComposicao/Table';
+import { useProdutoComposicao } from '@/hooks/useProdutoComposicao';
 
 export interface ProductEditInfoRef {
   submitForm: () => void;
@@ -70,16 +74,26 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
   produtoRefresh,
   onSave,
 }, ref) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleOpenModal = () => setIsModalVisible(true);
+  const handleCloseModal = () => setIsModalVisible(false);
+  const [refreshTableFlag, setRefreshTableFlag] = useState(0);
+
+  const handleItemCreated = (novaComp: any) => {
+    notification.success({ message: 'Composição adicionada!' });
+    setRefreshTableFlag(prev => prev + 1); // força refresh da table
+  };
   const { notification } = App.useApp();
   const [form] = Form.useForm<IProduto>();
   const [isLoading, setIsLoading] = useState(false);
   const [initialProduto, setInitialProduto] = useState<IProduto | null>(null);
   const router = useRouter();
-  const { registerSubmitHandler, produto } = useProdutoContext();
+  const { registerSubmitHandler, produto, } = useProdutoContext();
   const defaultFlags = Object.fromEntries(flagsConfig.map(({ key }) => [key, false]));
   const { permissions } = useAuth();
-
   if (!permissions?.includes('produtos')) return <NotFound />;
+  const { composicao, composicaoLoading, composicaoRefresh } = useProdutoComposicao({ id: produto?.id  });
 
   useEffect(() => {
     if (produto && Object.keys(produto).length > 0) {
@@ -185,6 +199,20 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
   return (
     <>
       <ProductFormInfo form={form} isEditing permissions={permissions} />
+      <SectionSeparator title="Composição do Produto">
+
+        <Button type="primary" onClick={handleOpenModal}>Adicionar Item</Button>
+        <div className='container-conteudo-small'>
+          <ProdutoComposicaoCreateModal
+            visible={isModalVisible}
+            onClose={handleCloseModal}
+            produtoId={produto?.id || ''}
+            onCreated={handleItemCreated}
+            composicaoRefresh={composicaoRefresh}
+          />
+          <ProdutoComposicaoTable composicao={composicao} composicaoLoading={composicaoLoading} composicaoRefresh={composicaoRefresh}/>
+        </div>
+      </SectionSeparator>
     </>
   );
 });

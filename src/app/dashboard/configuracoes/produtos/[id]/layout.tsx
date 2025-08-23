@@ -8,7 +8,7 @@ import DeleteInColumn from "@/components/DeleteInColumn";
 import { produtosService } from "@/services/product.service";
 import { useAuth } from "@/contexts/AuthContext";
 import getUserPermissions from "@/utils/permissions";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import SectionSeparator from "@/components/MiniComponents/SectionSeparator";
 
 export default function ProdutosEditLayout({ children }: { children: React.ReactNode }) {
@@ -24,23 +24,24 @@ export default function ProdutosEditLayout({ children }: { children: React.React
 
     const handleNovoProduto = () => router.push("/dashboard/configuracoes/produtos/cadastrar");
 
-    const registerSubmitHandler = (fn: () => void) => {
+    const registerSubmitHandler = useCallback((fn: () => void) => {
         setSubmitHandler(() => fn);
-    };
+    }, []);
 
-    const onSave = () => {
+    const onSave = useCallback(() => {
         if (submitHandler) submitHandler();
-    };
+    }, [submitHandler]);
+
+    const providerValue = useMemo(() => ({
+        produto,
+        produtoLoading,
+        produtoRefresh,
+        permissions,
+        registerSubmitHandler,
+    }), [produto, produtoLoading, produtoRefresh, permissions, registerSubmitHandler]);
 
     return (
-        <ProdutoProvider value={{
-            produto,
-            produtoLoading,
-            produtoRefresh,
-            permissions,
-            registerSubmitHandler,
-        }}
-        >
+        <ProdutoProvider value={providerValue}>
             <ProfileStructure
                 isLoading={produtoLoading}
                 produto={produto}
@@ -56,7 +57,6 @@ export default function ProdutosEditLayout({ children }: { children: React.React
 
                 {isEditingRoute && produto && (
                     <SectionSeparator title="Area Gerencial" expanded={false}>
-                  
                         <DeleteInColumn
                             id={id}
                             service={produtosService}

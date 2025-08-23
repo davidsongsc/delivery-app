@@ -37,10 +37,7 @@ const Cardapio: React.FC = () => {
 
 
     const [filtroCategoria, setFiltroCategoria] = useState<string>('Todos');
-
     const setProdutos = useProdutosStore(state => state.setProdutos);
-    const router = useRouter();
-
     const [modalAberto, setModalAberto] = useState(false);
     const [produtoSelecionado, setProdutoSelecionado] = useState<IProduto | null>(null);
     const [adicionarSelecionado, setAdicionarSelecionado] = useState<string[]>([]);
@@ -54,8 +51,6 @@ const Cardapio: React.FC = () => {
         searchQuery: debouncedBusca,
     });
 
-
-    // Function to open the modal and set the selected product
     const abrirModal = (produto: IProduto) => {
         setProdutoSelecionado(produto);
         setAdicionarSelecionado([]);
@@ -77,20 +72,19 @@ const Cardapio: React.FC = () => {
             adicionarSelecionado.includes(a.item)
         );
 
-        // Create the item to be added to the cart
         const item: IItem = {
-            id: produtoSelecionado.id, // Assuming 'id' can be a number or string based on IProduto
+            id: produtoSelecionado.id,
             nome: produtoSelecionado.nome,
-            valor: parseFloat(produtoSelecionado.preco), // Ensure price is a number
+            valor: parseFloat(produtoSelecionado.preco),
             desconto: produtoSelecionado.desconto || 0,
             quantidade: 1,
-            adicionar: adicionaisSelecionados,
+            adicionar: adicionarSelecionado,
             remover: removerSelecionado,
             categoria: produtoSelecionado.categoria.nome,
             descricao: produtoSelecionado.descricao,
             imagem: produtoSelecionado.imagens?.[0]?.imagem_url || 'https://placehold.co/800x600/CCCCCC/FFFFFF?text=No+Image',
         };
-
+        console.log('Item adicionado ao carrinho:', item);
         // Add the item to the global delivery store
         useDeliveryStore.getState().adicionarItem(item);
         setModalAberto(false); // Close the modal
@@ -141,7 +135,7 @@ const Cardapio: React.FC = () => {
 
     return (
         <div className="p-4 mx-auto md:px-2 xl:px-4 2xl:px-6 space-y-8">
-     
+
             <Input.Search
                 placeholder="🍔 Buscar no cardápio..."
                 allowClear

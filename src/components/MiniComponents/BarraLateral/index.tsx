@@ -12,10 +12,8 @@ const BannerLateral: React.FC = () => {
       const scrollY = window.scrollY;
 
       if (scrollY < 300) {
-        // Se estiver perto do topo, banner desce um pouco
         setTopOffset(470);
       } else {
-        // Quando rolar, banner fica "grudado"
         setTopOffset(65);
       }
     };

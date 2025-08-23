@@ -1,6 +1,9 @@
 'use client'
 import React, { useState } from 'react';
-import { Menu, Drawer } from 'antd';
+import { Menu } from 'antd';
+import { Drawer } from 'antd/lib';
+import type { MenuProps } from "antd";
+
 import { MenuOutlined } from '@ant-design/icons';
 import { FaShoppingCart } from "react-icons/fa";
 import CarrinhoPedido from '@/components/SalesCart/Cart';
@@ -12,6 +15,7 @@ import { useCategoriasStore } from '@/store/categoriasStore';
 import { useBreakpoint } from '@/utils/useBreakpoint';
 import { ICorporation } from '@/interfaces/ICorporation';
 import { useLoja } from '@/contexts/LojaContext';
+
 
 
 const Header = () => {
@@ -49,7 +53,7 @@ const Header = () => {
 
     const menuItemsMobile = [
         { key: `/${lojaObj.page}', label: 'Início` },
-        
+
         { key: `/${lojaObj.page}/promocoes`, label: 'Promoções' },
         { key: 'carrinho', label: 'Carrinho' },
     ];
@@ -91,7 +95,7 @@ const Header = () => {
             {/* Carrinho Desktop */}
             {!isMobile && (
                 <button
-                    onClick={() => setOpenCart(true)}
+                    onClick={() => { if (totalItens > 0) setOpenCart(true) }}
                     className="relative bg-yellow-400 text-black p-3 rounded-full shadow-xl hover:bg-yellow-500 transition"
                 >
                     <FaShoppingCart size={24} />

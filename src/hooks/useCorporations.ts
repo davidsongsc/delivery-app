@@ -1,30 +1,40 @@
-import { useState, useEffect } from 'react';
-import apiClient from '@/services/apiClient';
-import { CorporationForm } from '@/store/CorporationRegisterForm';
-import { notification } from 'antd';
+import { ICorporation } from "@/interfaces/ICorporation";
+import { corporationService } from "@/services/corporation.service";
+import { useEffect, useState } from "react";
 
-export const useCorporations = () => {
-    const [data, setData] = useState<CorporationForm[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+interface UseAllCorporationsResponse {
+  corporations: ICorporation[] | null;
+  loading: boolean;
+  refresh: () => void;
+}
 
-    const fetchCorporations = async () => {
-        setLoading(true);
-        try {
-            const response = await apiClient.get('/api/corporation-user/');
-            setData(response.data.results);
-        } catch (error: any) {
-            notification.error({
-                message: 'Erro ao carregar empresas',
-                description: error.message || 'Tente novamente mais tarde.',
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
+export const useAllCorporations = (): UseAllCorporationsResponse => {
+  const [data, setData] = useState<ICorporation[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        fetchCorporations();
-    }, []);
+  const fetchData = () => {
+    if (isLoading) return;
 
-    return { data, loading, refetch: fetchCorporations };
+    setIsLoading(true);
+
+    corporationService
+      .getAllPublic()
+      .then(res => {
+        setData(res.data.corporations || []);
+      })
+      .catch(() => {
+        console.error("Erro ao buscar todas as corporations");
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return {
+    corporations: data,
+    loading: isLoading,
+    refresh: fetchData,
+  };
 };

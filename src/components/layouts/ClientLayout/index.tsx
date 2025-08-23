@@ -1,6 +1,6 @@
 'use client';
 
-import { ConfigProvider, App as AntdApp, Layout, Spin } from "antd";
+import { ConfigProvider, App as AntdApp, Layout, Spin } from "antd/es";
 
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../../../../tailwind.config";
@@ -11,7 +11,6 @@ import GlobalLoader from "@/components/ui/GlobalLoader";
 
 import LoginModalIcon from "@/components/Login";
 import { LoginModalProvider } from "@/contexts/LoginModalContext";
-import { BgColorsOutlined } from "@ant-design/icons";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const config = useMemo(() => resolveConfig(tailwindConfig), []);

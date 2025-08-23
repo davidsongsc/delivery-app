@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { NextPage } from 'next';
 import { Layout, Menu, Card, Button, Tooltip, Spin } from 'antd';
 import { DollarOutlined, CheckOutlined, CloseOutlined, WhatsAppOutlined } from '@ant-design/icons';
@@ -7,25 +7,19 @@ import { usePlanStore } from '@/store/planosStore';
 import './styles.css';
 
 import FinalCTASection from '@/components/MiniComponents/Section/FinalAction';
-const { Header, Content, Footer } = Layout;
+import { useAllCorporations } from '@/hooks/useCorporations';
+import { useRouter } from 'next/navigation';
+import ClientsGrid from '@/components/MiniComponents/ClienteCard';
+const { Content } = Layout;
 
-const clients = [
-  { nome: 'Hamburgueria Cracker', logo: 'hcracker' },
-  { nome: 'Lanchonete Barroso', logo: 'barroso' },
-  { nome: 'Cozinha da Vó Nadir', logo: 'vonadir' },
-  { nome: 'Sorvetes Sonya', logo: 'sorvetesonya' },
-
-];
 
 const Planos: NextPage = () => {
-  const { planos, featuresGlobais, loading, fetchPlanos } = usePlanStore();
-
+  const { planos, featuresGlobais } = usePlanStore();
+  const { corporations } = useAllCorporations();
   return (
     <>
       <Content className='flex flex-col gap-4 py-2'>
-
-
-        <section className="max-w-4xl mx-auto text-center px-4 mb-2">
+        <section className="max-w-4xl mx-auto text-center px-s mb-2">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">Tecnologia e Serviço de Qualidade</h1>
           <p className="text-gray-600 text-lg">
             Fornecemos soluções digitais sob medida para impulsionar seu negócio.
@@ -115,24 +109,7 @@ const Planos: NextPage = () => {
           </div>
         </section>
         <FinalCTASection />
-        <section id="clients" className="max-w-7xl mx-auto px-4 mt-20">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Nossos Clientes</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center justify-center">
-            {clients.map((client, index) => (
-              <Tooltip key={index} title={client.nome}>
-                <div className="flex items-center justify-center p-4 bg-white rounded-lg shadow hover:shadow-md transition hover:scale-105 cursor-pointer">
-                  <Image
-                    src={`/files/imagens/clientes/${client.logo}.png`}
-                    alt={`Logo de ${client.nome}`}
-                    width={100}
-                    height={50}
-                    className="object-contain"
-                  />
-                </div>
-              </Tooltip>
-            ))}
-          </div>
-        </section>
+        <ClientsGrid corporations={corporations} />
       </Content>
 
 

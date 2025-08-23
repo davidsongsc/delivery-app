@@ -52,7 +52,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/antd": "^0.12.32",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^22.14.1",
     "@types/papaparse": "^5.3.15",

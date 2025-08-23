@@ -1,11 +1,16 @@
-// DashboardLayout.tsx
-import { LojaProvider } from '@/contexts/LojaContext';
+'use client';
 
-export default function DashboardLayout({ children, params }: { children: React.ReactNode, params: { page: string } }) {
-  return (
-    <>
- 
-      <LojaProvider initialPage={params.page}>{children}</LojaProvider>
-    </>
-  );
+import { ReactNode } from 'react';
+import { LojaProvider } from '@/contexts/LojaContext';
+import { useParams } from 'next/navigation';
+
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const params = useParams();
+  const initialPage = params?.page || 'loja';
+
+  return <LojaProvider initialPage={initialPage}>{children}</LojaProvider>;
 }

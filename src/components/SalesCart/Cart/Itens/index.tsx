@@ -5,16 +5,18 @@ import { useDeliveryStore } from '@/store/deliveryStore'
 
 const CarrinhoItens: React.FC = () => {
   const { itensPedido, alterarQuantidade } = useDeliveryStore()
-
+  console.log('Itens do pedido:', itensPedido)
   return (
     <div className="space-y-4">
       {itensPedido.map((item, index) => {
-        const adicionaisValorTotal = item.adicionar.reduce((total, adicional) => {
-          if (typeof adicional === 'object' && adicional.valor) {
-            return total + adicional.valor
-          }
-          return total
-        }, 0)
+        const removerSelecionados = item.remover || []
+
+        const adicionaisSelecionados = item.adicionar || []
+
+        const adicionaisValorTotal = adicionaisSelecionados.reduce(
+          (total: number, comp: any) => total + (parseFloat(comp.preco) || 0) * (comp.quantidade || 1),
+          0
+        )
 
         const valorBaseUnitario = item.valor + adicionaisValorTotal
         const valorComDescontoUnitario =
@@ -25,8 +27,9 @@ const CarrinhoItens: React.FC = () => {
         return (
           <div
             key={index}
-            className="flex items-start bg-white rounded-2xl shadow-md p-3"
+            className="flex items-start bg-white rounded-2xl shadow-md p-4"
           >
+            {/* Imagem */}
             <div className="flex-shrink-0">
               <Image
                 src={item.imagem}
@@ -37,7 +40,9 @@ const CarrinhoItens: React.FC = () => {
               />
             </div>
 
+            {/* Conteúdo */}
             <div className="flex-1 px-3 flex flex-col justify-between">
+              {/* Cabeçalho */}
               <div className="flex justify-between items-start">
                 <span className="font-bold text-lg">{item.nome}</span>
                 {item.desconto > 0 ? (
@@ -56,47 +61,37 @@ const CarrinhoItens: React.FC = () => {
                 )}
               </div>
 
-              {(item.remover.length > 0 || item.adicionar.length > 0) && (
-                <div className="mt-1 text-sm space-y-1">
-                  {item.remover.length > 0 && (
+              {/* Adicionais e Remoções */}
+              {(removerSelecionados.length > 0 || adicionaisSelecionados.length > 0) && (
+                <div className="mt-2 text-sm space-y-2">
+                  {/* Removidos */}
+                  {removerSelecionados.length > 0 && (
                     <div className="flex flex-wrap gap-2 text-red-500 font-semibold">
-                      {item.remover.map((remover: string, i: number) => (
-                        <span key={i} className="flex items-center gap-1 uppercase">
-                          <CiSquareRemove size={16} /> {remover}
+                      {removerSelecionados.map((comp: any) => (
+                        <span key={comp.id} className="flex items-center gap-1 uppercase line-through">
+                          <CiSquareRemove size={16} /> {comp.nome} {comp.preco ? `- R$ ${parseFloat(comp.preco).toFixed(2)}` : ''}
                         </span>
                       ))}
                     </div>
                   )}
 
-                  {item.adicionar.length > 0 && (
+                  {/* Adicionados */}
+                  {adicionaisSelecionados.length > 0 && (
                     <div className="flex flex-wrap gap-2 text-green-600 font-semibold">
-                      {item.adicionar.map((adicionar: any, i: number) => {
-                        const nome =
-                          typeof adicionar === 'string'
-                            ? adicionar
-                            : adicionar.item
-                        const valor =
-                          typeof adicionar === 'object'
-                            ? `+R$ ${adicionar.valor.toFixed(2)}`
-                            : ''
-                        return (
-                          <span
-                            key={i}
-                            className="flex items-center gap-1 uppercase"
-                          >
-                            <CiSquarePlus size={16} /> {nome}{' '}
-                            {valor && (
-                              <span className="text-xs text-gray-400">{valor}</span>
-                            )}
-                          </span>
-                        )
-                      })}
+                      {adicionaisSelecionados.map((comp: any) => (
+                        <span key={comp.id} className="flex items-center gap-1 uppercase">
+                          <CiSquarePlus size={16} /> {comp.nome}
+                          {comp.preco ? <span className="text-xs text-gray-400">+R$ {parseFloat(comp.preco).toFixed(2)}</span> : null}
+                          {comp.quantidade > 1 && <span className="ml-1 text-xs text-gray-500">x{comp.quantidade}</span>}
+                        </span>
+                      ))}
                     </div>
                   )}
                 </div>
               )}
 
-              <div className="mt-2 flex items-center gap-2">
+              {/* Quantidade */}
+              <div className="mt-3 flex items-center gap-2">
                 <button
                   onClick={() => alterarQuantidade(index, 'decrementar')}
                   className="w-8 h-8 rounded-full bg-gray-200 text-lg font-bold flex items-center justify-center hover:bg-gray-300"
