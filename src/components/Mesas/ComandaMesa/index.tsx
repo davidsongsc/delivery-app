@@ -175,18 +175,20 @@ const ComandaMesa: React.FC<Props> = ({ mesa, onClose }) => {
                             <Title level={5} style={{ marginTop: 0 }}>Categorias</Title>
 
                             <Space wrap>
-                                {categorias.map((cat) => (
-                                    <Button
-                                        key={cat.id}
-                                        type={categoriaFiltro === cat.id ? 'primary' : 'default'}
-                                        onClick={() => {
-                                            setCategoriaFiltro(cat.id);
-                                            setPage(1);
-                                        }}
-                                    >
-                                        {cat.nome}
-                                    </Button>
-                                ))}
+                                {categorias
+                                    .filter(cat => produtos.some(prod => prod.categoria.id === cat.id && prod.flags?.comanda)) // só categorias com produtos "comanda"
+                                    .map((cat) => (
+                                        <Button
+                                            key={cat.id}
+                                            type={categoriaFiltro === cat.id ? 'primary' : 'default'}
+                                            onClick={() => {
+                                                setCategoriaFiltro(cat.id);
+                                                setPage(1);
+                                            }}
+                                        >
+                                            {cat.nome}
+                                        </Button>
+                                    ))}
 
                                 <Button
                                     danger
@@ -222,46 +224,48 @@ const ComandaMesa: React.FC<Props> = ({ mesa, onClose }) => {
                                 <Spin />
                             ) : (
                                 <Row gutter={[16, 16]}>
-                                    {produtos.map((item) => (
-                                        <Col span={4} key={item.id} >
-                                            <Card
-                                                hoverable
+                                    {produtos
+                                        .filter(item => item.flags?.comanda)
+                                        .map((item) => (
+                                            <Col span={4} key={item.id} >
+                                                <Card
+                                                    hoverable
 
-                                                onClick={() => item.ativo && adicionarItem(item)}
-                                                style={{
-                                                    cursor: item.ativo ? 'pointer' : 'not-allowed',
-                                                    opacity: item.ativo ? 1 : 0.6,
-                                                    transition: 'opacity 0.3s ease-in-out',
-                                                    height: '150px',
-                                                    width: '150px',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    backgroundColor: item.ativo ? '#f5f5f5' : '#ccc',
-                                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                                                }}
-                                            >
-                                                <Card.Meta
-                                                    title={
-                                                        <div className='flex flex-col items-center'>
-                                                            <span className='font-bold uppercase'>{item.nome_interno}</span>
-                                                            <span className='text-sm text-gray-500'> ({item.estoque})</span>
-                                                        </div>}
+                                                    onClick={() => item.ativo && adicionarItem(item)}
+                                                    style={{
+                                                        cursor: item.ativo ? 'pointer' : 'not-allowed',
+                                                        opacity: item.ativo ? 1 : 0.6,
+                                                        transition: 'opacity 0.3s ease-in-out',
+                                                        height: '150px',
+                                                        width: '150px',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        backgroundColor: item.ativo ? '#f5f5f5' : '#ccc',
+                                                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                                    }}
+                                                >
+                                                    <Card.Meta
+                                                        title={
+                                                            <div className='flex flex-col items-center'>
+                                                                <span className='font-bold uppercase'>{item.nome_interno}</span>
+                                                                <span className='text-sm text-gray-500'> ({item.estoque})</span>
+                                                            </div>}
 
-                                                    description={
-                                                        <>
-                                                            {!item.ativo && (
-                                                                <Text type="danger" style={{ display: 'block' }}>
-                                                                    Indisponível
-                                                                </Text>
-                                                            )}
-                                                        </>
-                                                    }
-                                                />
-                                            </Card>
-                                        </Col>
-                                    ))}
+                                                        description={
+                                                            <>
+                                                                {!item.ativo && (
+                                                                    <Text type="danger" style={{ display: 'block' }}>
+                                                                        Indisponível
+                                                                    </Text>
+                                                                )}
+                                                            </>
+                                                        }
+                                                    />
+                                                </Card>
+                                            </Col>
+                                        ))}
                                 </Row>
                             )}
 

@@ -8,7 +8,6 @@ import { IProduto } from "@/interfaces/IProduto";
 import { IUser } from "@/interfaces/IUser";
 import { UserOutlined } from "@ant-design/icons";
 
-
 interface ProfileStructureProps {
   isLoading: boolean;
   navTitle: string;
@@ -17,6 +16,7 @@ interface ProfileStructureProps {
   produto?: IProduto | null;
   menuButtons: MenuButton[];
   children?: React.ReactNode;
+  className?: string;
 }
 
 interface MenuButton {
@@ -26,155 +26,103 @@ interface MenuButton {
   disabled?: boolean;
   isVisible?: boolean;
   onClick?: () => void;
+
 }
 
 const ProfileStructure: React.FC<ProfileStructureProps> = ({
   isLoading,
   navTitle,
   title,
-  user = undefined,
-  produto = undefined,
+  user,
+  produto,
   menuButtons,
   children,
+  className,
 }) => {
   const router = useRouter();
 
-  // Função para pegar a imagem mais recente do produto (baseada no 'ordem' ou última imagem)
   const getLatestProductImage = (): string | undefined => {
-    if (!produto || !produto.imagens || produto.imagens.length === 0) return undefined;
-
-    // Tenta ordenar pela propriedade ordem, se existir
-    const imagensOrdenadas = [...produto.imagens].sort((a, b) => {
-      if (a.ordem == null) return 1;
-      if (b.ordem == null) return -1;
-      return a.ordem - b.ordem;
-    });
-
+    if (!produto?.imagens?.length) return undefined;
+    const imagensOrdenadas = [...produto.imagens].sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
     return imagensOrdenadas[0].imagem_url;
   };
 
   return (
-    <div className="grid grid-cols-1 gap-2 lg:grid-cols-12">
-      <div className="lg:col-span-2">
+    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 ${className}`}>
+
+      {/* Sidebar */}
+      <div className="lg:col-span-3 flex flex-col gap-6">
         <PageTitle hasBackButton navTitle={navTitle} title={title} />
 
-        {produto ? (
-          <div className="flex flex-col items-center justify-center mb-8">
-            <div className="bg-darkModal rounded-full w-[300px] h-[300px] my-4 relative overflow-hidden">
+        {/* Produto Card */}
+        {produto && (
+          <div className="bg-white shadow-lg  overflow-hidden flex flex-col items-center ">
+            <div className="w-full h-80  overflow-hidden relative ">
               {getLatestProductImage() ? (
-                <Image
-                  src={getLatestProductImage()!}
-                  alt={produto.nome}
-                  className="object-cover rounded-full"
-                  fill
-                  sizes="300px"
-                />
+                <Image src={getLatestProductImage()} alt={produto.nome} fill className="object-contain" />
               ) : (
-                <div className="bg-gray-300 w-full h-full rounded-full flex items-center justify-center text-gray-500">
+                <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-400">
                   Sem imagem
                 </div>
               )}
             </div>
-            <div className="w-full px-4">
-              <table className="table-auto w-full text-left text-sm">
-                <tbody>
-                  <tr>
-                    <th className="pr-4 font-semibold">Nome</th>
-                    <td>{produto.nome}</td>
-                  </tr>
-                  <tr>
-                    <th className="pr-4 font-semibold">Preço</th>
-                    <td>R$ {produto.preco}</td>
-                  </tr>
-                  <tr>
-                    <th className="pr-4 font-semibold">Qtd. Imagens</th>
-                    <td>{produto.imagens.length}</td>
-                  </tr>
-                  <tr>
-                    <th className="pr-4 font-semibold">Data da Imagem 1</th>
-                    <td>
-                      {produto.imagens[0]?.ordem
-                        ? new Date(produto.imagens[0].ordem * 1000).toLocaleDateString("pt-BR")
-                        : "Sem data"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th className="pr-4 font-semibold">Estoque</th>
-                    <td>{produto.estoque}</td>
-                  </tr>
-                  <tr>
-                    <th className="pr-4 font-semibold">Status</th>
-                    <td>{produto.ativo ? "Ativo" : "Inativo"}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <div className="w-full grid grid-cols-2 gap-2">
+              <div className="bg-gray-50 rounded-lg p-2 shadow-sm text-sm text-gray-600">Preço</div>
+              <div className="p-2 font-semibold text-gray-800">R$ {produto.preco}</div>
 
+              <div className="bg-gray-50 rounded-lg p-2 shadow-sm text-sm text-gray-600">Imagens</div>
+              <div className="p-2 font-semibold text-gray-800">{produto.imagens.length}</div>
+
+              <div className="bg-gray-50 rounded-lg p-2 shadow-sm text-sm text-gray-600">Estoque</div>
+              <div className="p-2 font-semibold text-gray-800">{produto.estoque}</div>
+
+              <div className="bg-gray-50 rounded-lg p-2 shadow-sm text-sm text-gray-600">Status</div>
+              <div className={`p-2 font-semibold ${produto.ativo ? "text-green-600" : "text-red-600"}`}>
+                {produto.ativo ? "Ativo" : "Inativo"}
+              </div>
+            </div>
           </div>
-        ) : (
-          user && (
-            <div className="flex flex-col items-center justify-center">
-              <div className="bg-darkModal rounded-full my-8">
-                {user?.id && (
-                  user?.avatar ? (
-                    <Image
-                      src={user.avatar}
-                      alt="Foto"
-                      width={200}
-                      height={200}
-                    />
-                  ) : (
-                    <div
-                      className="bg-gray-300 w-64 h-64 rounded-full flex items-center justify-center text-gray-500"
-                    >
-                      <UserOutlined className="text-4xl" />
-                    </div>
-                  )
-                )}
-              </div>
-              <div className="text-left">
-                <h1 className="text-2xl sm:text-3xl  xl:text-4xl font-extrabold tracking-tight text-textoSeparador">
-                  {user.first_name}</h1>
-                <hr className="border-t border-primary mb-1" />
-                <h3 className="text-2xl sm:text-2xl  xl:text-3xl  tracking-tight text-textoSeparador">
-
-                  {user.perfis?.map((perfil) => perfil.nome).join(", ")}
-                </h3>
-                <h2>{user.phone}</h2>
-              </div>
-            </div>
-          )
-
         )}
 
-        <hr className="border-t border-primary mb-1" />
+        {/* User Card */}
+        {user && (
+          <div className="bg-white shadow-lg rounded-xl overflow-hidden flex flex-col items-center p-4">
+            <div className="w-40 h-40 rounded-full overflow-hidden mb-4">
+              {user.avatar ? (
+                <Image src={user.avatar} alt="Avatar" fill className="object-cover" />
+              ) : (
+                <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-400">
+                  <UserOutlined className="text-5xl" />
+                </div>
+              )}
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">{user.first_name}</h2>
+            <p className="text-gray-600">{user.perfis?.map(p => p.nome).join(", ")}</p>
+            <p className="text-gray-500">{user.phone}</p>
+          </div>
+        )}
 
-        {menuButtons.map((button) => (
-          <React.Fragment key={button.title}>
+        {/* Menu Buttons */}
+        <div className="flex flex-col gap-3">
+          {menuButtons.map(btn => (
             <Button
-              type={button.isActive ? "primary" : "default"}
+              key={btn.title}
+              type={btn.isActive ? "primary" : "default"}
               block
               size="large"
-              className={`mb-1 h-[60px] uppercase text-md ${button.isActive ? "border-2 border-primary " : "font-bold"
-                }`}
-              onClick={() => {
-                if (button.onClick) {
-                  button.onClick();
-                } else if (button.link) {
-                  router.push(button.link);
-                }
-              }}
-              disabled={button.disabled}
+              className="uppercase font-bold h-14"
+              onClick={() => btn.onClick ? btn.onClick() : btn.link && router.push(btn.link)}
+              disabled={btn.disabled}
             >
-              {button.title}
+              {btn.title}
             </Button>
-            <hr className="border-t border-primary mb-1" />
-          </React.Fragment>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div className="lg:col-span-10 max-h-[calc(100vh-122px)] overflow-y-auto">
-        {isLoading ? <AppLoading /> : <>{children}</>}
+      {/* Main Content */}
+      <div className="lg:col-span-9 max-h-[calc(100vh-122px)] ">
+        {isLoading ? <AppLoading /> : children}
       </div>
     </div>
   );

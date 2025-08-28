@@ -1569,6 +1569,11 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/html-truncate@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@types/html-truncate/-/html-truncate-1.2.4.tgz#0d4fb61ef1413182d111df19a59e73b94455f44a"
+  integrity sha512-tZysECytmk7mi1yNuOXnu4dgitNf4Mstfu2oTYJ3iFoC4xSMMXnUPS/uj2QOx96SEnRFOZsNQozojxlHQY3avA==
+
 "@types/jquery@*":
   version "3.5.32"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.32.tgz#3eb0da20611b92c7c49ebed6163b52a4fdc57def"
@@ -3641,6 +3646,11 @@ html-entities@~1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/html-entities/-/html-entities-1.4.0.tgz#cfbd1b01d2afaf9adca1b10ae7dffab98c71d2dc"
   integrity sha512-8nxjcBcd8wovbeKx7h3wTji4e6+rhaVuPNpMqwWgnHh+N9ToqsCs6XztWRBPQ+UtzsoMAdKZtUENoVzU/EMtZA==
+
+html-truncate@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/html-truncate/-/html-truncate-1.2.2.tgz#db2e331dcf1cba0bd432a507d16e988609f2575f"
+  integrity sha512-oiXb65RDxSYY8eXJKJiKHHpI7LyQbMG8LbSuvvWLLxAKNywJ7aaq0M1ynj2QJs0odQNggEEg/dTFVtH3lG0ClQ==
 
 human-signals@^5.0.0:
   version "5.0.0"

@@ -1,8 +1,8 @@
-'use client';
+'use client'; 
 
-import { ReactNode } from 'react';
 import { LojaProvider } from '@/contexts/LojaContext';
 import { useParams } from 'next/navigation';
+import { ReactNode } from 'react';
 
 interface DashboardLayoutProps {
   children: ReactNode;

@@ -43,13 +43,14 @@ export default function ProdutosEditLayout({ children }: { children: React.React
     return (
         <ProdutoProvider value={providerValue}>
             <ProfileStructure
+                className=""
                 isLoading={produtoLoading}
                 produto={produto}
                 navTitle="Produtos > Editar"
                 title={produto?.nome ?? "Editar Produto"}
                 menuButtons={[
-                    { title: "Informações", link: `/dashboard/configuracoes/produtos/${id}/editar`, isActive: pathname === `/dashboard/configuracoes/produtos/${id}/editar` },
-                    { title: "Salvar", isActive: pathname === `/dashboard/configuracoes/produtos/${id}/opcoes`, onClick: onSave },
+                    { title: "Todos os Produtos", link: `/dashboard/configuracoes/produtos/`, isActive: pathname === `/dashboard/configuracoes/produtos/` },
+                    { title: "Salvar", isActive: pathname === `/dashboard/configuracoes/produtos/${id}/editar`, onClick: onSave },
                     { title: "Cadastrar Novo", link: `/dashboard/configuracoes/produtos/${id}/editar`, isActive: pathname === `/dashboard/configuracoes/produtos/cadastrar` },
                 ]}
             >

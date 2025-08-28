@@ -32,6 +32,7 @@
     "grapesjs-preset-webpage": "^1.0.3",
     "grapesjs-rulers": "^1.0.8",
     "gsap": "^3.13.0",
+    "html-truncate": "^1.2.2",
     "jquery": "^3.7.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.522.0",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/html-truncate": "^1.2.4",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^22.14.1",
     "@types/papaparse": "^5.3.15",

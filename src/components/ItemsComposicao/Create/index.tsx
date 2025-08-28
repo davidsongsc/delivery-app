@@ -5,6 +5,7 @@ import { Modal, Form, InputNumber, Select, Button, notification, Radio } from 'a
 import { produtoComposicaoService } from '@/services/product-composition.service'
 import { ItensSelect } from '../Select'
 import { tipoOptions } from '../Table'
+import { Tooltip } from 'antd/lib'
 
 interface ProdutoComposicaoCreateModalProps {
   visible: boolean;
@@ -50,6 +51,8 @@ export const ProdutoComposicaoCreateModal: React.FC<ProdutoComposicaoCreateModal
     }
   }
 
+  const tipoSelecionado = Form.useWatch('tipo', form);
+
   return (
     <Modal
       title="Adicionar Item à Composição"
@@ -81,27 +84,67 @@ export const ProdutoComposicaoCreateModal: React.FC<ProdutoComposicaoCreateModal
           initialValue="BS"
           rules={[{ required: true, message: 'Selecione o tipo.' }]}
         >
-          <Radio.Group buttonStyle="solid">
+          <Radio.Group
+            buttonStyle="solid"
+            className="flex flex-wrap gap-2"
+          >
             {tipoOptions.map(opt => (
-              <Radio.Button key={opt.value} value={opt.value}>
+              <Radio.Button
+                key={opt.value}
+                value={opt.value}
+                className={`
+        flex-1
+        rounded-md
+        
+        text-gray-700
+        hover:bg-primary hover:text-white
+        checked:bg-red-600 checked:text-white
+        transition-colors duration-200
+        text-center
+      `}
+              >
                 {opt.label}
               </Radio.Button>
             ))}
           </Radio.Group>
+
         </Form.Item>
 
 
         <Form.Item
-          label="Quantidade"
+          label={
+            <span>
+              Limite de Quantidade{' '}
+              <Tooltip title="O cliente pode escolher até essa quantidade, os adicionais serão cobrados à parte.">
+                <span className="text-gray-400 cursor-help">(?)</span>
+              </Tooltip>
+            </span>
+          }
           name="quantidade"
           initialValue={1}
           rules={[{ required: true, message: 'Informe a quantidade.' }]}
         >
-          <InputNumber min={1} className="w-full" />
+          <InputNumber min={1} className="w-full" disabled={!['BS', 'AD', 'AL', 'OP'].includes(tipoSelecionado)} />
         </Form.Item>
 
-        <Form.Item label="Preço Extra (R$)" name="preco_extra" initialValue={0}>
-          <InputNumber min={0} step={0.01} className="w-full" />
+        <Form.Item
+          label={
+            <span>
+              Preço Extra{' '}
+              <Tooltip title="O valor adicional cobrado por unidade acima do limite.">
+                <span className="text-gray-400 cursor-help">(?)</span>
+              </Tooltip>
+            </span>
+          }
+          name="preco_extra"
+          initialValue={0}
+        >
+          <InputNumber
+            min={0}
+            step={0.01}
+            className="w-full"
+            disabled={!['BS', 'AD', 'AL', 'OP'].includes(tipoSelecionado)}
+          />
         </Form.Item>
 
         <Form.Item>

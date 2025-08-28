@@ -16,10 +16,13 @@ export default {
                 'multi-gradient': 'linear-gradient(to right, var(--primary) 20%, var(--secondary) 50%, transparent 80%)',
             },
             colors: {
-                // Branding e principais
-                primary: '#a9a9a9', 
+                primary: '#4B0082',
                 secondary: '#eeeeee',
                 tertiary: '#111111',
+                prib1: '#FFB703',
+                prib2: '#7B3F00',
+                prib3: '#FF6F00',
+                fundo_menu: '#F5E1A4',
                 grafite: '#AC0F0A',
                 aço: '#2F2F31',
                 gelo: '#F5F5F5',
@@ -66,7 +69,6 @@ export default {
                 d_notificacao_erro: '#D62828',     // Alerta de erro
                 d_notificacao_sucesso: '#2DBE60',  // Alerta de sucesso
 
-                // Papéis e cargos
                 admin: '#6A1B9A',
                 user: '#607D8B',
 

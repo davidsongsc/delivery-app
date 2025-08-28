@@ -49,7 +49,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef 
     <Card
 
     >
- 
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           ref={emailRef}
@@ -60,7 +60,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef 
           required
           autoComplete="username"
           status={fieldErrors.username ? 'error' : ''}
-          className="rounded-lg border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600"
+          className="bg-white rounded-lg border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
         />
         {fieldErrors.username && (
           <Typography.Text type="danger" className="text-sm block">
@@ -78,7 +78,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef 
           autoComplete="current-password"
           iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)}
           status={fieldErrors.password ? 'error' : ''}
-          className="rounded-lg border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600"
+          className="bg-white rounded-lg border-gray-300 focus:border-primary focus:ring-1 focus:ring-primary"
         />
         {fieldErrors.password && (
           <Typography.Text type="danger" className="text-sm block">
@@ -89,7 +89,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef 
         <Checkbox
           checked={rememberMe}
           onChange={(e) => setRememberMe(e.target.checked)}
-          className="text-gray-700"
+          className="text-tertiary"
         >
           Lembrar-me
         </Checkbox>
@@ -99,7 +99,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, emailRef, passwordRef 
           htmlType="submit"
           size="large"
           block
-          className="bg-red-600 hover:bg-red-700 text-white rounded-xl h-12 flex items-center justify-center gap-2"
+          className="bg-primary text-white rounded-xl h-12 flex items-center justify-center gap-2"
           loading={loading}
           disabled={loading}
         >

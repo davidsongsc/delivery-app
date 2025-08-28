@@ -43,7 +43,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
       >
         <div
           className={`
-            flex flex-col sm:flex-row sm:items-center sm:justify-between my-1
+            flex flex-col sm:flex-row sm:items-center sm:justify-between 
             py-4 px-2 sm:px-3 lg:px-4 left-0 w-full z-50
             bg-secondary text-option rounded-sm mx-auto 
             ${className || ""}
@@ -53,15 +53,15 @@ const PageTitle: React.FC<PageTitleProps> = ({
             {hasBackButton && (
               <IoChevronBackSharp
                 size={40}
-                className="mr-3 cursor-pointer hover:scale-110 text-option transition-transform duration-200 bg-textoSeparador rounded-full p-1"
+                className="mr-3 cursor-pointer hover:scale-110 text-option transition-transform duration-200 bg-primary rounded-full p-1"
                 onClick={() => router.back()}
               />
             )}
             <div >
               {navTitle && (
-                <p className="text-md opacity-75 text-textoSeparador">{navTitle}</p>
+                <p className="text-sm opacity-75 text-tertiary ">{navTitle}</p>
               )}
-              <h1 className="text-2xl sm:text-3xl  xl:text-4xl font-extrabold tracking-tight text-textoSeparador">
+              <h1 className="text-2xl md:text-3xl 2xl:text-4xl font-extrabold tracking-tight text-textoSeparador capitalize">
                 {title}
               </h1>
               <h2 className="text-md sm:text-sm opacity-75">

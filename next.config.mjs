@@ -11,6 +11,10 @@ const baseConfig = {
     ],
     remotePatterns: [
       {
+        protocol: 'https',
+        hostname: 'placehold.co',
+      },
+      {
         protocol: "http",
         hostname: "localhost",
         port: "3001",

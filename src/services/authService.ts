@@ -33,7 +33,7 @@ export const authService = {
             console.error('Erro ao fazer logout:', error);
         } finally {
             await CookiesHandler.session.remove();
-            
+
         }
     },
     register: async (userData: any): Promise<void> => {
@@ -65,25 +65,29 @@ export const authService = {
 
     checkAuth: async () => {
         try {
-            const refresh = (await CookiesHandler.session.get()).refresh;
+            const { refresh } = await CookiesHandler.session.get();
             if (!refresh) throw new Error('Não autenticado');
 
             const refreshResponse = await apiClient.post('/api/token/refresh/', { refresh });
-            const access = refreshResponse.data?.access;
+            const { access, refresh: newRefresh } = refreshResponse.data;
 
             if (!access) throw new Error('Não autenticado');
 
-            await CookiesHandler.session.set({ token: access });
-            const userResponse = await apiClient.get('/api/users/me/'); // sua rota para pegar dados do user
+            await CookiesHandler.session.set({
+                token: access,
+                refresh: newRefresh || refresh 
+            });
+
+            const userResponse = await apiClient.get('/api/users/me/');
             useAuthStore.getState().setUser(userResponse.data);
 
             return userResponse.data;
-        } catch {
+        } catch (error) {
             await CookiesHandler.session.remove();
             useAuthStore.getState().logout();
             throw new Error('Não autenticado');
         }
-    },
+    }
 
 
 

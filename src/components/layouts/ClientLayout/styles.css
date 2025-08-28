@@ -1,0 +1,6 @@
+.ant-menu-item,
+.ant-menu-submenu-title,
+.ant-menu-item a {
+    color: theme("colors.secondary") !important;
+    background-color: theme("colors.primary") !important;
+}

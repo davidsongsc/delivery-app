@@ -10,18 +10,40 @@ interface IRichEditorProps {
   onChange?: (value: string) => void;
   isActive?: boolean;
 }
-
 const modules = {
   toolbar: [
-    ["bold", "italic",],
-    
+    [{ header: [1, 2, 3, false] }],        // Títulos H1, H2, H3, Normal
+    ["bold", "italic", "underline", "strike"], // Negrito, itálico, sublinhado, riscado
+    [{ color: [] }, { background: [] }],   // Cor do texto e fundo
+    [{ list: "ordered" }, { list: "bullet" }], // Listas
+    [{ indent: "-1" }, { indent: "+1" }], // Recuo
+    [{ align: [] }],                       // Alinhamento: left, center, right, justify
+    ["link", "image", "video"],            // Inserir link, imagem, vídeo
+    ["blockquote", "code-block"],          // Citação e bloco de código
+    ["clean"],                             // Remove formatação
   ],
 };
 
+
 const formats = [
+  "header",
   "bold",
   "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "list",
+  "bullet",
+  "indent",
+  "align",
+  "link",
+  "image",
+  "video",
+  "blockquote",
+  "code-block",
 ];
+
 
 const RichEditor: React.FC<IRichEditorProps> = ({
   value,

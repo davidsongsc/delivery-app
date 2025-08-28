@@ -191,12 +191,8 @@ export const useAuthStore = create<AuthState>()(
             logout: async () => {
                 try {
                     await authService.logout();
-                    notification.success({
-                        message: 'Logout realizado com sucesso',
-                    });
                 } finally {
-                    // Garante que o estado é limpo, mesmo se o logout da API falhar
-                    get().clearAuth(); // Chama a função clearAuth para limpar tudo
+                    get().clearAuth();
                 }
             },
 
@@ -225,25 +221,23 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
             checkAuth: async () => {
-                set({ loading: true });
+                set({ loading: true })
                 try {
-                    const response = await authService.checkAuth();
+                    const response = await authService.checkAuth()
                     set({
                         user: response.user,
                         isAuthenticated: true,
-                        loading: false,
-                    });
+                    })
                 } catch (error) {
                     set({
                         user: null,
                         isAuthenticated: false,
-                        loading: false,
-                    });
-
+                    })
                 } finally {
-                    set({ hydrated: true });
+                    set({ loading: false, hydrated: true })
                 }
             }
+
 
         }),
         {

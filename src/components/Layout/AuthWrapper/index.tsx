@@ -3,12 +3,11 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useLoginModal } from '@/contexts/LoginModalContext';  // import do modal
 import { useEffect, useState } from 'react';
-import External from '@/components/header/external';
 import AppLoading from '@/components/AppLoading';
 
 export default function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, checkAuth } = useAuth();
-  const { openModal } = useLoginModal();  // pega a função para abrir o modal
+  const { openModal } = useLoginModal();  
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -41,12 +40,12 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
   }
 
   if (!isAuthenticated) {
-    return null; // evita flicker, modal abrirá em paralelo
+    return null; 
   }
 
   return (
     <>
-      <External />
+      
       {children}
     </>
   );

@@ -9,7 +9,7 @@ interface NomeProdutoProps {
 const NomeProduto: React.FC<NomeProdutoProps> = ({ nome, nome_interno, className }) => {
     return (
         <div className={className}>
-            <strong className='text-lg'>{nome}</strong>
+            <strong className='text-lg capitalize'>{nome}</strong>
             {nome_interno && (
                 <div className="text-sm text-gray-500 uppercase">
                     {nome_interno}

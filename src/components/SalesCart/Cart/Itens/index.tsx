@@ -44,7 +44,7 @@ const CarrinhoItens: React.FC = () => {
             <div className="flex-1 px-3 flex flex-col justify-between">
               {/* Cabeçalho */}
               <div className="flex justify-between items-start">
-                <span className="font-bold text-lg">{item.nome}</span>
+                <span className="font-bold text-lg capitalize">{item.nome}</span>
                 {item.desconto > 0 ? (
                   <div className="text-right">
                     <span className="block text-sm text-gray-400 line-through">
@@ -68,8 +68,8 @@ const CarrinhoItens: React.FC = () => {
                   {removerSelecionados.length > 0 && (
                     <div className="flex flex-wrap gap-2 text-red-500 font-semibold">
                       {removerSelecionados.map((comp: any) => (
-                        <span key={comp.id} className="flex items-center gap-1 uppercase line-through">
-                          <CiSquareRemove size={16} /> {comp.nome} {comp.preco ? `- R$ ${parseFloat(comp.preco).toFixed(2)}` : ''}
+                        <span key={comp.id} className="flex items-center gap-1 capitalize">
+                          <CiSquareRemove size={16} /> {comp.nome}
                         </span>
                       ))}
                     </div>
@@ -78,15 +78,36 @@ const CarrinhoItens: React.FC = () => {
                   {/* Adicionados */}
                   {adicionaisSelecionados.length > 0 && (
                     <div className="flex flex-wrap gap-2 text-green-600 font-semibold">
-                      {adicionaisSelecionados.map((comp: any) => (
-                        <span key={comp.id} className="flex items-center gap-1 uppercase">
-                          <CiSquarePlus size={16} /> {comp.nome}
-                          {comp.preco ? <span className="text-xs text-gray-400">+R$ {parseFloat(comp.preco).toFixed(2)}</span> : null}
-                          {comp.quantidade > 1 && <span className="ml-1 text-xs text-gray-500">x{comp.quantidade}</span>}
-                        </span>
-                      ))}
+                      {adicionaisSelecionados.map((comp: any) => {
+                        const precoUnit = parseFloat(comp.preco || 0)
+                        const total = precoUnit * (comp.quantidade || 1)
+
+                        return (
+                          <span key={comp.id} className="flex items-center gap-1">
+                            <CiSquarePlus size={16} /> {comp.nome}
+
+                            {precoUnit > 0 && (
+                              <span className="text-xs text-gray-400">
+                                R$ {precoUnit.toFixed(2)}
+                              </span>
+                            )}
+
+                            {comp.quantidade > 1 && (
+                              <>
+                                <span className="ml-1 text-[10px] text-gray-500">
+                                  x{comp.quantidade}
+                                </span>
+                                <span className="text-[10px] text-green-400">
+                                  R$ {total.toFixed(2)}
+                                </span>
+                              </>
+                            )}
+                          </span>
+                        )
+                      })}
                     </div>
                   )}
+
                 </div>
               )}
 

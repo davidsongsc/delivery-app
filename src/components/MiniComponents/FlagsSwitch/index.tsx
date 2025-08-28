@@ -1,16 +1,24 @@
-import { Form, Switch } from 'antd';
-
+import { Form, Segmented } from 'antd';
+import React from 'react';
+import './styles.css';
 interface FlagSwitchProps {
-  name: string;
+  name: string[];
   label: string;
 }
 
 const FlagSwitch: React.FC<FlagSwitchProps> = ({ name, label }) => (
-  <Form.Item name={['flags', name]} valuePropName="checked" style={{ marginBottom: 8 }}>
-    <div className="flex justify-between items-center">
-      <span className="font-bold">{label}:</span>
-      <Switch checkedChildren="Ativo" unCheckedChildren="Desativado" />
-    </div>
+  <Form.Item
+    label={<span className="font-bold text-xl">{label}</span>}
+    name={name}
+    className="col-span-6 px-2"
+  >
+    <Segmented
+      block
+      options={[
+        { label: 'Ativo', value: true },
+        { label: 'Desativado', value: false }
+      ]}
+    />
   </Form.Item>
 );
 

@@ -32,25 +32,18 @@ export default function LoginModalIcon() {
     <div className="fixed bottom-5 right-5 z-[1300] flex flex-col items-end gap-2">
       {user ? (
         <>
-          <Button
-            type="default"
-            shape="circle"
-            icon={<UserOutlined style={{ fontSize: 24, color: '#D32F2F' }} />}
-            size="large"
-            onClick={() => setUserMenuOpen((prev) => !prev)}
-            className="shadow-lg hover:shadow-2xl transition-all duration-300 bg-white"
-          />
-          {userMenuOpen && <UserMenu />}
+          <span></span>
         </>
       ) : (
         <>
           <Button
             type="primary"
             shape="circle"
-            icon={<LoginOutlined style={{ fontSize: 24 }} />}
+            icon={<LoginOutlined className='text-secondary ' />}
+            style={{ fontSize: '18px', lineHeight: '24px' }}
             size="large"
             onClick={() => setModalOpen(true)}
-            className="bg-red-600 hover:bg-red-700 shadow-lg transition-all duration-300"
+            className="bg-primary hover:bg-tertiary hover:scale-125 shadow-lg transition-all duration-300"
           />
 
           <Modal
@@ -61,9 +54,9 @@ export default function LoginModalIcon() {
             width={500}
             destroyOnHidden
             maskClosable
-            className="rounded-2xl shadow-2xl border-t-8 border-red-600 overflow-hidden "
-            closeIcon={<span className="text-gray-500 hover:text-gray-800 text-2xl">&times;</span>}
-            bodyStyle={{ padding: '0 0 24px 0' }}
+            className="rounded-2xl shadow-2xl border-t-8 border-primary overflow-hidden "
+            closeIcon={<span className="text-primary hover:text-tertiary text-2xl">&times;</span>}
+
           >
             <Typography.Title level={3} className="text-center font-bold text-yellow-500 mb-6">
               Login

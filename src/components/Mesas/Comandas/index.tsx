@@ -11,7 +11,6 @@ import { useMesas } from '@/hooks/useMesas';
 import { mesasService } from '@/services/mesas.service';
 import { IMesa } from '@/interfaces/IMesa';
 import { useAuth } from '@/contexts/AuthContext';
-import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
 import PageTitle from '@/components/MiniComponents/PageTitle';
 
@@ -22,10 +21,8 @@ const MesasComponent: React.FC = () => {
     const router = useRouter();
     const [page, setPage] = useState(1);
     const [selectedMesa, setSelectedMesa] = useState<IMesa | null>(null);
-    const { user, isAuthenticated, loading } = useAuth(); // Assume que useAuth fornece o objeto de usuário
+    const { user, isAuthenticated, loading, permissions } = useAuth(); // Assume que useAuth fornece o objeto de usuário
 
-    // Lógica para verificar permissões
-    const permissions = useMemo(() => user ? getUserPermissions(user) : [], [user]);
 
     const canCreateMesas = permissions.includes('comanas_mesa_criar');
     const canVisualizeMesas = permissions.includes('comanas_mesa_visualizar');

@@ -7,20 +7,11 @@ export interface IProdutoImagem {
 
 
 export interface IProdutoFlags {
-  ativo: boolean;
-  is_delivery: boolean;
-  is_pickup: boolean;
-  is_visible: boolean;
-  is_digital: boolean;
-  is_scheduled: boolean;
-  has_stock_control: boolean;
-  is_limited: boolean;
-  is_blocked: boolean;
-  blocked_reason: string;
-  limited_stock: number;
-  is_free: boolean;
-  is_discounted: boolean;
-  requires_preparation: boolean;
+  delivery: boolean;
+  comanda: boolean;
+  happy_hour: boolean;
+  promocional: boolean;
+
 }
 
 export interface IProduto {
@@ -50,7 +41,7 @@ export interface IProduto {
 
 export type IProdutoCreate = Omit<IProduto, 'id' | 'created_by' | 'updated_by'>;
 
-export type IProdutoUpdate = IProdutoCreate; 
+export type IProdutoUpdate = IProdutoCreate;
 
 export type IProdutoPatch = Partial<IProdutoCreate>;
 

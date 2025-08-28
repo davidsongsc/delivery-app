@@ -189,51 +189,6 @@ body {
   min-height: 100dvh;
 }
 
-.form-observations {
-  & .ql-container.ql-snow {
-    border: 1px solid theme("colors.darkModal");
-    border-bottom: 15px;
-  }
-
-  & .ql-toolbar.ql-snow {
-    border: 1px solid theme("colors.darkBg");
-    border-bottom: 1px solid theme("colors.secondary");
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-top-right-radius: 15px;
-    border-top-left-radius: 15px;
-    border-left: none;
-    border-right: none;
-  }
-
-  & .ant-form-item-control-input {
-    background-color: theme("colors.darkBg");
-    border: none;
-    border-radius: 5px;
-  }
-
-  & .ql-stroke {
-    stroke: theme("colors.secondary") !important;
-  }
-
-  & .ql-editor {
-    min-height: 90px;
-    color: white !important;
-  }
-
-  & .ql-editor.ql-blank::before {
-    color: theme("colors.secondary") !important;
-  }
-
-  & .ql-snow.ql-toolbar button {
-    transform: scale(1.4);
-  }
-
-  & .ql-snow.ql-toolbar button.ql-active .ql-stroke {
-    stroke: theme("colors.sistemaBlue") !important;
-  }
-
-}
 
 ::-webkit-scrollbar {
   width: 5px;

@@ -2,7 +2,7 @@
 
 import { IProduto } from '@/interfaces/IProduto';
 import { Button, Form, App } from 'antd';
-import React, { useCallback, useEffect, useState, forwardRef, useImperativeHandle, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import ProductFormInfo from '@/components/Products/Form';
 import { produtosService } from '@/services/product.service';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ import SectionSeparator from '@/components/MiniComponents/SectionSeparator';
 import { ProdutoComposicaoCreateModal } from '@/components/ItemsComposicao/Create';
 import { ProdutoComposicaoTable } from '@/components/ItemsComposicao/Table';
 import { useProdutoComposicao } from '@/hooks/useProdutoComposicao';
+import { IProdutoFlags } from '@/interfaces/IProduto';
 
 export interface ProductEditInfoRef {
   submitForm: () => void;
@@ -36,11 +37,13 @@ function formatDate(value: string) {
   }
 }
 
-function formatFlags(oldFlags: Record<string, boolean>, newFlags: Record<string, boolean>) {
+function formatFlags(oldFlags: IProdutoFlags, newFlags: IProdutoFlags) {
   const diffs = [];
-  for (const key in { ...oldFlags, ...newFlags }) {
-    const oldVal = oldFlags[key] ?? false;
-    const newVal = newFlags[key] ?? false;
+  const allKeys = new Set([...Object.keys(oldFlags), ...Object.keys(newFlags)]);
+
+  for (const key of Array.from(allKeys)) {
+    const oldVal = oldFlags[key as keyof IProdutoFlags] ?? false;
+    const newVal = newFlags[key as keyof IProdutoFlags] ?? false;
     if (oldVal !== newVal) {
       diffs.push(`${key}: ${oldVal ? 'Sim' : 'Não'} → ${newVal ? 'Sim' : 'Não'}`);
     }
@@ -50,16 +53,19 @@ function formatFlags(oldFlags: Record<string, boolean>, newFlags: Record<string,
 
 function compareChanges(oldData: Partial<IProduto>, newData: Partial<IProduto>): string {
   const changes = [];
+  const keysToIgnore = ['imagens', 'created_at', 'updated_at', 'tenant'];
+
   for (const key in newData) {
-    if (key === 'imagens') continue;
-    const oldVal = oldData[key];
-    const newVal = newData[key];
+    if (keysToIgnore.includes(key) || !Object.prototype.hasOwnProperty.call(oldData, key)) {
+      continue;
+    }
+
+    const oldVal = oldData[key as keyof IProduto];
+    const newVal = newData[key as keyof IProduto];
 
     if (JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
-      if (key === 'updated_at' && typeof oldVal === 'string' && typeof newVal === 'string') {
-        changes.push(`Atualizado em: ${formatDate(oldVal)} → ${formatDate(newVal)}`);
-      } else if (key === 'flags' && typeof oldVal === 'object' && typeof newVal === 'object') {
-        const flagsDiff = formatFlags(oldVal as any, newVal as any);
+      if (key === 'flags' && typeof oldVal === 'object' && typeof newVal === 'object') {
+        const flagsDiff = formatFlags(oldVal as IProdutoFlags, newVal as IProdutoFlags);
         if (flagsDiff) changes.push(`Flags:\n${flagsDiff}`);
       } else {
         changes.push(`${key}: ${JSON.stringify(oldVal)} → ${JSON.stringify(newVal)}`);
@@ -75,25 +81,29 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
   onSave,
 }, ref) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const handleOpenModal = () => setIsModalVisible(true);
   const handleCloseModal = () => setIsModalVisible(false);
   const [refreshTableFlag, setRefreshTableFlag] = useState(0);
 
-  const handleItemCreated = (novaComp: any) => {
+  const handleItemCreated = () => {
     notification.success({ message: 'Composição adicionada!' });
-    setRefreshTableFlag(prev => prev + 1); // força refresh da table
+    setRefreshTableFlag(prev => prev + 1);
   };
+
   const { notification } = App.useApp();
   const [form] = Form.useForm<IProduto>();
   const [isLoading, setIsLoading] = useState(false);
   const [initialProduto, setInitialProduto] = useState<IProduto | null>(null);
   const router = useRouter();
-  const { registerSubmitHandler, produto, } = useProdutoContext();
-  const defaultFlags = Object.fromEntries(flagsConfig.map(({ key }) => [key, false]));
+  const { registerSubmitHandler, produto } = useProdutoContext();
+  const defaultFlags: IProdutoFlags = Object.fromEntries(
+    flagsConfig.map(({ key }) => [key, false])
+  ) as IProdutoFlags;
+
   const { permissions } = useAuth();
-  if (!permissions?.includes('produtos')) return <NotFound />;
-  const { composicao, composicaoLoading, composicaoRefresh } = useProdutoComposicao({ id: produto?.id  });
+
+  const produtoId = produto?.id || '';
+  const { composicao, composicaoLoading, composicaoRefresh } = useProdutoComposicao({ id: produtoId });
 
   useEffect(() => {
     if (produto && Object.keys(produto).length > 0) {
@@ -103,68 +113,83 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
         ...produto.flags,
       };
       form.setFieldsValue({
-        nome: produto.nome ?? '',
-        nome_interno: produto.nome_interno ?? '',
+        ...produto,
+        nome: produto.nome.toLocaleLowerCase() ?? '',
+        nome_interno: produto.nome_interno.toLocaleLowerCase() ?? '',
         preco: produto.preco ?? 9.95,
         desconto: produto.desconto ?? 0,
         estoque: produto.estoque ?? 0,
-        remover: produto.remover ?? [],
-        adicionar: produto.adicionar ?? [],
         quantidade: produto.quantidade ?? 0,
-        categoria_id: produto.categoria.id ?? '',
-        ativo: produto.ativo ?? false,
+        categoria_id: produto.categoria?.id ?? '',
         descricao: produto.descricao ?? '',
-        imagens: convertImagensToFileList(produto.imagens || []),
-        promocional: produto.promocional ?? false,
-        composicao: produto.composicao ?? [],
-        volume: produto.volume ?? '0',
-        peso: produto.peso ?? '0',
+        volume: produto.volume ?? '',
+        ativo: produto.ativo ?? false,
+        peso: produto.peso ?? '',
         unidade_medida: produto.unidade_medida ?? '',
-        tenant: produto.tenant ?? '',
         sku: produto.sku ?? '',
+        imagens: convertImagensToFileList(produto.imagens || []),
         flags: mergedFlags,
+
+      });
+    } else {
+
+      form.setFieldsValue({
+
+        flags: defaultFlags,
       });
     }
-  }, [produto, form]);
+  }, [produto, form, defaultFlags]);
 
+  // No arquivo ProductEditInfo.tsx
   const submitData = useCallback(() => {
     if (isLoading || !produto?.id) return;
 
     form.validateFields().then(values => {
       setIsLoading(true);
-
+      console.log('Form Values before submit:', values);
       const formData = new FormData();
-      formData.append('nome', values.nome);
-      formData.append('nome_interno', values.nome_interno);
+
+      // 1. Adicionar os campos básicos e de texto
+      // Isso garante que campos como nome, preco, etc., sejam adicionados
+      formData.append('nome', values.nome.toLowerCase());
+      formData.append('nome_interno', values.nome_interno.toLocaleLowerCase());
       formData.append('preco', String(values.preco ?? 9.95));
       formData.append('desconto', String(values.desconto ?? 0));
       formData.append('estoque', String(values.estoque ?? 10));
       formData.append('quantidade', String(values.quantidade ?? 10));
-      formData.append('descricao', values.descricao || '');
+      formData.append('descricao', values.descricao.toLocaleLowerCase() || '');
       formData.append('promocional', values.promocional ? 'true' : 'false');
       formData.append('categoria_id', values.categoria_id || '');
       formData.append('sku', values.sku || '');
       formData.append('volume', String(values.volume ?? 0));
       formData.append('peso', String(values.peso ?? 0));
       formData.append('unidade_medida', values.unidade_medida || '');
-      if (values.tenant) formData.append('tenant', values.tenant);
+      if (values.tenant) {
+        formData.append('tenant', values.tenant);
+      }
+      // A flag 'ativo' é parte do objeto 'flags', então não precisamos dela aqui.
       formData.append('ativo', values.ativo ? 'true' : 'false');
-      formData.append('flags', JSON.stringify(values.flags));
-      (values.remover || []).forEach((item: string) => formData.append('remover', item));
-      (values.composicao || []).forEach((item: string) => formData.append('composicao', item));
-      (values.adicionar || []).forEach((item: { item: string; valor: number }) => formData.append('adicionar', JSON.stringify(item)));
 
+      // 2. Adicionar o objeto 'flags' como uma string JSON
+      if (values.flags) {
+        console.log('values.flags', values.flags);
+        formData.append('flags', JSON.stringify(values.flags));
+      }
+
+      // 3. Adicionar arrays de forma explícita
+      (values.remover || []).forEach((item) => formData.append('remover', item));
+      (values.composicao || []).forEach((item) => formData.append('composicao', item));
+      (values.adicionar || []).forEach((item) => formData.append('adicionar', JSON.stringify(item)));
+
+      // 4. Adicionar imagens e IDs das imagens mantidas
       const imagens = values.imagens || [];
       const imagensIdsManter = imagens.filter((img: any) => !img.originFileObj).map((img: any) => img.uid);
-
       formData.append('imagens_ids_manter', JSON.stringify(imagensIdsManter));
-
       imagens.filter((img: any) => img.originFileObj).forEach((img: any) => formData.append('imagens', img.originFileObj));
 
       produtosService.update(produto.id, formData)
         .then((response) => {
           const changesSummary = initialProduto ? compareChanges(initialProduto, response.data) : '';
-
           if (changesSummary) {
             showChangesNotification(response.data.nome, changesSummary);
           } else {
@@ -173,7 +198,7 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
               description: 'O produto foi atualizado com sucesso.',
             });
           }
-
+          console.log('Response data:', response.data);
           if (onSave) onSave();
           router.back();
         })
@@ -196,11 +221,12 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
     submitForm: submitData,
   }));
 
+  if (!permissions?.includes('produtos')) return <NotFound />;
+
   return (
     <>
       <ProductFormInfo form={form} isEditing permissions={permissions} />
       <SectionSeparator title="Composição do Produto">
-
         <Button type="primary" onClick={handleOpenModal}>Adicionar Item</Button>
         <div className='container-conteudo-small'>
           <ProdutoComposicaoCreateModal
@@ -210,7 +236,7 @@ const ProductEditInfo = forwardRef<ProductEditInfoRef, ProductEditInfoProps>(({
             onCreated={handleItemCreated}
             composicaoRefresh={composicaoRefresh}
           />
-          <ProdutoComposicaoTable composicao={composicao} composicaoLoading={composicaoLoading} composicaoRefresh={composicaoRefresh}/>
+          <ProdutoComposicaoTable composicao={composicao} composicaoLoading={composicaoLoading} composicaoRefresh={composicaoRefresh} />
         </div>
       </SectionSeparator>
     </>

@@ -1,8 +1,11 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { notification } from 'antd';
-import Router from 'next/router';
+
 import { useAuthStore } from '@/store/authStore';
 import { CookiesHandler } from '@/cookies';
+import { useRouter } from 'next/navigation';
+import { use } from 'react';
+
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -74,7 +77,7 @@ apiClient.interceptors.response.use(
           description: 'Você precisa fazer login novamente.',
           duration: 4,
         });
-        if (Router.pathname !== '/login') Router.push('/login');
+        useRouter().push('/');
       } finally {
         isRefreshing = false;
       }

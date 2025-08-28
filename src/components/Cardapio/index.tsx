@@ -7,6 +7,7 @@ import { useDeliveryStore } from '@/store/deliveryStore';
 import { IItem } from '@/interfaces/IPedido';
 import { useCategoriasStore } from '@/store/categoriasStore';
 import { useProdutosStore } from '@/store/produtosStore';
+import DOMPurify from "dompurify";
 
 import { IProduto } from '@/interfaces/IProduto'; // Assuming IProduto interface is defined
 import Image from 'next/image';
@@ -18,6 +19,7 @@ import { useLoja } from '@/contexts/LojaContext';
 import ProductModal from '@/components/Products/modal';
 import { useProdutosPublicos } from '@/hooks/useProductsPublic';
 import { useCategoriasPublicas } from '@/hooks/usePublicCategory';
+import DescricaoStyles from '../MiniComponents/DescricaoStyles';
 
 const Cardapio: React.FC = () => {
 
@@ -41,6 +43,9 @@ const Cardapio: React.FC = () => {
     const [modalAberto, setModalAberto] = useState(false);
     const [produtoSelecionado, setProdutoSelecionado] = useState<IProduto | null>(null);
     const [adicionarSelecionado, setAdicionarSelecionado] = useState<string[]>([]);
+    const [opcionaisSelecionados, setOpcionaisSelecionados] = useState<
+        { id: string; nome: string; preco: number; quantidade: number }[]
+    >([]);
     const [removerSelecionado, setRemoverSelecionado] = useState<string[]>([]);
     console.log('id do tenant', lojaId, corporation);
     const { produtos, produtosLoading, hasMore, produtosRefresh } = useProdutosPublicos({
@@ -51,14 +56,6 @@ const Cardapio: React.FC = () => {
         searchQuery: debouncedBusca,
     });
 
-    const abrirModal = (produto: IProduto) => {
-        setProdutoSelecionado(produto);
-        setAdicionarSelecionado([]);
-        setRemoverSelecionado([]);
-        setModalAberto(true);
-    };
-
-    // Function to confirm addition to cart
     const confirmarAdicao = () => {
         if (!produtoSelecionado) return;
 
@@ -91,14 +88,31 @@ const Cardapio: React.FC = () => {
     };
 
     const categoriasNomes = useMemo(() => {
-        const todas = categorias.flatMap(cat =>
+        if (!categorias || categorias.length === 0) return [];
+
+        // Primeiro, filtra os produtos que têm delivery
+        const produtosComDelivery = produtos.filter(p => p.flags?.delivery);
+
+        // Depois, pega apenas categorias que têm produtos
+        const categoriasValidas = categorias.filter(cat => {
+            const catNomes = [cat.nome, ...cat.subcategorias.map(sub => sub.nome)];
+            return catNomes.some(nome =>
+                produtosComDelivery.some(p => (p.categoria.nome || 'Outros') === nome)
+            );
+        });
+
+        // Extrai os nomes únicos
+        const todas = categoriasValidas.flatMap(cat =>
             [cat.nome, ...cat.subcategorias.map(sub => sub.nome)]
-        )
-        const únicas = Array.from(new Set(todas))
-        const resultado = ['Todos', ...únicas]
-        useCategoriasStore.getState().setCategorias(resultado)
-        return resultado
-    }, [categorias])
+        );
+
+        const únicas = Array.from(new Set(todas));
+        const resultado = ['Todos', ...únicas];
+
+        useCategoriasStore.getState().setCategorias(resultado);
+        return resultado;
+    }, [categorias, produtos]);
+
 
 
     const produtosFiltrados = useMemo(() => {
@@ -125,6 +139,37 @@ const Cardapio: React.FC = () => {
 
         if (scrollPosition >= threshold) {
             setPage(prev => prev + 1);
+        }
+    };
+    const tiposInterativos = ['NV', 'PT', 'RM', 'AD', 'AL', 'PC', 'OP', 'FX', 'CP', 'VR', 'CT'];
+
+    const abrirProduto = (produto: IProduto) => {
+        if (!produto) return;
+
+        // Verifica se o produto tem steps (NV, PT ou RM)
+        const temSteps = produto.composicoes?.some(c => tiposInterativos.includes(c.tipo));
+
+        if (temSteps) {
+            // Abre o modal
+            setProdutoSelecionado(produto);
+            setAdicionarSelecionado([]);
+            setRemoverSelecionado([]);
+            setModalAberto(true);
+        } else {
+            // Adiciona direto ao carrinho
+            const item: IItem = {
+                id: produto.id,
+                nome: produto.nome,
+                valor: parseFloat(produto.preco),
+                desconto: produto.desconto || 0,
+                quantidade: 1,
+                adicionar: [],
+                remover: [],
+                categoria: produto.categoria.nome,
+                descricao: produto.descricao,
+                imagem: produto.imagens?.[0]?.imagem_url || 'https://placehold.co/800x600/CCCCCC/FFFFFF?text=No+Image',
+            };
+            useDeliveryStore.getState().adicionarItem(item);
         }
     };
 
@@ -161,17 +206,24 @@ const Cardapio: React.FC = () => {
 
 
 
-            {categoriasFiltradas.map(categoria => (
-                <div id={categoria} key={categoria} className="pt-8 mt-8">
-                    <div className="space-y-4">
-                        <h2 className="text-3xl font-extrabold tracking-tight text-d_primary uppercase">
-                            {categoria}
-                        </h2>
+            {categoriasFiltradas.map(categoria => {
+                const produtosDaCategoria = produtosFiltrados
+                    .filter(p => (p.categoria.nome || 'Outros') === categoria)
+                    .filter(p => p.flags?.delivery);
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {produtosFiltrados
-                                .filter(p => (p.categoria.nome || 'Outros') === categoria)
-                                .map(produto => (
+                if (produtosDaCategoria.length === 0) {
+                    return null; // 👈 não renderiza se vazio
+                }
+
+                return (
+                    <div id={categoria} key={categoria} className="pt-8 mt-8">
+                        <div className="space-y-4">
+                            <h2 className="text-3xl font-extrabold tracking-tight text-d_primary uppercase">
+                                {categoria}
+                            </h2>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {produtosDaCategoria.map(produto => (
                                     <div
                                         key={produto.id}
                                         className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col hover:shadow-2xl transition"
@@ -179,7 +231,10 @@ const Cardapio: React.FC = () => {
                                         {/* Imagem grande */}
                                         <div className="relative h-48 w-full overflow-hidden">
                                             <Image
-                                                src={produto.imagens?.[0]?.imagem_url || 'https://placehold.co/600x400/CCCCCC/FFFFFF?text=No+Image'}
+                                                src={
+                                                    produto.imagens?.[0]?.imagem_url ||
+                                                    'https://placehold.co/600x400/CCCCCC/FFFFFF?text=No+Image'
+                                                }
                                                 alt={produto.nome}
                                                 fill
                                                 className="object-cover hover:scale-110 transition-transform"
@@ -188,21 +243,21 @@ const Cardapio: React.FC = () => {
 
                                         {/* Info */}
                                         <div className="flex-1 flex flex-col p-4">
-                                            <h3 className="text-xl font-bold text-gray-900 leading-tight line-clamp-1">
+                                            <h3 className="text-xl font-bold text-gray-900 leading-tight line-clamp-1 capitalize">
                                                 {produto.nome}
                                             </h3>
-                                            <p className="text-gray-600 text-sm flex-1 line-clamp-2">
-                                                {produto.descricao || "Sem descrição."}
-                                            </p>
+                                            <DescricaoStyles value={produto.descricao} />
 
                                             {/* Preço + botão */}
                                             <div className="flex items-center justify-between mt-4">
                                                 <p className="text-2xl font-extrabold text-d_primary">
-                                                    R$ {parseFloat(produto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                                    R$ {parseFloat(produto.preco).toLocaleString('pt-BR', {
+                                                        minimumFractionDigits: 2,
+                                                    })}
                                                 </p>
                                                 <button
-                                                    onClick={() => abrirModal(produto)}
-                                                    className="bg-d_primary text-white px-5 py-2 rounded-full font-bold shadow-md hover:bg-d_primary/90 active:scale-95 transition"
+                                                    onClick={() => abrirProduto(produto)}
+                                                    className="bg-primary text-white px-5 py-2 rounded-full font-bold shadow-md hover:bg-prib1  active:scale-95 transition"
                                                 >
                                                     Adicionar +
                                                 </button>
@@ -210,10 +265,12 @@ const Cardapio: React.FC = () => {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
+
 
             <ProductModal
                 modalAberto={modalAberto}
@@ -224,6 +281,8 @@ const Cardapio: React.FC = () => {
                 setAdicionarSelecionado={setAdicionarSelecionado}
                 removerSelecionado={removerSelecionado}
                 setRemoverSelecionado={setRemoverSelecionado}
+                opcionaisSelecionados={opcionaisSelecionados}
+                setOpcionaisSelecionados={setOpcionaisSelecionados}
             />
         </div >
     );

@@ -24,7 +24,7 @@ const HeaderPage: NextPage = () => {
 
   return (
     <>
-      <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50 bg-primary ">
+      <Header className="shadow-md px-4 flex items-center justify-between sticky top-0 z-50 bg-darkModal">
         <div className="flex items-center gap-4">
           {mounted && <LogoIcon texto={user?.corporation?.nome || 'Lojavel'} />}
 
@@ -56,7 +56,7 @@ const HeaderPage: NextPage = () => {
             )
           )}
         </Space>
-      </Header>
+      </Header >
 
       {mounted && user && (
         <div className="grid grid-cols-12 gap-4 border-b border-gray-100 cursor-pointer rounded-b-md shadow-sm m-2">
@@ -75,7 +75,8 @@ const HeaderPage: NextPage = () => {
 
           </div>
         </div>
-      )}
+      )
+      }
     </>
   );
 };

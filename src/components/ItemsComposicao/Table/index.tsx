@@ -98,7 +98,7 @@ export const ProdutoComposicaoTable: React.FC<ProdutoComposicaoTableProps> = ({ 
                 ),
         },
         {
-            title: 'Qtd',
+            title: 'Limite',
             dataIndex: 'quantidade',
             key: 'quantidade',
             render: (_: any, record: IProdutoComposicao) =>
