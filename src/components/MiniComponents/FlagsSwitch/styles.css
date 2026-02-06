@@ -18,10 +18,11 @@
 
 .ant-segmented-item-selected,
 .ant-segmented-thumb-motion-appear-active {
-    background-color: theme("colors.azulEscuro") !important;
-    color: theme("colors.primary") !important;
+    background-color: theme("colors.option") !important;
+    color: theme("colors.tertiary") !important;
     text-transform: uppercase !important;
     font-size: 12px !important;
-    text-shadow: 1px 1px 1px theme("colors.tertiary") !important;
+    font-weight: 800 !important;
+    text-shadow: 1px 1px 3px theme("colors.secondary") !important;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05) !important;
 }

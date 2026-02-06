@@ -5,15 +5,15 @@ import PageTitle from '@/components/MiniComponents/PageTitle';
 import { Button, Input, Table } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ClienteColumn } from './column'; // Assuming CourseColumn is meant to be UserColumn
+import { UserColumn } from './column'; // Assuming CourseColumn is meant to be UserColumn
+import { useUsers } from '@/hooks/useUsers';
 import PageSizeSelector from '@/components/MiniComponents/PageSizeSelector';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Constants } from '@/components/constants';
 import { useAuth } from '@/contexts/AuthContext';
-import NotFound from '@/app/not-found';
-import { useReservas } from '@/hooks/useReservas';
+import AccessDenied from '@/app/access-denied';
 
-const ReservasList: React.FC = () => {
+const LeadList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(Constants.per_page);
   const [selectedField, setSelectedField] = useState<string>('first_name');
@@ -27,42 +27,26 @@ const ReservasList: React.FC = () => {
     { value: 'cpf', label: 'CPF' }, // Added CPF as a filter option
   ], []);
 
-  if (!permissions.includes('afiliados_acesso_visualizar')) return NotFound();
+  if (!permissions.includes('usuarios_colaborador')) return AccessDenied();
 
-  const { reservas, reservasLoading, reservasTotal, reservasRefresh } = useReservas(
+  const { users, usersLoading, usersTotal, usersRefresh } = useUsers(
     useMemo(
       () => ({
         page,
         limit: pageSize,
-        filters: { ...debouncedFilter, tenant: user?.tenant },
+        filters: { ...debouncedFilter, tipo_usuario: 'lead' },
       }),
-      [page, debouncedFilter, pageSize, user]
+      [page, debouncedFilter, pageSize]
     )
   );
 
   return (
-    // Added some padding for the overall container for better spacing
     <div className="w-7xl container mx-auto">
       <PageTitle
-        navTitle="Sistema > Publico"
-        title="Reservas"
+        navTitle="Sistema"
+        title="Leads"
         hasBackButton={true}
-        action={
-          <>
-            {permissions.includes('afiliados_acesso_criar') && (
-              <Link href="/dashboard/reservas/cadastrar">
-                {/* Styled button to match the new PageTitle aesthetic */}
-                <Button
-                  type="default"
-                  size="large"
-                  className="w-full sm:w-auto px-6 py-3 font-semibold text-base rounded-md shadow-md hover:shadow-lg transition-shadow"
-                >
-                  Adicionar Reserva
-                </Button>
-              </Link>
-            )}</>
-
-        }
+        
       />
 
       <div className="bg-secondary  rounded-lg shadow-xl">
@@ -79,13 +63,13 @@ const ReservasList: React.FC = () => {
 
         <Table
           rowKey="id"
-          columns={ClienteColumn(reservasRefresh, permissions)}
-          dataSource={reservas}
-          loading={reservasLoading}
+          columns={UserColumn(usersRefresh, permissions)}
+          dataSource={users}
+          loading={usersLoading}
           pagination={{
             current: page,
             pageSize: pageSize,
-            total: reservasTotal,
+            total: usersTotal,
             onChange: (page) => setPage(page),
             showSizeChanger: false,
             // Styling for Ant Design pagination (optional, but can enhance consistency)
@@ -99,4 +83,4 @@ const ReservasList: React.FC = () => {
   );
 };
 
-export default React.memo(ReservasList);
+export default React.memo(LeadList);

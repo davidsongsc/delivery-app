@@ -79,16 +79,9 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                   <Input placeholder="Digite o nome do produto..." />
                 </Form.Item>
                 <Form.Item<IProdutoCreate>
-                  label={<span className="font-bold">SKU:</span>}
-                  name="sku"
-                  className="col-span-6"
-                >
-                  <Input placeholder="Código interno (opcional)" />
-                </Form.Item>
-                <Form.Item<IProdutoCreate>
                   label={<span className="font-bold text-sm">Categoria:</span>}
                   name="categoria_id"
-                  className="col-span-6"
+                  className="col-span-12 md:col-span-6"
                   rules={[{ required: true, message: 'Selecione uma categoria' }]}
                 >
                   <SelectCategoryAutoComplete
@@ -96,13 +89,21 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                     onChange={(id) => form.setFieldsValue({ categoria_id: id })}
                   />
                 </Form.Item>
+                <Form.Item<IProdutoCreate>
+                  label={<span className="font-bold">SKU:</span>}
+                  name="sku"
+                  className="col-span-12 md:col-span-6"
+                >
+                  <Input placeholder="Código interno (opcional)" />
+                </Form.Item>
+
 
               </div>
               <div className="grid grid-cols-12 gap-1">
                 <Form.Item<IProdutoCreate>
                   label={<span className="font-bold text-sm">Preço (R$):</span>}
                   name="preco"
-                  className="col-span-3"
+                  className="col-span-6 md:col-span-3"
                   initialValue={0}
                   rules={[{ required: true, message: 'Campo obrigatório' }]}
                 >
@@ -116,7 +117,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                 <Form.Item<IProdutoCreate>
                   label={<span className="font-bold text-sm">Desconto (%):</span>}
                   name="desconto"
-                  className="col-span-3"
+                  className="col-span-6 md:col-span-3"
                   initialValue={0}
                 >
                   <InputNumber
@@ -129,7 +130,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                 <Form.Item<IProdutoCreate>
                   label={<span className="font-bold">Estoque:</span>}
                   name="estoque"
-                  className="col-span-3"
+                  className="col-span-6 md:col-span-3"
                   rules={[{ required: true, message: 'Campo obrigatório' }]}
                   initialValue={10}
                 >
@@ -143,7 +144,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
                   label={<span className="font-semibold ">Status</span>}
                   name="ativo"
                   initialValue={true}
-                  className="col-span-3"
+                  className="col-span-6 md:col-span-3"
                 >
                   <Select
                     disabled={!permissions?.includes('produtos_editar_status')}
@@ -181,7 +182,7 @@ const ProductFormInfo: React.FC<ProductFormProps> = ({ form, isEditing = false, 
           </div>
         </SectionSeparator>
 
-        <SectionSeparator title="Detalhes Operacionais" expanded={false}>
+        <SectionSeparator title="Detalhes Operacionais" expanded={true}>
           <div className='grid grid-cols-6 md:grid-cols-12 gap-1 container-conteudo-small '>
             <div className="grid grid-cols-2 gap-x-4 border p-4 rounded-lg bg-gray-100 col-span-6">
               <div className="col-span-2">

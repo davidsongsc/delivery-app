@@ -6,6 +6,7 @@ import { listaCupons } from '@/components/serverside';
 const CarrinhoTotalVenda: React.FC = () => {
     const itensPedido = useDeliveryStore(state => state.itensPedido);
     const taxaEntrega = useDeliveryStore(state => state.taxaEntrega);
+    console.log('Itens do pedido:', itensPedido)
 
     const [cupom, setCupom] = useState('');
     const [cupomAplicado, setCupomAplicado] = useState<ICupom | null>(null);
@@ -17,7 +18,7 @@ const CarrinhoTotalVenda: React.FC = () => {
 
     itensPedido.forEach(item => {
         const adicionaisValor = item.adicionar.reduce((total, adicional) => {
-            return total + (typeof adicional === 'object' && adicional.valor ? adicional.valor : 0);
+            return total + (adicional.preco || 0) * (adicional.quantidade || 1);
         }, 0);
 
         const baseUnitario = item.valor + adicionaisValor;
@@ -31,6 +32,7 @@ const CarrinhoTotalVenda: React.FC = () => {
         totalDescontos += descontoTotal;
         totalFinal += final;
     });
+
 
     const aplicarCupom = () => {
         const encontrado = listaCupons.find(

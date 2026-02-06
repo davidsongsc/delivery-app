@@ -107,7 +107,9 @@ const SelectCategoryAutoComplete: React.FC<SelectCategoryAutoCompleteProps> = ({
           icon={<PlusOutlined />}
           onClick={() => setModalCreateVisible(true)}
           disabled={isDisabled}
-        />
+        >
+          Nova
+        </Button>
 
         {selectedCategory && (
           <Tooltip title="Editar categoria selecionada">

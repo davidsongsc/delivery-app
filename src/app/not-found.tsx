@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { App } from 'antd';
 export default function NotFound() {
   const router = useRouter();
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(15);
   const { notification } = App.useApp();
   useEffect(() => {
     if (countdown === 4) {

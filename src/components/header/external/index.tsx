@@ -26,7 +26,6 @@ const Header = () => {
     const [imageSrc, setImageSrc] = useState(lojaObj.logo_url);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [openCart, setOpenCart] = useState(false);
-    console.log('Corporation:', lojaObj);
     const categorias = useCategoriasStore((state) => state.categorias);
     const breakpoint = useBreakpoint();
     const isMobile = breakpoint === 'mobile' || breakpoint === 'tablet';

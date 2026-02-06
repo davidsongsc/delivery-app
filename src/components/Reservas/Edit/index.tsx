@@ -26,8 +26,7 @@ const ReservaEdit: React.FC = () => {
     useMemo(() => ({ id }), [id])
   );
 
-  const { user } = useAuth();
-  const permissions = getUserPermissions(user);
+  const { user, permissions } = useAuth();
   if (!permissions.includes('afiliados_editar')) return NotFound();
 
   useEffect(() => {

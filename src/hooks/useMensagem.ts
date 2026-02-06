@@ -2,7 +2,7 @@
 import { App } from 'antd';
 import { useEffect, useState, useRef } from 'react';
 
-interface IMensagem {
+export interface IMensagem {
   id: string;
   remetente: string;
   destinatario: string;

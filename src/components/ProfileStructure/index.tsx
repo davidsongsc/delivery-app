@@ -48,10 +48,10 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
   };
 
   return (
-    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 ${className}`}>
+    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-2 md:p-4 ${className}`}>
 
       {/* Sidebar */}
-      <div className="lg:col-span-3 flex flex-col gap-6">
+      <div className="lg:col-span-3 flex flex-col gap-3">
         <PageTitle hasBackButton navTitle={navTitle} title={title} />
 
         {/* Produto Card */}
@@ -110,7 +110,7 @@ const ProfileStructure: React.FC<ProfileStructureProps> = ({
               type={btn.isActive ? "primary" : "default"}
               block
               size="large"
-              className="uppercase font-bold h-14"
+              className="uppercase font-bold h-10"
               onClick={() => btn.onClick ? btn.onClick() : btn.link && router.push(btn.link)}
               disabled={btn.disabled}
             >

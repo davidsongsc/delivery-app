@@ -49,11 +49,11 @@ const PageTitle: React.FC<PageTitleProps> = ({
             ${className || ""}
           `}
         >
-          <div className="flex items-center mb-4 sm:mb-0">
+          <div className="flex items-center mb-2 sm:mb-0">
             {hasBackButton && (
               <IoChevronBackSharp
                 size={40}
-                className="mr-3 cursor-pointer hover:scale-110 text-option transition-transform duration-200 bg-primary rounded-full p-1"
+                className="mr-2 cursor-pointer hover:scale-110 text-option transition-transform duration-200 bg-primary rounded-full p-1"
                 onClick={() => router.back()}
               />
             )}
@@ -72,7 +72,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
 
           <div className="flex items-center gap-3">
             <button
-              className="text-option hover:text-primary transition-transform flex items-center gap-1 xl:hidden"
+              className="text-primary hover:text-primary transition-transform flex items-center gap-1 xl:hidden"
               onClick={toggleVisibility}
               title="Ocultar título"
             >

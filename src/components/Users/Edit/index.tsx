@@ -77,10 +77,28 @@ const UserEdit: React.FC = () => {
           router.back();
         })
         .catch((error) => {
-          // Exibe mensagens detalhadas de erro (caso o backend retorne)
-          const detail = error?.response?.data?.detail;
-          const msg = detail || 'Erro ao atualizar colaborador';
-          notification.error({ message: msg });
+          const responseData = error?.response?.data
+          let message = 'Erro ao atualizar colaborador'
+          let description: string | undefined = undefined
+
+          if (typeof responseData === 'string') {
+            description = responseData
+          } else if (responseData?.detail) {
+            message = responseData.detail
+          } else if (typeof responseData === 'object') {
+            const [field, errors] = Object.entries(responseData)[0] || []
+            if (field && errors) {
+              message = String(field).toUpperCase()
+              description = Array.isArray(errors) ? errors.join(', ') : String(errors)
+            }
+          }
+
+          notification.error({
+            message,
+            description,
+          })
+
+
         })
         .finally(() => setIsLoading(false));
     });

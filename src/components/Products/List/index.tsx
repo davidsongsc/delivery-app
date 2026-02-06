@@ -15,17 +15,8 @@ import { useRouter } from 'next/navigation';
 import AppLoading from '@/components/AppLoading';
 
 const ProductList: React.FC = () => {
-  const { user, permissions = [], hydrated } = useAuth();
+  const { user, permissions } = useAuth();
   const router = useRouter();
-
-  // espera hidratação
-  if (!hydrated || !user) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <AppLoading />
-      </div>
-    );
-  }
 
   if (!permissions.includes('produtos')) return <NotFound />;
 

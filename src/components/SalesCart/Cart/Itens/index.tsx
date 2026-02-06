@@ -5,7 +5,6 @@ import { useDeliveryStore } from '@/store/deliveryStore'
 
 const CarrinhoItens: React.FC = () => {
   const { itensPedido, alterarQuantidade } = useDeliveryStore()
-  console.log('Itens do pedido:', itensPedido)
   return (
     <div className="space-y-4">
       {itensPedido.map((item, index) => {

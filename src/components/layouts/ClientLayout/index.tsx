@@ -32,13 +32,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                     colorWarningBg: config.theme.colors.transparent,
                     colorWarningBorder: config.theme.colors.transparent,
                 },
-                Menu: {
-                    colorText: config.theme.colors.secondary,
-                    colorItemText: config.theme.colors.secondary, 
-                    colorItemTextSelected: config.theme.colors.secondary, 
-                    colorItemBgSelected: config.theme.colors.primary, 
-                    colorItemBgActive: config.theme.colors.primary,
-                },
 
                 Select: {
                     optionSelectedBg: config.theme.colors.darkSelecao,

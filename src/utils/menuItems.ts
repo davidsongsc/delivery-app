@@ -144,40 +144,9 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                     ].filter(Boolean),
                 },
                 permissions.includes('afiliados') && {
-                    key: 'leads',
+                    key: '/dashboard/configuracoes/leads',
                     label: 'Leads',
-                    children: [
-                        permissions.includes('afiliados_leads') && {
-                            key: '/dashboard/leads/lista',
-                            label: 'Listar leads',
-                        },
-                        permissions.includes('afiliados_buscar_leads') && {
-                            key: '/dashboard/configuracoes/afiliados/leads',
-                            label: 'Buscar leads',
-                        },
-                        permissions.includes('afiliados_campanhas') && {
-                            key: '/dashboard/configuracoes/afiliados/campanha',
-                            label: 'Campanhas',
-                        },
-                        permissions.includes('afiliados_configuracoes/afiliados/leads') && {
-                            key: 'historico_leads',
-                            label: 'Historico leads',
-                            children: [
-                                permissions.includes('afiliados_convertidos_leads') && {
-                                    key: '/dashboard/configuracoes/afiliados/convertidos',
-                                    label: 'Convertidos',
-                                },
-                                permissions.includes('afiliados_nao_convertidos_leads') && {
-                                    key: '/dashboard/configuracoes/afiliados/leads/conversao',
-                                    label: 'Nao convertidos',
-                                },
-                                permissions.includes('afiliados_geral_leads') && {
-                                    key: '/dashboard/configuracoes/afiliados/geral',
-                                    label: 'Geral',
-                                },
-                            ].filter(Boolean),
-                        },
-                    ].filter(Boolean),
+
                 },
 
 
@@ -227,13 +196,14 @@ export const generateMenuItems = (user: any): MenuProps['items'] => {
                 },
             ].filter(Boolean),
         }, {
-            key: 'mensagens',
-            label: 'Mensagens',
+            key: 'whatsapp',
+            label: 'Whatsapp',
             children: [
                 permissions.includes('mensagens') && {
-                    key: `/dashboard/mensagens/${user?.tenant}/`,
-                    label: 'Canal Interno',
-                },
+                    key: `/dashboard/whatsapp/${user?.tenant ?? ''}/`,
+                    label: 'Atendimento',
+                }
+                ,
                 permissions.includes('mensagens_leads') && {
                     key: `/dashboard/mensagens/${user?.tenant}/leads`,
                     label: 'Leads',

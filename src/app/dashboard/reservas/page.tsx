@@ -1,11 +1,11 @@
 'use client';
 import React, { useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
 import ReservasList from '@/components/Reservas/List';
+import { useAuth } from '@/contexts/AuthContext';
 const RegisterCorporation = () => {
-  const user = useAuthStore((state) => state.user);
+  const { isAuthenticated } = useAuth();
 
-  if (!user) return null;
+  if (!isAuthenticated) return null;
 
   return <ReservasList />;
 };

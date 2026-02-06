@@ -4,21 +4,16 @@ import React from 'react';
 import { App } from 'antd';
 import MessagePanel from '@/components/MessagePanel';
 import { useAuth } from '@/contexts/AuthContext';
+import NotFound from '@/app/not-found';
 
-interface MessagePageProps {
-  params?: {
-    tenantId?: string | null;
-  };
-}
-
-const MessagePage: React.FC<MessagePageProps> = ({ params }) => {
-  const { user } = useAuth();
-  const tenantId = params?.tenantId ?? 'loja'; 
+const MessagePage: React.FC = () => {
+  const { user, permissions } = useAuth();
+  if (!permissions.includes('forneceores_acesso_visualizar')) return NotFound();
 
   return (
     <App>
       <div style={{ padding: '24px' }}>
-        <MessagePanel tenantId={tenantId} currentUser={user!} />
+        <MessagePanel currentUser={user!} />
       </div>
     </App>
   );

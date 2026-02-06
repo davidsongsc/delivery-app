@@ -16,7 +16,7 @@ export default {
                 'multi-gradient': 'linear-gradient(to right, var(--primary) 20%, var(--secondary) 50%, transparent 80%)',
             },
             colors: {
-                primary: '#4B0082',
+                primary: '#E63946',
                 secondary: '#eeeeee',
                 tertiary: '#111111',
                 prib1: '#FFB703',

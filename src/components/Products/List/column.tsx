@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Quantidade from '@/components/MiniComponents/Quantidade';
 import NomeProduto from '@/components/MiniComponents/NomeProduto';
 import truncate from "html-truncate";
+import { MergeFilled, RightOutlined } from '@ant-design/icons'
 
 const { useBreakpoint } = Grid;
 
@@ -91,14 +92,14 @@ export const ProductColumn: ProductColumnProps = (fetchData, productPermissions)
 
       {
         width: 300,
-        title: 'Status',
+        title: 'Operações',
         dataIndex: 'ativo',
         key: 'ativo',
         render: (_: any, record: IProduto) => (
           <div className="flex flex-wrap">
             <Tag color={record.ativo ? "#52c41a" : "#ff4d4f"} style={tagStyle}>
-              {record.ativo ? "Disponível" : "Indisponível"}
-            </Tag>
+              {record.ativo ? <><MergeFilled /> Disponível</> : "Indisponível"}
+            </Tag><RightOutlined style={{ fontSize: 12, margin: '0 4px', color: '#999' }} />
             {record.flags?.comanda && <Tag color="#1890ff" style={tagStyle}>Comanda</Tag>}
             {record.flags?.delivery && <Tag color="#fa8c16" style={tagStyle}>Delivery</Tag>}
             {record.flags?.happy_hour && <Tag color="#722ed1" style={tagStyle}>Happy Hour</Tag>}

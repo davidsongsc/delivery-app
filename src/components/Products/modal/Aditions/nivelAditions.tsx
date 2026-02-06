@@ -1,5 +1,5 @@
 import React from 'react'
-import { Circle } from 'lucide-react'
+import { Star } from 'lucide-react'
 
 interface INivelSelectorProps {
   composicoes: { id: string; item_nome: string; tipo: string }[]
@@ -14,13 +14,11 @@ const NivelSelector: React.FC<INivelSelectorProps> = ({ composicoes, adicionarSe
   const nomeOriginal = nvComposicao.item_nome
   const nivelSelecionado = adicionarSelecionado.find(a => a.tipo === 'NV')?.nivel || null
 
-  // Níveis com cores e ícones
   const niveis = [
-    { nome: 'Delicado', cor: 'text-gray-400' },
-    { nome: 'Leve', cor: 'text-green-400' },
-    { nome: 'Médio', cor: 'text-yellow-500' },
-    { nome: 'Marcante', cor: 'text-orange-500' },
-    { nome: 'Intenso', cor: 'text-red-600' },
+    { nome: "Suave", cor: "#A8E05F", barras: 1 },
+    { nome: "Médio", cor: "#FFB347", barras: 2 },
+    { nome: "Forte", cor: "#E63946", barras: 3 },
+    { nome: "Explosivo", cor: "#8B0000", barras: 4 },
   ]
 
   const handleSelect = (nivel: string) => {
@@ -42,19 +40,23 @@ const NivelSelector: React.FC<INivelSelectorProps> = ({ composicoes, adicionarSe
     <div className="mb-4">
       <h3 className="text-lg font-bold text-gray-900 mb-2">{nomeOriginal || 'Nível'}</h3>
       <div className="flex flex-wrap gap-2">
-        {niveis.map(({ nome, cor }) => {
+        {niveis.map(({ nome, cor, barras }) => {
           const isSelected = nivelSelecionado === nome
           return (
             <button
               key={nome}
               onClick={() => handleSelect(nome)}
-              className={`flex-1 min-w-[120px] flex justify-between items-center p-4 rounded-xl border cursor-pointer transition
+              className={`flex-1 min-w-[140px] flex justify-between items-center p-4 rounded-xl border cursor-pointer transition
                 ${isSelected ? 'border-d_primary bg-gray-100' : 'border-gray-200 bg-white'}
                 hover:border-blue-400
               `}
             >
               <span className="font-semibold">{nome}</span>
-              <Circle className={`${cor} w-5 h-5`} />
+              <div className="flex gap-1">
+                {[...Array(barras)].map((_, idx) => (
+                  <Star key={idx} className="w-2 h-2" style={{ color: cor }} />
+                ))}
+              </div>
             </button>
           )
         })}

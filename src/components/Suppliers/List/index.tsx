@@ -10,7 +10,6 @@ import PageSizeSelector from '@/components/MiniComponents/PageSizeSelector';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Constants } from '@/components/constants';
 import { useAuth } from '@/contexts/AuthContext';
-import getUserPermissions from '@/utils/permissions';
 import NotFound from '@/app/not-found';
 import { userSuppliers } from '@/hooks/useSuppliers';
 
@@ -20,9 +19,8 @@ const SuppliersList: React.FC = () => {
   const [selectedField, setSelectedField] = useState<string>('first_name');
   const [filters, setFilters] = useState<object>({});
   const debouncedFilter = useDebounce(filters, 2000);
-  const { user } = useAuth();
-  const permissions = getUserPermissions(user);
-  
+  const { user, permissions } = useAuth();
+
   const filterOptions = useMemo(() => [
     { value: 'name', label: 'Nome' }, // Changed label to 'Nome' for User list
     { value: 'email', label: 'Email' }, // Added email as a filter option
@@ -49,7 +47,7 @@ const SuppliersList: React.FC = () => {
       <PageTitle
         navTitle="Sistema"
         title="Fornecedores"
-        hasBackButton={true} 
+        hasBackButton={true}
         action={
           <>
             {permissions.includes('forneceores_acesso_criar') && (
@@ -68,7 +66,7 @@ const SuppliersList: React.FC = () => {
         }
       />
 
-      <div className="bg-secondary  rounded-lg shadow-xl"> 
+      <div className="bg-secondary  rounded-lg shadow-xl">
         <PageSizeSelector
           pageSize={pageSize}
           setPageSize={setPageSize}

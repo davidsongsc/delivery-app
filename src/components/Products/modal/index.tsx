@@ -70,8 +70,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
     ...produtoSelecionado?.composicoes
       ?.filter(c => ['NV', 'PT', 'OP'].includes(c.tipo))
       .map(c => ({ tipo: c.tipo, nome: c.item_nome, id: c.id })) || [],
-    { tipo: 'RM', nome: 'Retirar do Pedido' },
-    { tipo: 'RES', nome: 'Resumo' }
+    { tipo: 'RM', nome: 'Alterações' },
+    { tipo: 'RES', nome: 'Adicionar ao Pedido' }
   ]
 
 

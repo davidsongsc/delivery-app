@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useWebSocket } from '@/hooks/useWebSocket';
+import { useChat } from '@/hooks/useChat';
 import { useChatUsers } from '@/hooks/useChatUsers';
 import {
   Spin,
@@ -22,27 +22,28 @@ const { TextArea } = Input;
 const { Text } = Typography;
 
 interface MessagePanelProps {
-  tenantId: string;
+  tenantId?: string | ''; 
   currentUser: IUser;
 }
 
-const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId, currentUser }) => {
+const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId = '', currentUser }) => {
   const [messageText, setMessageText] = useState('');
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { users, usersLoading } = useChatUsers();
-  const { messages, onlineUsers, isConnected, sendMessage } = useWebSocket(tenantId, currentUser.id);
+  const { messages, onlineUsers, isConnected, sendMessage } = useChat(
+    currentUser.id,
+    tenantId || '',
+  );
 
   // Scroll automático para última mensagem
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, selectedUser]);
 
-  // Filtra usuários excluindo o currentUser
   const otherUsers = users.filter((u) => u.id !== currentUser.id);
 
-  // Ordena usuários para mostrar primeiro os online (com base na lista real onlineUsers)
   const usersForChat = otherUsers.sort((a, b) => {
     const aOnline = onlineUsers.some((user) => user.id === a.id);
     const bOnline = onlineUsers.some((user) => user.id === b.id);
@@ -51,7 +52,6 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId, currentUser }) =>
     return 0;
   });
 
-  // Mensagens da conversa atual (entre currentUser e selectedUser)
   const currentConversation = selectedUser
     ? messages.filter((msg) => {
       if (!msg.remetente_id || !msg.destinatario_id) return false;
@@ -62,7 +62,6 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId, currentUser }) =>
     })
     : [];
 
-  // Handler para enviar mensagem
   const handleSendMessage = () => {
     if (messageText.trim() && selectedUser) {
       sendMessage(messageText.trim(), selectedUser.id);
@@ -70,7 +69,6 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId, currentUser }) =>
     }
   };
 
-  // Envio ao pressionar Enter (sem Shift)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -144,9 +142,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({ tenantId, currentUser }) =>
       <Layout>
         <Content style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
           <Card
-            title={
-              selectedUser ? `Conversa com ${selectedUser.username}` : 'Selecione um usuário para conversar'
-            }
+            title={selectedUser ? `Conversa com ${selectedUser.username}` : 'Selecione um usuário para conversar'}
             style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}
           >
             {!isConnected ? (

@@ -8,7 +8,7 @@ interface FlagSwitchProps {
 
 const FlagSwitch: React.FC<FlagSwitchProps> = ({ name, label }) => (
   <Form.Item
-    label={<span className="font-bold text-xl">{label}</span>}
+    label={<span className="font-bold text-xl ">{label}</span>}
     name={name}
     className="col-span-6 px-2"
   >
